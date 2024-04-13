@@ -1,14 +1,15 @@
 ---
-title: "Bioinformatics Scientist"
-substitle: "Introduction"
-author: "Sung Rye Park"
-date: "2024-04-13"
+title: "Sung Rye Park"
+subtitle: "Bioinformatics Scientist"
+author: ""
+
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+<br>
 
 ## Professional summary  
 Dynamic Senior Bioinformatics Scientist with over 6 years of hands-on experience in genomic data analysis and a strong publication record, including a co-authorship in Nature Immunology (2024). Proficient in orchestrating the integration of comprehensive multi-omic datasets, encompassing transcriptomic, genomic, epigenomic, and clinical data, to drive research and development in oncology. At Dana Farber Cancer Institute, played a pivotal role in analyzing complex drug combination datasets and provided critical bioinformatics consultation. Passionate about applying a blend of technical proficiency and biological insights to enhance team success, particularly within innovative personalized cancer therapy programs.     
