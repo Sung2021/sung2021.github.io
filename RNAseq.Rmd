@@ -4,14 +4,14 @@ subtitle: ""
 date: "`r format(Sys.Date())`"
 output:  
   rmdformats::robobook: 
-    code_folding: hide 
+    code_folding: show 
     number_sections: FALSE
     toc_depth: 6
     toc_float: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=F, fig.align = "center", 
+knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
                       message=F, warning=F,
                       results = "markup",
                       error = TRUE,
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(echo=F, fig.align = "center",
 # Preparation  
 
 ## Load packages   
-```{r, echo=T}
+```{r, echo=T, eval=TRUE}
 library(dplyr)
 library(ggplot2)
 library(DESeq2)
@@ -41,26 +41,159 @@ library(dplyr)
 
 # Sample data  
 
+Data import (count matrix).  
+Data import (TPM).    
 
-# Quality control  
+<!-- # Quality control   -->
 
 
-# TPM calculation  
+<!-- # TPM calculation   -->
 
 
 # Principal component analysis  
 
+```{r, echo=FALSE, eval=T}
+# First, create vectors for each column
+PC1 <- c(-12.48417792, -11.60784426, -10.95278299, -9.234550928, -12.93624321, 
+         -10.6807003, -0.065991014, -5.536146627, -8.234377152, 31.11284796,
+         19.72396967, 21.42781676, 45.91067912)
+PC2 <- c(0.352316398, 0.203888683, -0.460533257, 1.467805113, 1.046447489, 
+         -0.74510519, -0.458497168, -0.925433457, -0.656565276, 2.23485637, 
+         -0.519156466, -2.6308456, -5.790269992)
+group <- c("CondA", "CondA", "CondA", "CondA", "CondA", 
+           "CondB", "CondB", "CondB", "CondB", "Ctl",
+           "Ctl", "Ctl", "Ctl")
+sample <- c("CondA1", "CondA2", "CondA3", "CondA4", "CondA5", 
+            "CondB1", "CondB2", "CondB3", "CondB4", "Ctl1",
+            "Ctl2", "Ctl3", "Ctl4")
+name <- c("CondA1", "CondA2", "CondA3", "CondA4", "CondA5", 
+          "CondB1", "CondB2", "CondB3", "CondB4", "Ctl1",
+          "Ctl2", "Ctl3", "Ctl4")
+
+# Create the data frame
+pcaData <- data.frame(PC1, PC2, group, sample, name)
+
+PCA_var <- c(0.82990806, 0.07676304)
+```
+
+```{r, fig.width=6.5, fig.height=5, eval=T}
+ggplot(pcaData, aes(x = PC1, y = PC2, fill = group)) +
+  geom_point(size = 4, alpha = 0.6, shape = 21, color = "black", stroke = 0.5)  +
+  ggrepel::geom_text_repel(aes(label=name), 
+                           color="grey6", size=3, hjust= -0.3, vjust=-0.3) +
+  labs(x = paste("PC1: ", round(100 * PCA_var[1]), "% variance"),
+       y = paste("PC2: ", round(100 * PCA_var[2]), "% variance")) +
+  theme_bw() +
+  theme(legend.title = element_blank()) +
+  ggtitle("PCA") +
+  labs(caption = " ")
+```
+
 
 # Differentially Expressed Genes (DEG) analysis  
 
-## Obtain DEGs  
+## DEG data   
+```{r}
+# Generate info table
+info <- data.frame(matrix(nrow = ncol(count.mtx), ncol = 2))
+colnames(info) <- c('sample', 'cond')
+info$sample <- colnames(count.mtx)
+info$cond <- "sample information here"
 
-## Visualization of DEGs  
+# DESeq
+dds <- DESeqDataSetFromMatrix(count.mtx, info, ~ cond)
+dds <- DESeq(dds)
+res <- results(dds)
+```
 
-## Gene set enrichment analysis  
 
-# Further analysis
+## Visualization of DEGs Volcanoplot    
+```{r}
+res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & padj < pval, 'UP',
+                               ifelse(log2FoldChange <= -log2(fc) & padj < pval, 'DN','no_sig')))
+res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
 
+res %>% 
+  ggplot(aes(log2FoldChange, -log10(padj), color=DE)) + 
+  geom_point(size=1, alpha=0.5) + 
+  scale_color_manual(values = c('red','blue','grey')) +
+  theme_classic() +
+  geom_vline(xintercept = c(-log2(fc),log2(fc)), color='grey') +
+  geom_hline(yintercept = -log10(0.05),color='grey') +
+  guides(colour = guide_legend(override.aes = list(size=5))) +
+  ggtitle("Resist/Naive") +
+  ggeasy::easy_center_title() ## to center title
+
+```
+
+
+
+
+# Gene set enrichment analysis {.tabset}
+
+## Perform GSEA  
+```{r}
+library(clusterProfiler)
+gobp <- msigdbr::msigdbr(species = "Mus musculus", 
+                         category = "C5", subcategory = "GO:BP") %>% 
+  dplyr::select(gs_name, gene_symbol)
+
+perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
+  ranking <- function(res) {
+    df <- res$avg_log2FC
+    names(df) <- rownames(res)
+    df <- sort(df, decreasing = TRUE)
+    return(df)
+  }
+  
+  ranked.res <- ranking(res)
+  
+  x <- clusterProfiler::GSEA(geneList = ranked.res,
+                             TERM2GENE = ref,
+                             pvalueCutoff = pvalueCutoff,
+                             pAdjustMethod = "BH",
+                             verbose = TRUE,
+                             seed = TRUE)
+  
+  result <- x@result %>% arrange(desc(NES))
+  result <- result[, c('NES', 'pvalue', 'p.adjust', 'core_enrichment', 'ID')]
+  return(result)
+}
+
+# Application 
+gsea.res = perform_GSEA(res = deg.cluster3, ref = gpbp)
+
+```
+
+
+## NES plot  
+```{r}
+# GESA Plot 
+gsea_nes_plot =function(gsea.res, title){
+  gsea.res %>% ggplot(aes(reorder(ID, NES), NES)) +
+    geom_col(aes(fill=p.adjust)) +
+    coord_flip() +
+    labs(x="Pathway", y="Normalized Enrichment Score",
+         title= "GSEA") + 
+    theme_classic() +
+    scale_fill_gradient(low = 'red', high = '#E5E7E9') +
+    theme(axis.text.x= element_text(size=5, face = 'bold'),
+          axis.text.y= element_text(size=6, face = 'bold'), 
+          axis.title =element_text(size=10)) +ggtitle(title)
+}
+
+# Application 
+gsea_nes_plot(gsea.res[gsea.res$p.adjust <= 0.05,], title = "Cluster3")
+```
+
+
+## Enrichment plot for the individual pathway  
+
+```{r}
+id1 = "GOBP_NUCLEOSOME_POSITIONING 
+enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
+
+```
 
 
 <br><br>
