@@ -1,10 +1,10 @@
 ---
-title: "TCR-seq"
+title: "scTCR-seq"
 subtitle: ""
 date: "`r format(Sys.Date())`"
 output:  
   rmdformats::robobook: 
-    code_folding: hide 
+    code_folding: show 
     number_sections: FALSE
     toc_depth: 6
     toc_float: false
@@ -35,34 +35,89 @@ library(dplyr)
 
 # Workflow 
 
-## Calling Clonotypes   
+## Preprocessing by cellranger (count, vdj, aggr)  
 
-Calling method from contigs  
+```{bash, echo=T, eval=FALSE}
+# Sample : Control
+# CellRanger count for Transcriptome 
+cellranger count --id=<SampleID_GEX> \
+                 --transcriptome=<Path_to_Mouse_GEX_Reference> \
+                 --fastqs=<Path_to_GEX_Raw_Data> \
+                 --sample=<Sample_Name_GEX> \
+                 --expect-cells=10000
 
-**1. Using Gene information**  
+# CellRanger vdj for VDJ information  
+cellranger vdj --id=<SampleID_VDJ> \
+               --reference=<Path_to_Mouse_VDJ_Reference> \
+               --fastqs=<Path_to_VDJ_Raw_Data> \
+               --sample=<Sample_Name_VDJ>
 
-  - VDJC(TRA/TRB)  
-  - CDR3nt  
-  - CDR3aa  
-  - Combination  
   
-**2. Using Chain information**     
+# Sample : Treated
+# CellRanger count for Transcriptome 
+cellranger count --id=<SampleID_GEX_2> \
+                 --transcriptome=<Path_to_Mouse_GEX_Reference> \
+                 --fastqs=<Path_to_GEX_Raw_Data_2> \
+                 --sample=<Sample_Name_GEX_2> \
+                 --expect-cells=10000
 
-  - TRA1+TRB1
-  - TRA1 or TRB1
-  - multi-chains
+# CellRanger vdj for VDJ information  
+cellranger vdj --id=<SampleID_VDJ_2> \
+               --reference=<Path_to_Mouse_VDJ_Reference> \
+               --fastqs=<Path_to_VDJ_Raw_Data_2> \
+               --sample=<Sample_Name_VDJ_2>
+
+# CellRanger aggr for combining all samples
+cellranger aggr --id=<Aggregation_ID> \
+                --csv=<Path_to_Aggregation_CSV>
+```
+
+[Cell Ranger 5' VDJ Algorithm Overview](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-5p-vdj-algorithm)
+
+
+<br>
+
+## VDJ information     
+
+```{r, eval=FALSE, echo=TRUE}
+# Import cellranger aggr output 
+vdj <- read.csv('path_to_filtered_contig_annotations.csv')
+clono <- read.csv('path_to_clonotypes.csv')
+
+# Removal of duplicates and merging by clonotype_id
+vdj <- vdj %>% distinct(barcode, .keep_all = TRUE)
+rownames(vdj) <- vdj$barcode
+vdj.clono <- inner_join(vdj, clono, by=c('raw_clonotype_id'='clonotype_id'))
+
+# Counting TRA and TRB from cdr3s_aa  
+vdj.clono$TRBcount <- stringr::str_count(vdj.clono$cdr3s_aa, "TRB")
+vdj.clono$TRAcount <- stringr::str_count(vdj.clono$cdr3s_aa, "TRA")
+vdj.clono <- vdj.clono %>% arrange(desc(frequency))
+rownames(vdj.clono) <- vdj.clono$barcode
+
+# filtering 1 alpha chain and  1 beta chain clonotype
+vdj.clono <- vdj.clono %>% filter(TRBcount == 1 & TRAcount == 1)
+
+# save vdj information
+vdj.clono %>% write.csv('path_to_save_vdj_clono.csv')
+
+```
+
 <br>
 
 ## Basic Clonotype Analysis   
 
-Immune repertoire analysis  
+**Immune repertoire analysis**  
+
+Analysis using R packages (scRepertoire, immunarch)  
+
 
 **1. Diversity Index** 
 
   - Shannon Entropy 
   - Simpson 
 
-**2. Repertoire analysis**. 
+**2. Repertoire analysis** 
 
   - TRAV/D/J/C distribution
   - TRBV/D/J/C distribution
@@ -76,28 +131,29 @@ Immune repertoire analysis
 
 <br>
 
-## Target Cell:Clonotype Analysis   
+## Further Analysis with scRNA-seq data     
 
-Combination with scRNA-seq (if available)  
+Merging vdj information with scRNA-seq (if available)  
+Suggested analyses below  
 
 
-**1. Target cell selection**  
+**Target cell selection**  
 
   - Cells with target features (e.g. cytotoxic cells, effector T cells, NKT, etc). 
   - Cells associated with expanded clonotypes (hyper, high, medium, small, rare). 
   - Cells with clonotypes displaying treatment-specific response.  
 
-**2. Correlation of clonotype frequency with related data**  
+**Correlation of clonotype frequency with related data**  
 
   - Correlation of clonotype frequency with target gene expression profiles.  
   - Correlation with clinical outcomes and phenotypic data. (if available)  
 
-**3. Comparative Analysis**  
+**Comparative Analysis**  
 
   - Comparison between different patient groups (e.g., responders vs non-responders to therapy, different disease stages) and associated clonotypes.
   - Clonotype repertoires to identify conserved features of the immune response.
 
-**4. Statistical and Computational Approaches**  
+**Statistical Modeling**  
 
   - Application of statistical models and computational algorithms for the analysis.  
   - Evaluation of the robustness and reproducibility of findings.  
@@ -108,9 +164,7 @@ Combination with scRNA-seq (if available)
 # Example Plots  
 
 ## Clonotype Distribution 
-
-<br>
-```{r, fig.width=12, fig.height=5}
+```{r}
 # 데이터 프레임 예제 데이터 생성
 set.seed(123) # 결과의 재현 가능성을 위해 설정
 clonotypes <- paste0("Clonotype", 1:100) # 100개의 클론타입 예제
@@ -122,10 +176,13 @@ data <- data.frame(Clonotype = clonotypes, A = A_values, B = B_values)
 
 # 긴 형태로 데이터를 변환
 data_melted <- data %>% reshape2::melt(id.vars = "Clonotype")
+```
 
-# ggplot을 사용하여 막대 그래프에 아웃라인 추가
-ggplot(data_melted, aes(x = reorder(Clonotype, -value), y = value, fill = variable)) + 
-  geom_col(color = "grey3", size=0.2) + # 여기서 아웃라인을 검은색으로 설정
+```{r, echo=TRUE, fig.width=12, fig.height=5}
+# Draw plot
+ggplot(data_melted, aes(x = reorder(Clonotype, -value), y = value, 
+                        fill = variable)) + 
+  geom_col(color = "grey3", size=0.2) + 
   scale_fill_manual(values = c("salmon", "darkorange"),
                     labels = c("Sample A", "Sample B")) +
   theme_bw() +
@@ -133,15 +190,14 @@ ggplot(data_melted, aes(x = reorder(Clonotype, -value), y = value, fill = variab
         legend.title = element_blank(),
         plot.title = element_text(hjust = 0.5, size=20)) +
   labs(x = "Top 100 Clonotype", y = "Total number of clonotype",
-      title = "Clonotype distribution by sample") # fill 레전드 제목 변경
+      title = "Clonotype distribution by sample") 
 ```
 
 <br>
 
 
 ## Clonotype Abundance {.tabset}  
-
-```{r}
+```{r, echo=TRUE}
 # Bubble Plot 
 # input data format
 # column1 : name of the factor
@@ -160,7 +216,8 @@ bubble_plot = function(input.data, title="Abundant Clonotypes"){
   ggplot() + 
     # Make the bubbles
     geom_polygon(data = dat.gg, aes(x, y, group = id, 
-                                    fill=as.factor(id)), colour = "black", alpha = 0.6) +
+                                    fill=as.factor(id)), 
+                 colour = "black", alpha = 0.6) +
     theme_void() + 
     theme(legend.position="none",
           plot.title = element_text(hjust = 0.5, size=30)) +
@@ -173,7 +230,6 @@ bubble_plot = function(input.data, title="Abundant Clonotypes"){
 }
 ```
 
-<br>
 
 ### Sample A  
 ```{r,fig.width=16, fig.height=10}
@@ -186,28 +242,9 @@ bubble_plot(input.data = data[,c(1,2)], title = "Abundant Clonotypes in A")
 bubble_plot(input.data = data[,c(1,3)], title = "Abundant Clonotypes in B")
 ```
 
-<br>
-
-## Cytotoxic Gene Expression Profiling across Clonotypes and Samples   
-
-
-**Important Cytotoxic Gene Information** 
-
-
-| Gene  | Description                                                                                         |
-|-------|-----------------------------------------------------------------------------------------------------|
-| NKG7  | Natural Killer Growth Factor 7, the function of cytotoxic lymphocytes, particularly Natural Killer (NK) cells, potentially through the regulation of apoptotic pathways. |
-| KLRG1 | Killer Cell Lectin-Like Receptor G1, is a transmembrane protein receptor primarily expressed on cytotoxic lymphocytes, regulating their activation and effector functions. |
-| IFNG  | Interferon Gamma, is a cytokine crucially involved in the activation and effector functions of cytotoxic lymphocytes, including NK cells and cytotoxic T cells. IFNG enhances the cytotoxicity of these cells, promotes antigen presentation, and directs T helper cell differentiation towards a Th1 phenotype, crucial for effective immune responses. |
-| GZMA  | Granzyme A, is a serine protease predominantly expressed in cytotoxic lymphocytes, facilitating target cell apoptosis. Upon recognition of target cells, GZMA is released and initiates caspase-independent cell death pathways, leading to the elimination of infected or transformed cells. |
-| PRF1  | Perforin-1, is a pore-forming protein primarily expressed in cytotoxic lymphocytes, essential for target cell lysis. PRF1 forms pores in target cell membranes, enabling the delivery of pro-apoptotic molecules and promoting target cell death, crucial for immune surveillance and defense. |
-
-
-
-
-  
 <br><br>
 
+## Gene Expression Profiling across Clonotypes and Samples   
 ```{r}
 library(MASS)
 set.seed(123)
@@ -262,12 +299,14 @@ cell_metadata$clonotype = factor(cell_metadata$clonotype, levels = clonotype_ord
 cell_metadata = cell_metadata %>% arrange(clonotype)
 
 ```
+<br>
 
-**Heatmap**  
-```{r, fig.width=8, fig.height=9, out.width="70%"}
+### Heatmap (Cytotoxic Genes)
+```{r, fig.width=8, fig.height=9, out.width="70%", echo=TRUE}
 # Draw heatmap 
-expression_matrix[rownames(cell_metadata),] %>% pheatmap::pheatmap(show_rownames = F,
-                                                                   annotation_row = cell_metadata,
-                                                                   cluster_rows = T)
+expression_matrix[rownames(cell_metadata),] %>% 
+  pheatmap::pheatmap(show_rownames = F,
+                     annotation_row = cell_metadata,
+                     cluster_rows = T)
 ```
 
