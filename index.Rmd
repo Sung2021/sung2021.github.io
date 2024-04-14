@@ -16,7 +16,7 @@ Dynamic Senior Bioinformatics Scientist with over 6 years of hands-on experience
 
 <br>
 
-## Sample page  
+## Sample pages  
 
 <a href="TCR_seq.html">TCR-seq</a>  
 

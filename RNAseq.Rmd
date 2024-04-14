@@ -1,0 +1,70 @@
+---
+title: "RNA-seq analysis workflow"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: hide 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+
+
+
+<a href="index.html">Back to Main Page </a>  
+
+# Preparation  
+
+## Load packages   
+```{r, echo=T}
+library(dplyr)
+library(ggplot2)
+library(DESeq2)
+library(edgeR)
+library(reshape)
+library(dplyr)
+```
+
+
+# Sample data  
+
+
+# Quality control  
+
+
+# TPM calculation  
+
+
+# Principal component analysis  
+
+
+# Differentially Expressed Genes (DEG) analysis  
+
+## Obtain DEGs  
+
+## Visualization of DEGs  
+
+## Gene set enrichment analysis  
+
+# Further analysis
+
+
+
+<br><br>
+More example analyses will be updated.  
+
+<br><br>
+

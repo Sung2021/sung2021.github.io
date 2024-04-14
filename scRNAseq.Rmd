@@ -1,0 +1,354 @@
+---
+title: "scRNA-seq analysis workflow"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+
+
+<a href="index.html">Back to Main Page </a>  
+
+# Preparation  
+
+## Load packages   
+```{r, echo=T}
+library(dplyr)
+library(ggplot2)
+library(Seurat)
+library(reshape)
+library(dplyr)
+```
+
+
+# Sample data  
+
+Data import from the cellranger output.  
+Create Seurat Object  
+```{r, }
+obj.raw = Read10X('raw_data/Path/filtered_feature_bc_matrix/')
+obj.srt = CreateSeuratObject(counts = obj.raw, project = 'project_name')
+```
+
+
+# Perform default analysis 
+**This process includes the following.**  
+
+FindVariableFeatures("vst" method)   
+NormalizeData   
+ScaleData   
+RunPCA   
+FindNeighbors   
+FindClusters   
+RunUMAP   
+
+
+```{r}
+## perform default analysis
+perform_default_analysis <- function(obj.srt, n_features = 2000, n_pcs = 20, 
+                                     dims_for_neighbors = 1:20, 
+                                     resolutions = c(0.1,0.5,1), 
+                                     umap_dims = 1:20) {
+  # Step 1: Find variable features
+  obj.srt <- FindVariableFeatures(obj.srt, 
+                                  selection.method = 'vst', 
+                                  nfeatures = n_features)
+  
+  # Step 2: Scale and normalize data
+  all_genes <- rownames(obj.srt)
+  obj.srt <- NormalizeData(obj.srt)
+  obj.srt <- ScaleData(obj.srt, features = all_genes)
+  
+  # Step 3: Run PCA
+  obj.srt <- RunPCA(obj.srt, 
+                    features = VariableFeatures(object = obj.srt), npcs = n_pcs)
+  
+  # Step 4: Find neighbors
+  obj.srt <- FindNeighbors(obj.srt, dims = dims_for_neighbors)
+  
+  # Step 5: Find clusters
+  obj.srt <- FindClusters(obj.srt, resolution = resolutions)
+  
+  # Step 6: Run UMAP
+  obj.srt <- RunUMAP(obj.srt, dims = umap_dims)
+  
+  # Return the Seurat object with analysis results
+  return(obj.srt)
+}
+
+# apply
+obj.srt <- perform_default_analysis(obj.srt)
+```
+
+
+# Cell cycle scoring 
+
+```{r}
+s.genes <- cc.genes$s.genes
+g2m.genes <- cc.genes$g2m.genes
+obj.srt <- CellCycleScoring(obj.srt, 
+                            s.features = s.genes, g2m.features = g2m.genes)
+```
+
+
+# Cell type annotation by scType  
+
+```{r}
+# DB file
+db_ <- "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx";
+tissue <- "Immune system" # e.g. Immune system,Pancreas,Liver,Kidney,Brain,Lung
+
+# prepare gene sets
+gs_list <- gene_sets_prepare(db_, tissue)
+
+# extract scaled scRNA-seq matrix
+scRNAseqData_scaled <- as.matrix(obj.srt[["RNA"]]@scale.data)
+
+# run ScType
+es.max <- sctype_score(scRNAseqData = scRNAseqData_scaled, 
+                       scaled = TRUE, 
+                       gs = gs_list$gs_positive, 
+                       gs2 = gs_list$gs_negative)
+
+# Merge by cluster
+cL_results <- do.call("rbind", 
+  lapply(unique(obj.srt@meta.data$seurat_clusters), function(cl) {
+    cl_data <- obj.srt@meta.data[obj.srt@meta.data$seurat_clusters == cl, ]
+    es_sum <- rowSums(es.max[, rownames(cl_data)])
+    es_sorted <- sort(es_sum, decreasing = TRUE)
+    top_es <- head(data.frame(cluster = cl, 
+                              type = names(es_sorted), 
+                              scores = es_sorted, 
+                              ncells = nrow(cl_data)), 10)
+    return(top_es)
+  })
+)
+
+# Calculate top scores by cluster
+sctype_scores <- cL_results %>% 
+  group_by(cluster) %>% 
+  top_n(n = 1, wt = scores)
+
+# Set low-confidence clusters to "Unknown"
+threshold <- sctype_scores$ncells / 4
+sctype_scores$type[sctype_scores$scores < threshold] <- "Unknown"
+
+```
+
+
+```{r}
+# overlay the identified cell types on UMAP plot
+obj.srt@meta.data$sctype_classification = ""
+
+# Assign cell type classification to meta data
+unique_clusters <- unique(sctype_scores$cluster)
+
+for (j in unique_clusters) {
+  # Extract the type for the current cluster
+  cl_type <- sctype_scores[sctype_scores$cluster == j, ]
+  type_label <- as.character(cl_type$type[1])
+  
+  # Assign type label to all cells in the cluster
+  obj.srt@meta.data$sctype_classification[obj.srt@meta.data$seurat_clusters == j] <- type_label
+}
+
+# Draw plot 
+DimPlot(obj.srt, reduction = "umap", label = TRUE, repel = TRUE, 
+        group.by = 'sctype_classification')        
+
+
+```
+
+
+# Marker gene analysis  
+
+## Find markers  
+```{r}
+# Find markers based on the selected cluster 
+Idents(obj.srt) = 'RNA_snn_res.0.1'
+fc=1.2
+all.markers = FindAllMarkers(obj.srt, logfc.threshold = log2(fc), 
+                             only.pos = T, test.use = 'wilcox',min.pct = 0.5)
+```
+
+## Create downloadable link of markers 
+```{r}
+all.markers %>% DT::datatable(extensions = "Buttons", 
+                options = list(autoWidth = TRUE, 
+                               fixedHeader = TRUE,
+                               dom="Bfrtip", buttons=c("csv","excel")))
+```
+
+## Visualize the marker gene expression {.tabset} 
+
+### Dotplot
+```{r}
+gs = genes_selected # Selected genes from the marker list
+
+obj.srt$rev.res.0.1 = factor(obj.srt$RNA_snn_res.0.1, 
+                             levels = rev(levels(obj.srt$RNA_snn_res.0.1)))
+
+DotPlot(obj.srt, group.by = "rev.res.0.1", 
+        features = gs, cols = c("grey","red")) +RotatedAxis()
+```
+
+### Heatmap  
+```{r}
+gs = genes_selected # Selected genes from the marker list
+DoHeatmap(obj.srt, features = gs, group.by = "RNA_snn_res.0.1")
+```
+
+
+# DEG analysis between two conditions  
+## Find DEGs   
+```{r}
+# Generating DEGs bewteen condition 1 and condition 2
+DEG.two_groups= function(obj.srt,cluster=0, cond1="ADU", cond2="CTL"){
+  obj.srt@meta.data=obj.srt@meta.data %>% 
+    mutate(compare = ifelse(RNA_snn_res.0.1 == cluster & sample == cond1, 
+                            paste0(cluster,"_", cond1), 
+                            ifelse(RNA_snn_res.0.1 == cluster & sample == cond2, 
+                                   paste0(cluster,"_", cond2), "others")))
+  g2=paste0(cluster,"_", cond1)
+  g1=paste0(cluster,"_", cnod2)
+  Idents(obj.srt) = 'compare'
+  logfc=log2(1)
+  mks =FindMarkers(obj.srt, ident.1 = g2, ident.2 = g1, 
+                   logfc.threshold = logfc, assay = "count")
+  pval=0.05
+  fc=1.2
+  mks = mks %>% 
+    mutate(DE=ifelse(avg_log2FC >= log2(fc) & p_val_adj < pval, 'UP',
+                                 ifelse(avg_log2FC <= -log2(fc) & p_val_adj < pval, 'DN',
+                                        'no_sig')))
+  mks$DE = factor(mks$DE, levels = c('UP','DN','no_sig'))
+  
+  mks$gene = rownames(mks)
+  mks =mks %>% mutate(labels= ifelse(DE == 'UP', gene, ifelse(DE=='DN',gene,'')))
+  mks =mks %>% arrange(desc(avg_log2FC))
+  return(mks)
+}
+
+```
+
+```{r}
+# Application  
+deg.cluster0 = DEG.two_groups(obj.srt = obj.srt, cluster = 0)
+deg.cluster1 = DEG.two_groups(obj.srt = obj.srt, cluster = 1)
+deg.cluster2 = DEG.two_groups(obj.srt = obj.srt, cluster = 2)
+```
+
+## Visualize the DEG output 
+```{r}
+# Volcano plot   
+input.data = deg.cluster0
+# Draw plot 
+input.data %>% 
+  ggplot(aes(avg_log2FC, -log10(p_val_adj), color=DE)) + 
+  geom_point(size=1, alpha=0.5) + 
+  scale_color_manual(values = c('red','blue','grey')) +
+  theme_classic() +
+  geom_vline(xintercept = c(-log2(fc),log2(fc)), color='grey') +
+  geom_hline(yintercept = -log10(0.05),color='grey') +
+  guides(colour = guide_legend(override.aes = list(size=5))) +
+  ggtitle(paste0("Plot Title here")) +
+  geom_text(aes(label = labels), size = 2.5, 
+            show.legend = FALSE, hjust = 0, nudge_x = 0.01) +
+  ggeasy::easy_center_title() 
+
+```
+
+
+# Gene set enrichment analysis of DEGs  
+
+This analysis uses hallmark pathways for the anlaysis.  
+```{r}
+library(clusterProfiler)
+hallmark <- msigdbr::msigdbr(species = "Mus musculus", category = "H") %>% 
+  dplyr::select(gs_name, gene_symbol)
+
+perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
+  ranking <- function(res) {
+    df <- res$avg_log2FC
+    names(df) <- rownames(res)
+    df <- sort(df, decreasing = TRUE)
+    return(df)
+  }
+  
+  ranked.res <- ranking(res)
+  
+  x <- clusterProfiler::GSEA(geneList = ranked.res,
+                             TERM2GENE = ref,
+                             pvalueCutoff = pvalueCutoff,
+                             pAdjustMethod = "BH",
+                             verbose = TRUE,
+                             seed = TRUE)
+  
+  result <- x@result %>% arrange(desc(NES))
+  result <- result[, c('NES', 'pvalue', 'p.adjust', 'core_enrichment', 'ID')]
+  return(result)
+}
+
+# Application 
+gsea.res = perform_GSEA(res = deg.cluster3, ref = hallmark)
+
+```
+
+## GSEA output visualization {.tabset}
+
+### NES plot  
+```{r}
+# GESA Plot 
+gsea_nes_plot =function(gsea.res, title){
+  gsea.res %>% ggplot(aes(reorder(ID, NES), NES)) +
+    geom_col(aes(fill=p.adjust)) +
+    coord_flip() +
+    labs(x="Pathway", y="Normalized Enrichment Score",
+         title= "GSEA") + 
+    theme_classic() +
+    scale_fill_gradient(low = 'red', high = '#E5E7E9') +
+    theme(axis.text.x= element_text(size=5, face = 'bold'),
+          axis.text.y= element_text(size=6, face = 'bold'), 
+          axis.title =element_text(size=10)) +ggtitle(title)
+}
+
+# Application 
+gsea_nes_plot(gsea.res[gsea.res$p.adjust <= 0.05,], title = "Cluster3")
+```
+
+
+### Enrichment plot for the individual pathway  
+
+```{r}
+id1 = "GOBP_T_CELL_ACTIVATION" # Selected pathway 
+enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
+
+```
+
+
+
+# Further analysis
+
+
+
+<br><br>
+More example analyses will be updated.  
+
+<br><br>
+
