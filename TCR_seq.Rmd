@@ -310,3 +310,10 @@ expression_matrix[rownames(cell_metadata),] %>%
                      cluster_rows = T)
 ```
 
+
+
+<br><br>
+More example plots will be updated.  
+
+<br><br>
+
