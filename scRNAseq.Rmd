@@ -336,7 +336,7 @@ gsea_nes_plot(gsea.res[gsea.res$p.adjust <= 0.05,], title = "Cluster3")
 ### Enrichment plot for the individual pathway  
 
 ```{r}
-id1 = "GOBP_T_CELL_ACTIVATION" # Selected pathway 
+id1 = "GOBP_T_CELL_ACTIVATION" # Selected pathway" 
 enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
 
 ```
