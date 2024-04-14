@@ -31,7 +31,7 @@ library(dplyr)
 ```
 
 
-<a href="index.html">Back to Main</a>  
+<a href="index.html">Back to Main Page </a>  
 
 # Workflow 
 
@@ -194,21 +194,17 @@ bubble_plot(input.data = data[,c(1,3)], title = "Abundant Clonotypes in B")
 **Important Cytotoxic Gene Information** 
 
 
+| Gene  | Description                                                                                         |
+|-------|-----------------------------------------------------------------------------------------------------|
+| NKG7  | Natural Killer Growth Factor 7, the function of cytotoxic lymphocytes, particularly Natural Killer (NK) cells, potentially through the regulation of apoptotic pathways. |
+| KLRG1 | Killer Cell Lectin-Like Receptor G1, is a transmembrane protein receptor primarily expressed on cytotoxic lymphocytes, regulating their activation and effector functions. |
+| IFNG  | Interferon Gamma, is a cytokine crucially involved in the activation and effector functions of cytotoxic lymphocytes, including NK cells and cytotoxic T cells. IFNG enhances the cytotoxicity of these cells, promotes antigen presentation, and directs T helper cell differentiation towards a Th1 phenotype, crucial for effective immune responses. |
+| GZMA  | Granzyme A, is a serine protease predominantly expressed in cytotoxic lymphocytes, facilitating target cell apoptosis. Upon recognition of target cells, GZMA is released and initiates caspase-independent cell death pathways, leading to the elimination of infected or transformed cells. |
+| PRF1  | Perforin-1, is a pore-forming protein primarily expressed in cytotoxic lymphocytes, essential for target cell lysis. PRF1 forms pores in target cell membranes, enabling the delivery of pro-apoptotic molecules and promoting target cell death, crucial for immune surveillance and defense. |
 
-NKG7    
-  - Natural Killer Growth Factor 7, the function of cytotoxic lymphocytes, particularly Natural Killer (NK) cells, potentially through the regulation of apoptotic pathways.  
 
-KLRG1  
-  - Killer Cell Lectin-Like Receptor G1, is a transmembrane protein receptor primarily expressed on cytotoxic lymphocytes, regulating their activation and effector functions. 
 
-IFNG  
-  - Interferon Gamma, is a cytokine crucially involved in the activation and effector functions of cytotoxic lymphocytes, including NK cells and cytotoxic T cells. IFNG enhances the cytotoxicity of these cells, promotes antigen presentation, and directs T helper cell differentiation towards a Th1 phenotype, crucial for effective immune responses.
 
-GZMA  
-  - Granzyme A, is a serine protease predominantly expressed in cytotoxic lymphocytes, facilitating target cell apoptosis.Upon recognition of target cells, GZMA is released and initiates caspase-independent cell death pathways, leading to the elimination of infected or transformed cells.
-
-PRF1   
-  - Perforin-1, is a pore-forming protein primarily expressed in cytotoxic lymphocytes, essential for target cell lysis. PRF1 forms pores in target cell membranes, enabling the delivery of pro-apoptotic molecules and promoting target cell death, crucial for immune surveillance and defense. 
   
 <br><br>
 
