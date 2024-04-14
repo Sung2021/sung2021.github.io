@@ -1,0 +1,277 @@
+---
+title: "TCR-seq"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: hide 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+```{r, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+# library(DESeq2)
+# library(edgeR)
+library(reshape)
+library(dplyr)
+```
+
+
+<a href="index.html">Back to Main</a>  
+
+# Workflow 
+
+## Calling Clonotypes   
+
+Calling method from contigs  
+
+**1. Using Gene information**  
+
+  - VDJC(TRA/TRB)  
+  - CDR3nt  
+  - CDR3aa  
+  - Combination  
+  
+**2. Using Chain information**     
+
+  - TRA1+TRB1
+  - TRA1 or TRB1
+  - multi-chains
+<br>
+
+## Basic Clonotype Analysis   
+
+Immune repertoire analysis  
+
+**1. Diversity Index** 
+
+  - Shannon Entropy 
+  - Simpson 
+
+**2. Repertoire analysis**. 
+
+  - TRAV/D/J/C distribution
+  - TRBV/D/J/C distribution
+  - CDR3nt length distribution
+  - Clustering of clonotype repertoire
+
+**3. Expansion study**  
+
+  - Clonotype expansion (hyper,high,medium,small,rare)
+  - Top 100 expanded clonotypes with TRAV:TRBV info
+
+<br>
+
+## Target Cell:Clonotype Analysis   
+
+Combination with scRNA-seq (if available)  
+
+
+**1. Target cell selection**  
+
+  - Cells with target features (e.g. cytotoxic cells, effector T cells, NKT, etc). 
+  - Cells associated with expanded clonotypes (hyper, high, medium, small, rare). 
+  - Cells with clonotypes displaying treatment-specific response.  
+
+**2. Correlation of clonotype frequency with related data**  
+
+  - Correlation of clonotype frequency with target gene expression profiles.  
+  - Correlation with clinical outcomes and phenotypic data. (if available)  
+
+**3. Comparative Analysis**  
+
+  - Comparison between different patient groups (e.g., responders vs non-responders to therapy, different disease stages) and associated clonotypes.
+  - Clonotype repertoires to identify conserved features of the immune response.
+
+**4. Statistical and Computational Approaches**  
+
+  - Application of statistical models and computational algorithms for the analysis.  
+  - Evaluation of the robustness and reproducibility of findings.  
+
+
+<br><br>
+
+# Example Plots  
+
+## Clonotype Distribution 
+
+<br>
+```{r, fig.width=12, fig.height=5}
+# 데이터 프레임 예제 데이터 생성
+set.seed(123) # 결과의 재현 가능성을 위해 설정
+clonotypes <- paste0("Clonotype", 1:100) # 100개의 클론타입 예제
+A_values <- sample(10:100, 100, replace = TRUE) # A 값 예제 데이터
+B_values <- sample(1:100, 100, replace = TRUE) # B 값 예제 데이터
+
+# 데이터 프레임 생성
+data <- data.frame(Clonotype = clonotypes, A = A_values, B = B_values)
+
+# 긴 형태로 데이터를 변환
+data_melted <- data %>% reshape2::melt(id.vars = "Clonotype")
+
+# ggplot을 사용하여 막대 그래프에 아웃라인 추가
+ggplot(data_melted, aes(x = reorder(Clonotype, -value), y = value, fill = variable)) + 
+  geom_col(color = "grey3", size=0.2) + # 여기서 아웃라인을 검은색으로 설정
+  scale_fill_manual(values = c("salmon", "darkorange"),
+                    labels = c("Sample A", "Sample B")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size=6),
+        legend.title = element_blank(),
+        plot.title = element_text(hjust = 0.5, size=20)) +
+  labs(x = "Top 100 Clonotype", y = "Total number of clonotype",
+      title = "Clonotype distribution by sample") # fill 레전드 제목 변경
+```
+
+<br>
+
+
+## Clonotype Abundance {.tabset}  
+
+```{r}
+# Bubble Plot 
+# input data format
+# column1 : name of the factor
+# column2 : frequency of the factor
+library(packcircles)
+
+bubble_plot = function(input.data, title="Abundant Clonotypes"){
+  colnames(input.data)[2] = "Freq"
+  
+  packing <- circleProgressiveLayout(input.data$Freq, sizetype='area')
+  
+  input.data <- cbind(input.data, packing)
+  colnames(input.data)[1] ='clonotype'
+  dat.gg <- circleLayoutVertices(packing, npoints=50)
+  
+  ggplot() + 
+    # Make the bubbles
+    geom_polygon(data = dat.gg, aes(x, y, group = id, 
+                                    fill=as.factor(id)), colour = "black", alpha = 0.6) +
+    theme_void() + 
+    theme(legend.position="none",
+          plot.title = element_text(hjust = 0.5, size=30)) +
+    coord_equal() +
+    # Add text in the center of each bubble + control its size
+    geom_text(data = input.data, aes(x, y, size=Freq, label = clonotype)) +
+    scale_size_continuous(range = c(0.5,4)) +
+    ggtitle(title) +
+    scale_fill_viridis_d(option = "D", begin = 0.0, end = 1.0, direction = 1) 
+}
+```
+
+<br>
+
+### Sample A  
+```{r,fig.width=16, fig.height=10}
+bubble_plot(input.data = data[,c(1,2)], title = "Abundant Clonotypes in A")
+```
+
+
+### Sample B  
+```{r,fig.width=16, fig.height=10}
+bubble_plot(input.data = data[,c(1,3)], title = "Abundant Clonotypes in B")
+```
+
+<br>
+
+## Cytotoxic Gene Expression Profiling across Clonotypes and Samples   
+
+
+**Important Cytotoxic Gene Information** 
+
+
+
+NKG7    
+  - Natural Killer Growth Factor 7, the function of cytotoxic lymphocytes, particularly Natural Killer (NK) cells, potentially through the regulation of apoptotic pathways.  
+
+KLRG1  
+  - Killer Cell Lectin-Like Receptor G1, is a transmembrane protein receptor primarily expressed on cytotoxic lymphocytes, regulating their activation and effector functions. 
+
+IFNG  
+  - Interferon Gamma, is a cytokine crucially involved in the activation and effector functions of cytotoxic lymphocytes, including NK cells and cytotoxic T cells. IFNG enhances the cytotoxicity of these cells, promotes antigen presentation, and directs T helper cell differentiation towards a Th1 phenotype, crucial for effective immune responses.
+
+GZMA  
+  - Granzyme A, is a serine protease predominantly expressed in cytotoxic lymphocytes, facilitating target cell apoptosis.Upon recognition of target cells, GZMA is released and initiates caspase-independent cell death pathways, leading to the elimination of infected or transformed cells.
+
+PRF1   
+  - Perforin-1, is a pore-forming protein primarily expressed in cytotoxic lymphocytes, essential for target cell lysis. PRF1 forms pores in target cell membranes, enabling the delivery of pro-apoptotic molecules and promoting target cell death, crucial for immune surveillance and defense. 
+  
+<br><br>
+
+```{r}
+library(MASS)
+set.seed(123)
+# 셀 수와 유전자 목록 설정
+n_cells <- 1000
+genes <- c("NKG7", "KLRG1", "INFG", "GZMA", "PRF1")
+
+# 공분산 행렬 정의 - NKG7과 KLRG1은 높은 상관관계를, 나머지는 낮은 상관관계를 가지게 됩니다.
+# 공분산 행렬은 각 유전자 간의 상관관계를 정의합니다. 이 경우에는 상관관계가 다음과 같습니다:
+#   NKG7과 KLRG1: 0.8
+#   INFG, GZMA, PRF1 간의 상관관계: 0.4
+#   나머지 상관관계는 0.2로 설정
+cov_matrix <- matrix(c(1,    0.8,  0.2,  0.2,  0.2,
+                       0.8,  1,    0.2,  0.2,  0.2,
+                       0.2,  0.2,  1,    0.4,  0.4,
+                       0.2,  0.2,  0.4,  1,    0.4,
+                       0.2,  0.2,  0.4,  0.4,  1), byrow = TRUE, nrow = 5)
+
+# 각 유전자의 평균 발현값
+means <- rep(10, length(genes))
+
+# 공분산 행렬과 평균값을 사용하여 연관된 정규분포 발현 데이터를 생성
+expression_matrix <- mvrnorm(n = n_cells, mu = means, Sigma = cov_matrix, empirical = TRUE)
+
+# 발현 데이터를 행렬 형태로 변환하고, 행렬에 적절한 이름을 지정합니다.
+expression_matrix <- matrix(expression_matrix, nrow = n_cells, ncol = length(genes),
+                            dimnames = list(paste0("cell", 1:n_cells), genes))
+
+# 각 셀에 대한 샘플 정보와 클론타입 정보를 가진 데이터 프레임 생성
+set.seed(123) # 결과의 재현성을 위한 시드 설정
+
+# 클론타입에 가중치를 주어 샘플링
+clonotype_weights <- rep(1, 25)  # 모든 클론타입에 대해 기본 가중치 설정
+clonotype_weights[c(1, 25)] <- c(10, 0.1)  # 클론타입1은 더 자주, 클론타입25는 더 드물게
+
+cell_metadata <- data.frame(
+  cell_id = paste0("cell", 1:n_cells),
+  sample = sample(paste0("Condition", c("A", "B", "C")), n_cells, replace = TRUE),
+  clonotype = sample(paste0("clonotype", 1:25), n_cells, replace = TRUE, prob = clonotype_weights)
+)
+rownames(cell_metadata) = cell_metadata$cell_id
+cell_metadata = cell_metadata[,-1]
+
+clonotype_freq <- cell_metadata %>%
+  group_by(clonotype) %>%
+  summarise(frequency = n()) %>%
+  arrange(desc(frequency))
+
+clonotype_order = clonotype_freq$clonotype
+
+cell_metadata$clonotype = factor(cell_metadata$clonotype, levels = clonotype_order) 
+cell_metadata = cell_metadata %>% arrange(clonotype)
+
+```
+
+**Heatmap**  
+```{r, fig.width=8, fig.height=9, out.width="70%"}
+# Draw heatmap 
+expression_matrix[rownames(cell_metadata),] %>% pheatmap::pheatmap(show_rownames = F,
+                                                                   annotation_row = cell_metadata,
+                                                                   cluster_rows = T)
+```
+
