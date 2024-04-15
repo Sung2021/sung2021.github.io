@@ -162,5 +162,11 @@ shinyApp(ui = ui, server = server)
 ```
 
 
+# Output will be like this    
+
+<br>
+<img src="./png/Simple_RShiny_app_gene_gene_scatterplot.fig1.png" width="110%" height="auto"> 
+<br>
+
 <br><br>
 
