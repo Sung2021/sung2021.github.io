@@ -20,7 +20,9 @@ Dynamic Senior Bioinformatics Scientist with over 6 years of hands-on experience
 
 <a href="TCR_seq.html">TCR-seq</a>  
 <a href="scRNAseq.html">scRNA-seq</a>  
-<a href="RNAseq.html">RNA-seq</a>  
+<a href="RNAseq.html">RNA-seq</a>   
+<a href="Simple_RShiny_app_gene_gene_scatterplot.html>Simple_shiny_app</a> 
+
 <br>
 ATAC-seq/Cut&Run/ChIP-seq (will be updated)  
 WES (will be updated)  
