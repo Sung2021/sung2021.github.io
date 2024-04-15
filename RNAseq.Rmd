@@ -47,7 +47,18 @@ Data import (TPM).
 <!-- # Quality control   -->
 
 
-<!-- # TPM calculation   -->
+# TPM calculation   
+
+
+**Calculate TPM sample by sample**  
+```{r, eval=FALSE, echo=TRUE} 
+for(i in 1:ncol(count_mtx)){   
+  rpkm = count_mtx[,i]/(gene_length/1000)   
+  rpkm_sum = sum(rpkm)   
+  tpm <- rpkm / rpkm_sum * 1e6   
+  tpm_all[,i] = tpm   
+}  
+```
 
 
 # Principal component analysis  

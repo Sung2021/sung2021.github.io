@@ -1888,7 +1888,7 @@ RunUMAP</p>
 </div>
 <div id="gene-set-enrichment-analysis-of-degs" class="section level1">
 <h1>Gene set enrichment analysis of DEGs</h1>
-<p>This analysis uses hallmark pathways for the anlaysis.</p>
+<p>This analysis uses hallmark pathways for the analaysis.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(clusterProfiler)</span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>hallmark <span class="ot">&lt;-</span> msigdbr<span class="sc">::</span><span class="fu">msigdbr</span>(<span class="at">species =</span> <span class="st">&quot;Mus musculus&quot;</span>, <span class="at">category =</span> <span class="st">&quot;H&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gs_name, gene_symbol)</span>

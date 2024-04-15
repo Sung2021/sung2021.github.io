@@ -277,7 +277,7 @@ input.data %>%
 
 # Gene set enrichment analysis of DEGs  
 
-This analysis uses hallmark pathways for the anlaysis.  
+This analysis uses hallmark pathways for the analaysis.  
 ```{r}
 library(clusterProfiler)
 hallmark <- msigdbr::msigdbr(species = "Mus musculus", category = "H") %>% 
