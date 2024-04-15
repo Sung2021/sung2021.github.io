@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo=T, fig.align = "center",
                       tidy = FALSE)
 ```
 
+<a href="index.html">Back to Main Page </a>  
+
 # Introduction 
 
 This is a simple R Shiny app including 4 scatter plots of gene-gene expression.  
