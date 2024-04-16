@@ -161,9 +161,10 @@ Suggested analyses below
 
 <br><br>
 
-# Example Plots  
+ 
+<span style="font-size: 34px;">**Example Plots**</span>
 
-## Clonotype Distribution 
+# Clonotype Distribution 
 ```{r, echo=FALSE}
 # 데이터 프레임 예제 데이터 생성
 set.seed(123) # 결과의 재현 가능성을 위해 설정
@@ -197,7 +198,7 @@ ggplot(data_melted, aes(x = reorder(Clonotype, -value), y = value,
 <br>
 
 
-## Clonotype Abundance in each sample {.tabset}  
+# Clonotype Abundance in each sample {.tabset}  
 
 ```{r, echo=FALSE}
 library(packcircles)
@@ -236,20 +237,20 @@ bubble_plot = function(input.data, title="Abundant Clonotypes"){
 ```
 
 
-### Sample A  
+## Sample A  
 ```{r,fig.width=15, fig.height=9}
 bubble_plot(input.data = data[,c(1,2)], title = "Abundant Clonotypes in A")
 ```
 
 
-### Sample B  
+## Sample B  
 ```{r,fig.width=15, fig.height=9}
 bubble_plot(input.data = data[,c(1,3)], title = "Abundant Clonotypes in B")
 ```
 
 <br><br>
 
-## Gene Expression Profiling across Clonotypes and Samples   
+# Gene Expression Profiling across Clonotypes and Samples   
 ```{r, echo=FALSE}
 library(MASS)
 set.seed(123)
@@ -306,7 +307,7 @@ cell_metadata = cell_metadata %>% arrange(clonotype)
 ```
 <br>
 
-### Heatmap (Cytotoxic Genes)
+## Heatmap (Cytotoxic Genes)
 ```{r, fig.width=8, fig.height=9, out.width="70%", echo=TRUE}
 # Draw heatmap 
 expression_matrix[rownames(cell_metadata),] %>% 
