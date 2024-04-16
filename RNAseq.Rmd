@@ -207,6 +207,92 @@ enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
 ```
 
 
+# ssGSEA {.tabset}  
+
+Single sample GSEA   
+
+Single-sample Gene Set Enrichment Analysis (ssGSEA) is an variation of the GSEA algorithm that instead of calculating enrichment scores for groups of samples (i.e Control vs Disease) and sets of genes (i.e pathways), it provides a score for each each sample and gene set pair.   
+(https://www.genepattern.org/modules/docs/ssGSEAProjection/4#gsc.tab=0)   
+
+<br>
+
+
+```{r, echo=FALSE, eval=TRUE}
+tpm = read.csv("sample_data/tpm.sample.csv", row.names = 1)
+```
+
+```{r, echo=FALSE, eval=TRUE}
+library(corto)
+
+## Create hallmark pathway list 
+hallmark <- msigdbr::msigdbr(species = "Mus musculus", category = "H") %>% 
+  dplyr::select(gs_name, gene_symbol) %>% data.frame()
+
+hallmark$gs_name = gsub("HALLMARK_","",hallmark$gs_name)
+hallmark_gs_list = hallmark$gs_name %>% unique()
+
+
+hallmarkList = list()
+for(i in 1:length(hallmark_gs_list)){
+  pathway = hallmark_gs_list[i]
+  gs = hallmark[hallmark$gs_name == pathway,2] 
+  hallmarkList[[pathway]] = gs
+}
+```
+
+
+```{r, eval=TRUE}
+## Perform ssgsea 
+library(corto)
+
+## Input data : tpm (count.mtx is accepted as well) 
+test = ssgsea(tpm,hallmarkList)
+
+## Reshape it to plot 
+test.df = test %>% t() %>% data.frame()
+rownames(test.df) = colnames(tpm)
+
+## p value of ssgsea 
+pval = corto::z2p(test)
+colnames(pval) = rownames(test.df)
+
+```
+
+## ssGSEA heatmap  
+Color represents enrichment score   
+<br><br>
+
+```{r, fig.width=10, fig.height=9, eval=TRUE}
+## Heatmap 
+my.color=c(colorRampPalette(colors = c("#2874A6","white"))(60),
+           colorRampPalette(colors = c("white","#D35400"))(70))
+t(test.df) %>% pheatmap::pheatmap(color = my.color, 
+                                  cluster_rows = F,
+                                  cluster_cols = F,
+                                  main = "ssGSEA of HALLMARK pathways",
+                                  gaps_col = c(3,6)) # Simple heatmap 
+
+```
+
+## Significance by p value Heatmap    
+
+Red: p value <= 0.05  (significant)  
+White : p value > 0.05 (not significant)   
+<br>
+
+```{r, fig.width=10, fig.height=9, eval=TRUE}
+## Heatmap 
+input.data = (pval<=0.05)
+input.data[] <- +input.data
+input.data %>% pheatmap::pheatmap(color = c("grey99","salmon"), 
+                                  cluster_rows = F,
+                                  cluster_cols = F, 
+                                  main = "Significance by p value",
+                                  gaps_col = c(3,6)) # Simple heatmap 
+```
+
+
+
 <br><br>
 More example analyses will be updated.  
 
