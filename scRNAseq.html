@@ -1850,44 +1850,50 @@ across diverse datasets.</p>
 </div>
 <div id="cell-type-annotation-by-sctype" class="section level1">
 <h1>Cell type annotation by scType</h1>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># DB file</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>db_ <span class="ot">&lt;-</span> <span class="st">&quot;https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx&quot;</span>;</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>tissue <span class="ot">&lt;-</span> <span class="st">&quot;Immune system&quot;</span> <span class="co"># e.g. Immune system,Pancreas,Liver,Kidney,Brain,Lung</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># prepare gene sets</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>gs_list <span class="ot">&lt;-</span> <span class="fu">gene_sets_prepare</span>(db_, tissue)</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># extract scaled scRNA-seq matrix</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>scRNAseqData_scaled <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(obj.srt[[<span class="st">&quot;RNA&quot;</span>]]<span class="sc">@</span>scale.data)</span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co"># run ScType</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>es.max <span class="ot">&lt;-</span> <span class="fu">sctype_score</span>(<span class="at">scRNAseqData =</span> scRNAseqData_scaled, </span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>                       <span class="at">scaled =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>                       <span class="at">gs =</span> gs_list<span class="sc">$</span>gs_positive, </span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>                       <span class="at">gs2 =</span> gs_list<span class="sc">$</span>gs_negative)</span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co"># Merge by cluster</span></span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>cL_results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, </span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">unique</span>(obj.srt<span class="sc">@</span>meta.data<span class="sc">$</span>seurat_clusters), <span class="cf">function</span>(cl) {</span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    cl_data <span class="ot">&lt;-</span> obj.srt<span class="sc">@</span>meta.data[obj.srt<span class="sc">@</span>meta.data<span class="sc">$</span>seurat_clusters <span class="sc">==</span> cl, ]</span>
-<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>    es_sum <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(es.max[, <span class="fu">rownames</span>(cl_data)])</span>
-<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>    es_sorted <span class="ot">&lt;-</span> <span class="fu">sort</span>(es_sum, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>    top_es <span class="ot">&lt;-</span> <span class="fu">head</span>(<span class="fu">data.frame</span>(<span class="at">cluster =</span> cl, </span>
-<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>                              <span class="at">type =</span> <span class="fu">names</span>(es_sorted), </span>
-<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>                              <span class="at">scores =</span> es_sorted, </span>
-<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>                              <span class="at">ncells =</span> <span class="fu">nrow</span>(cl_data)), <span class="dv">10</span>)</span>
-<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>    <span class="fu">return</span>(top_es)</span>
-<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>  })</span>
-<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>)</span>
-<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a></span>
-<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="co"># Calculate top scores by cluster</span></span>
-<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>sctype_scores <span class="ot">&lt;-</span> cL_results <span class="sc">%&gt;%</span> </span>
-<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">wt =</span> scores)</span>
+<p>URL: <a href="https://github.com/IanevskiAleksandr/sc-type" class="uri">https://github.com/IanevskiAleksandr/sc-type</a></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># load gene set preparation function</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># load cell type annotation function</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/sctype_score_.R&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># DB file</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>db_ <span class="ot">&lt;-</span> <span class="st">&quot;https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx&quot;</span>;</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>tissue <span class="ot">&lt;-</span> <span class="st">&quot;Immune system&quot;</span> <span class="co"># e.g. Immune system,Pancreas,Liver,Kidney,Brain,Lung</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co"># prepare gene sets</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>gs_list <span class="ot">&lt;-</span> <span class="fu">gene_sets_prepare</span>(db_, tissue)</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co"># extract scaled scRNA-seq matrix</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>scRNAseqData_scaled <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(obj.srt[[<span class="st">&quot;RNA&quot;</span>]]<span class="sc">@</span>scale.data)</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co"># run ScType</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>es.max <span class="ot">&lt;-</span> <span class="fu">sctype_score</span>(<span class="at">scRNAseqData =</span> scRNAseqData_scaled, </span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>                       <span class="at">scaled =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>                       <span class="at">gs =</span> gs_list<span class="sc">$</span>gs_positive, </span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>                       <span class="at">gs2 =</span> gs_list<span class="sc">$</span>gs_negative)</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co"># Merge by cluster</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>cL_results <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, </span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">unique</span>(obj.srt<span class="sc">@</span>meta.data<span class="sc">$</span>seurat_clusters), <span class="cf">function</span>(cl) {</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>    cl_data <span class="ot">&lt;-</span> obj.srt<span class="sc">@</span>meta.data[obj.srt<span class="sc">@</span>meta.data<span class="sc">$</span>seurat_clusters <span class="sc">==</span> cl, ]</span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>    es_sum <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(es.max[, <span class="fu">rownames</span>(cl_data)])</span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>    es_sorted <span class="ot">&lt;-</span> <span class="fu">sort</span>(es_sum, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>    top_es <span class="ot">&lt;-</span> <span class="fu">head</span>(<span class="fu">data.frame</span>(<span class="at">cluster =</span> cl, </span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>                              <span class="at">type =</span> <span class="fu">names</span>(es_sorted), </span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a>                              <span class="at">scores =</span> es_sorted, </span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a>                              <span class="at">ncells =</span> <span class="fu">nrow</span>(cl_data)), <span class="dv">10</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>    <span class="fu">return</span>(top_es)</span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>  })</span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>)</span>
 <span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a></span>
-<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a><span class="co"># Set low-confidence clusters to &quot;Unknown&quot;</span></span>
-<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> sctype_scores<span class="sc">$</span>ncells <span class="sc">/</span> <span class="dv">4</span></span>
-<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a>sctype_scores<span class="sc">$</span>type[sctype_scores<span class="sc">$</span>scores <span class="sc">&lt;</span> threshold] <span class="ot">&lt;-</span> <span class="st">&quot;Unknown&quot;</span></span></code></pre></div>
+<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a><span class="co"># Calculate top scores by cluster</span></span>
+<span id="cb8-37"><a href="#cb8-37" tabindex="-1"></a>sctype_scores <span class="ot">&lt;-</span> cL_results <span class="sc">%&gt;%</span> </span>
+<span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">wt =</span> scores)</span>
+<span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a></span>
+<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a><span class="co"># Set low-confidence clusters to &quot;Unknown&quot;</span></span>
+<span id="cb8-42"><a href="#cb8-42" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> sctype_scores<span class="sc">$</span>ncells <span class="sc">/</span> <span class="dv">4</span></span>
+<span id="cb8-43"><a href="#cb8-43" tabindex="-1"></a>sctype_scores<span class="sc">$</span>type[sctype_scores<span class="sc">$</span>scores <span class="sc">&lt;</span> threshold] <span class="ot">&lt;-</span> <span class="st">&quot;Unknown&quot;</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># overlay the identified cell types on UMAP plot</span></span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>obj.srt<span class="sc">@</span>meta.data<span class="sc">$</span>sctype_classification <span class="ot">=</span> <span class="st">&quot;&quot;</span></span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
