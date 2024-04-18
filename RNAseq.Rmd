@@ -291,6 +291,60 @@ input.data %>% pheatmap::pheatmap(color = c("grey99","salmon"),
                                   gaps_col = c(3,6)) # Simple heatmap 
 ```
 
+# Multiple genes-violin plot across samples   
+
+```{r,echo=T, eval=TRUE}
+# Import sample data 
+tpm.sample = read.csv("sampledata/tpm.sample.csv", row.names = 1)
+
+cellmarker = read.csv('info/DB/CellMarker2.0.csv')
+celltypes = c("B cell",
+              "CD8+ T cell",
+              "Activated T cell",
+              "Cancer cell",
+              "CD4+ T cell",
+              "Dendritic cell",
+              "Macrophage")
+
+# Functions  
+mks.violinplot = function(cellname, tpm=tpm.sample){
+  rs <- grepl(cellname, cellmarker$cell_name, ignore.case = TRUE)
+  
+  mks = cellmarker[rs, ]$marker 
+  mks = mks[mks %in% rownames(tpm)]
+  
+  tpm.df =tpm %>% filter(rownames(.) %in% mks)
+  tpm.df$gene = rownames(tpm.df)
+  
+  p= tpm.df %>% reshape::melt() %>% ggplot(aes(.[,2], log10(.[,3]))) +
+    
+    geom_violin(aes(fill = variable), alpha = 0.1, show.legend = FALSE) +
+    geom_boxplot(outlier.size = 0, width = 0.2, alpha = 0.5, show.legend = FALSE) +
+    geom_jitter(aes(color = variable), alpha = 0.5, size = 1, show.legend = FALSE) +
+    scale_y_continuous(labels = scales::comma) +
+    theme_bw() +
+    labs(y = paste0(cellname, "  genes (log10 scaled)"),
+         title = paste0(cellname, " signature genes ")) +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 90, hjust=1, size=14),
+      panel.grid.major.x = element_blank(),
+      axis.title.y = element_text(size = 14),  # y 축 레이블 폰트 크기 설정
+      plot.title = element_text(size = 20)
+    )
+  return(p)
+}
+
+```
+
+
+```{r,echo=T, eval=TRUE}
+mks.violinplot(cellname = "B cell", tpm=tpm.sample)
+```
+
+```{r,echo=T, eval=TRUE}
+mks.violinplot(cellname = "Dendritic cell", tpm=tpm.sample)
+```
 
 
 <br><br>
