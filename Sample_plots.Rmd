@@ -1,0 +1,61 @@
+---
+title: "Sample plots"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+```{r, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+library(dplyr)
+```
+
+
+<a href="index.html">Back to Main Page </a>  
+
+
+
+
+# Sunburst graph plot  
+
+Let's just learn the concept of sunburst graph
+```{r}
+library(plotly)
+plot_ly(labels = c("Epcam+", 
+                   "Trop2+", "Trop2-", 
+                   "Trop2+EGFR+", "Trop2+EGFR-", "Trop2-EGFR+", "Trop2-EGFR-", 
+                   "Trop2+EGFR+HER2+","Trop2+EGFR+HER2-","Trop2-EGFR+HER2+","Trop2-EGFR+HER2-"),
+        parents = c("", 
+                    "Epcam+", "Epcam+", 
+                    "Trop2+", "Trop2+", "Trop2-", "Trop2-", 
+                    "Trop2+EGFR+","Trop2+EGFR+","Trop2-EGFR-","Trop2-EGFR-"),
+        values = c(46, 37, 9, 14, 23, 5, 4, 0, 14, 4,1), 
+        type = 'sunburst')
+
+```
+
+
+
+<br><br>
+More example plots will be updated.  
+
+<br><br>
+
