@@ -217,8 +217,8 @@ Single-sample Gene Set Enrichment Analysis (ssGSEA) is an variation of the GSEA 
 <br>
 
 
-```{r, echo=FALSE, eval=TRUE}
-tpm = read.csv("sample_data/tpm.sample.csv", row.names = 1)
+```{r, echo=TRUE, eval=TRUE}
+tpm = read.csv("sampledata/tpm.sample_mouse.csv", row.names = 1)
 ```
 
 ```{r, echo=FALSE, eval=TRUE}
@@ -290,6 +290,87 @@ input.data %>% pheatmap::pheatmap(color = c("grey99","salmon"),
                                   main = "Significance by p value",
                                   gaps_col = c(3,6)) # Simple heatmap 
 ```
+
+# Single pathway ssGSEA {.tabset}  
+
+
+## Pathway sample 1  
+```{r, eval=T, echo=FALSE}
+
+tpm = read.csv("sampledata/tpm.sample.csv", row.names = 1)
+
+# Import geneset 
+geneset_gs = read.csv("info/DB/wp_apoptosis.csv", row.names = 1)
+geneset_genes = geneset_gs$gene
+geneset_genes = geneset_genes[geneset_genes %in% rownames(tpm)]
+
+# Perform ssgsea
+test = ssgsea(tpm, list(geneset = geneset_genes))
+test.df = test %>% t() %>% data.frame()
+rownames(test.df) = colnames(tpm)
+
+# Add p value
+pval = corto::z2p(test)
+colnames(pval) = rownames(test.df)
+
+test.df$TCSA_pval = pval[1,]
+```
+
+```{r, eval=T, fig.width=4,fig.height=5, out.width="60%"}
+# Plot it 
+genesetname = "WP Apoptosis"
+test.df = test.df %>% 
+  mutate(significance = ifelse(TCSA_pval <= 0.05, max(test.df[,1]),0))
+input = data.frame(test.df[,c(1,3)])
+rownames(input) = rownames(test.df)
+colnames(input) = c(genesetname, "p value < = 0.05")
+my.color=c(colorRampPalette(colors = c("#2874A6","white"))(50),
+           colorRampPalette(colors = c("white","#D35400"))(40))
+input %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F, 
+                             color=my.color, border_color = "grey33", 
+                             gaps_col = 1, 
+                             main = "ssGSEA with significance")
+```
+
+## Pathway sample 2  
+```{r, eval=T, echo=FALSE}
+
+tpm = read.csv("sampledata/tpm.sample.csv", row.names = 1)
+
+# Import geneset 
+geneset_gs = read.csv("info/DB/gobp_dnaDamage.csv", row.names = 1)
+geneset_genes = geneset_gs$gene
+geneset_genes = geneset_genes[geneset_genes %in% rownames(tpm)]
+
+# Perform ssgsea
+test = ssgsea(tpm, list(geneset = geneset_genes))
+test.df = test %>% t() %>% data.frame()
+rownames(test.df) = colnames(tpm)
+
+# Add p value
+pval = corto::z2p(test)
+colnames(pval) = rownames(test.df)
+
+test.df$TCSA_pval = pval[1,]
+```
+
+```{r, eval=T, fig.width=4,fig.height=5, out.width="60%"}
+# Plot it 
+genesetname = "GPBP DNA Damage"
+test.df = test.df %>% 
+  mutate(significance = ifelse(TCSA_pval <= 0.05, max(test.df[,1]),0))
+input = data.frame(test.df[,c(1,3)])
+rownames(input) = rownames(test.df)
+colnames(input) = c(genesetname, "p value < = 0.05")
+my.color=c(colorRampPalette(colors = c("#2874A6","white"))(50),
+           colorRampPalette(colors = c("white","#D35400"))(60))
+input %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F, 
+                             color=my.color, border_color = "grey33", 
+                             gaps_col = 1, 
+                             main = "ssGSEA with significance")
+```
+
+
 
 # Multiple genes-violin plot across samples   
 
