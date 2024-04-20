@@ -1,0 +1,435 @@
+---
+title: "RNA-seq analysis workflow"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+
+
+
+<a href="index.html">Back to Main Page </a>  
+
+# Preparation  
+
+## Load packages   
+```{r, echo=T, eval=TRUE}
+library(dplyr)
+library(ggplot2)
+library(DESeq2)
+library(edgeR)
+library(reshape)
+library(dplyr)
+```
+
+
+# Sample data  
+
+Data import (count matrix).  
+Data import (TPM).    
+
+<!-- # Quality control   -->
+
+
+# TPM calculation   
+
+
+**Calculate TPM sample by sample**  
+```{r, eval=FALSE, echo=TRUE} 
+for(i in 1:ncol(count_mtx)){   
+  rpkm = count_mtx[,i]/(gene_length/1000)   
+  rpkm_sum = sum(rpkm)   
+  tpm <- rpkm / rpkm_sum * 1e6   
+  tpm_all[,i] = tpm   
+}  
+```
+
+
+# Principal component analysis  
+
+```{r, echo=FALSE, eval=T}
+# First, create vectors for each column
+PC1 <- c(-12.48417792, -11.60784426, -10.95278299, -9.234550928, -12.93624321, 
+         -10.6807003, -0.065991014, -5.536146627, -8.234377152, 31.11284796,
+         19.72396967, 21.42781676, 45.91067912)
+PC2 <- c(0.352316398, 0.203888683, -0.460533257, 1.467805113, 1.046447489, 
+         -0.74510519, -0.458497168, -0.925433457, -0.656565276, 2.23485637, 
+         -0.519156466, -2.6308456, -5.790269992)
+group <- c("CondA", "CondA", "CondA", "CondA", "CondA", 
+           "CondB", "CondB", "CondB", "CondB", "Ctl",
+           "Ctl", "Ctl", "Ctl")
+sample <- c("CondA1", "CondA2", "CondA3", "CondA4", "CondA5", 
+            "CondB1", "CondB2", "CondB3", "CondB4", "Ctl1",
+            "Ctl2", "Ctl3", "Ctl4")
+name <- c("CondA1", "CondA2", "CondA3", "CondA4", "CondA5", 
+          "CondB1", "CondB2", "CondB3", "CondB4", "Ctl1",
+          "Ctl2", "Ctl3", "Ctl4")
+
+# Create the data frame
+pcaData <- data.frame(PC1, PC2, group, sample, name)
+
+PCA_var <- c(0.82990806, 0.07676304)
+```
+
+```{r, fig.width=6.5, fig.height=5, eval=T}
+ggplot(pcaData, aes(x = PC1, y = PC2, fill = group)) +
+  geom_point(size = 4, alpha = 0.6, shape = 21, color = "black", stroke = 0.5)  +
+  ggrepel::geom_text_repel(aes(label=name), 
+                           color="grey6", size=3, hjust= -0.3, vjust=-0.3) +
+  labs(x = paste("PC1: ", round(100 * PCA_var[1]), "% variance"),
+       y = paste("PC2: ", round(100 * PCA_var[2]), "% variance")) +
+  theme_bw() +
+  theme(legend.title = element_blank()) +
+  ggtitle("PCA") +
+  labs(caption = " ")
+```
+
+
+# Differentially Expressed Genes (DEG) analysis  
+
+## DEG data   
+```{r}
+# Generate info table
+info <- data.frame(matrix(nrow = ncol(count.mtx), ncol = 2))
+colnames(info) <- c('sample', 'cond')
+info$sample <- colnames(count.mtx)
+info$cond <- "sample information here"
+
+# DESeq
+dds <- DESeqDataSetFromMatrix(count.mtx, info, ~ cond)
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+
+## Visualization of DEGs Volcanoplot    
+```{r}
+res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & padj < pval, 'UP',
+                               ifelse(log2FoldChange <= -log2(fc) & padj < pval, 'DN','no_sig')))
+res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
+
+res %>% 
+  ggplot(aes(log2FoldChange, -log10(padj), color=DE)) + 
+  geom_point(size=1, alpha=0.5) + 
+  scale_color_manual(values = c('red','blue','grey')) +
+  theme_classic() +
+  geom_vline(xintercept = c(-log2(fc),log2(fc)), color='grey') +
+  geom_hline(yintercept = -log10(0.05),color='grey') +
+  guides(colour = guide_legend(override.aes = list(size=5))) +
+  ggtitle("Resist/Naive") +
+  ggeasy::easy_center_title() ## to center title
+
+```
+
+
+
+
+# Gene set enrichment analysis {.tabset}
+
+## Perform GSEA  
+```{r}
+library(clusterProfiler)
+gobp <- msigdbr::msigdbr(species = "Mus musculus", 
+                         category = "C5", subcategory = "GO:BP") %>% 
+  dplyr::select(gs_name, gene_symbol)
+
+perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
+  ranking <- function(res) {
+    df <- res$avg_log2FC
+    names(df) <- rownames(res)
+    df <- sort(df, decreasing = TRUE)
+    return(df)
+  }
+  
+  ranked.res <- ranking(res)
+  
+  x <- clusterProfiler::GSEA(geneList = ranked.res,
+                             TERM2GENE = ref,
+                             pvalueCutoff = pvalueCutoff,
+                             pAdjustMethod = "BH",
+                             verbose = TRUE,
+                             seed = TRUE)
+  
+  result <- x@result %>% arrange(desc(NES))
+  result <- result[, c('NES', 'pvalue', 'p.adjust', 'core_enrichment', 'ID')]
+  return(result)
+}
+
+# Application 
+gsea.res = perform_GSEA(res = deg.cluster3, ref = gpbp)
+
+```
+
+
+## NES plot  
+```{r}
+# GESA Plot 
+gsea_nes_plot =function(gsea.res, title){
+  gsea.res %>% ggplot(aes(reorder(ID, NES), NES)) +
+    geom_col(aes(fill=p.adjust)) +
+    coord_flip() +
+    labs(x="Pathway", y="Normalized Enrichment Score",
+         title= "GSEA") + 
+    theme_classic() +
+    scale_fill_gradient(low = 'red', high = '#E5E7E9') +
+    theme(axis.text.x= element_text(size=5, face = 'bold'),
+          axis.text.y= element_text(size=6, face = 'bold'), 
+          axis.title =element_text(size=10)) +ggtitle(title)
+}
+
+# Application 
+gsea_nes_plot(gsea.res[gsea.res$p.adjust <= 0.05,], title = "Cluster3")
+```
+
+
+## Enrichment plot for the individual pathway  
+
+```{r}
+id1 = "GOBP_NUCLEOSOME_POSITIONING 
+enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
+
+```
+
+
+# ssGSEA {.tabset}  
+
+Single sample GSEA   
+
+Single-sample Gene Set Enrichment Analysis (ssGSEA) is an variation of the GSEA algorithm that instead of calculating enrichment scores for groups of samples (i.e Control vs Disease) and sets of genes (i.e pathways), it provides a score for each each sample and gene set pair.   
+(https://www.genepattern.org/modules/docs/ssGSEAProjection/4#gsc.tab=0)   
+
+<br>
+
+
+```{r, echo=TRUE, eval=TRUE}
+tpm = read.csv("../sampledata/tpm.sample_mouse.csv", row.names = 1)
+```
+
+```{r, echo=FALSE, eval=TRUE}
+library(corto)
+
+## Create hallmark pathway list 
+hallmark <- msigdbr::msigdbr(species = "Mus musculus", category = "H") %>% 
+  dplyr::select(gs_name, gene_symbol) %>% data.frame()
+
+hallmark$gs_name = gsub("HALLMARK_","",hallmark$gs_name)
+hallmark_gs_list = hallmark$gs_name %>% unique()
+
+
+hallmarkList = list()
+for(i in 1:length(hallmark_gs_list)){
+  pathway = hallmark_gs_list[i]
+  gs = hallmark[hallmark$gs_name == pathway,2] 
+  hallmarkList[[pathway]] = gs
+}
+```
+
+
+```{r, eval=TRUE}
+## Perform ssgsea 
+library(corto)
+
+## Input data : tpm (count.mtx is accepted as well) 
+test = ssgsea(tpm,hallmarkList)
+
+## Reshape it to plot 
+test.df = test %>% t() %>% data.frame()
+rownames(test.df) = colnames(tpm)
+
+## p value of ssgsea 
+pval = corto::z2p(test)
+colnames(pval) = rownames(test.df)
+
+```
+
+## ssGSEA heatmap  
+Color represents enrichment score   
+<br><br>
+
+```{r, fig.width=10, fig.height=9, eval=TRUE}
+## Heatmap 
+my.color=c(colorRampPalette(colors = c("#2874A6","white"))(60),
+           colorRampPalette(colors = c("white","#D35400"))(70))
+t(test.df) %>% pheatmap::pheatmap(color = my.color, 
+                                  cluster_rows = F,
+                                  cluster_cols = F,
+                                  main = "ssGSEA of HALLMARK pathways",
+                                  gaps_col = c(3,6)) # Simple heatmap 
+
+```
+
+## Significance by p value Heatmap    
+
+Red: p value <= 0.05  (significant)  
+White : p value > 0.05 (not significant)   
+<br>
+
+```{r, fig.width=10, fig.height=9, eval=TRUE}
+## Heatmap 
+input.data = (pval<=0.05)
+input.data[] <- +input.data
+input.data %>% pheatmap::pheatmap(color = c("grey99","salmon"), 
+                                  cluster_rows = F,
+                                  cluster_cols = F, 
+                                  main = "Significance by p value",
+                                  gaps_col = c(3,6)) # Simple heatmap 
+```
+
+# Single pathway ssGSEA {.tabset}  
+
+
+## Pathway sample 1  
+```{r, eval=T, echo=FALSE}
+
+tpm = read.csv("../sampledata/tpm.sample.csv", row.names = 1)
+
+# Import geneset 
+geneset_gs = read.csv("../info/DB/wp_apoptosis.csv", row.names = 1)
+geneset_genes = geneset_gs$gene
+geneset_genes = geneset_genes[geneset_genes %in% rownames(tpm)]
+
+# Perform ssgsea
+test = ssgsea(tpm, list(geneset = geneset_genes))
+test.df = test %>% t() %>% data.frame()
+rownames(test.df) = colnames(tpm)
+
+# Add p value
+pval = corto::z2p(test)
+colnames(pval) = rownames(test.df)
+
+test.df$TCSA_pval = pval[1,]
+```
+
+```{r, eval=T, fig.width=4,fig.height=5, out.width="60%"}
+# Plot it 
+genesetname = "WP Apoptosis"
+test.df = test.df %>% 
+  mutate(significance = ifelse(TCSA_pval <= 0.05, max(test.df[,1]),0))
+input = data.frame(test.df[,c(1,3)])
+rownames(input) = rownames(test.df)
+colnames(input) = c(genesetname, "p value < = 0.05")
+my.color=c(colorRampPalette(colors = c("#2874A6","white"))(50),
+           colorRampPalette(colors = c("white","#D35400"))(40))
+input %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F, 
+                             color=my.color, border_color = "grey33", 
+                             gaps_col = 1, 
+                             main = "ssGSEA with significance")
+```
+
+## Pathway sample 2  
+```{r, eval=T, echo=FALSE}
+
+tpm = read.csv("../sampledata/tpm.sample.csv", row.names = 1)
+
+# Import geneset 
+geneset_gs = read.csv("../info/DB/gobp_dnaDamage.csv", row.names = 1)
+geneset_genes = geneset_gs$gene
+geneset_genes = geneset_genes[geneset_genes %in% rownames(tpm)]
+
+# Perform ssgsea
+test = ssgsea(tpm, list(geneset = geneset_genes))
+test.df = test %>% t() %>% data.frame()
+rownames(test.df) = colnames(tpm)
+
+# Add p value
+pval = corto::z2p(test)
+colnames(pval) = rownames(test.df)
+
+test.df$TCSA_pval = pval[1,]
+```
+
+```{r, eval=T, fig.width=4,fig.height=5, out.width="60%"}
+# Plot it 
+genesetname = "GPBP DNA Damage"
+test.df = test.df %>% 
+  mutate(significance = ifelse(TCSA_pval <= 0.05, max(test.df[,1]),0))
+input = data.frame(test.df[,c(1,3)])
+rownames(input) = rownames(test.df)
+colnames(input) = c(genesetname, "p value < = 0.05")
+my.color=c(colorRampPalette(colors = c("#2874A6","white"))(50),
+           colorRampPalette(colors = c("white","#D35400"))(60))
+input %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F, 
+                             color=my.color, border_color = "grey33", 
+                             gaps_col = 1, 
+                             main = "ssGSEA with significance")
+```
+
+
+
+# Multiple genes-violin plot across samples   
+
+```{r,echo=T, eval=TRUE}
+# Import sample data 
+tpm.sample = read.csv("../sampledata/tpm.sample.csv", row.names = 1)
+
+cellmarker = read.csv('../info/DB/CellMarker2.0.csv')
+celltypes = c("B cell",
+              "CD8+ T cell",
+              "Activated T cell",
+              "Cancer cell",
+              "CD4+ T cell",
+              "Dendritic cell",
+              "Macrophage")
+
+# Functions  
+mks.violinplot = function(cellname, tpm=tpm.sample){
+  rs <- grepl(cellname, cellmarker$cell_name, ignore.case = TRUE)
+  
+  mks = cellmarker[rs, ]$marker 
+  mks = mks[mks %in% rownames(tpm)]
+  
+  tpm.df =tpm %>% filter(rownames(.) %in% mks)
+  tpm.df$gene = rownames(tpm.df)
+  
+  p= tpm.df %>% reshape::melt() %>% ggplot(aes(.[,2], log10(.[,3]))) +
+    
+    geom_violin(aes(fill = variable), alpha = 0.1, show.legend = FALSE) +
+    geom_boxplot(outlier.size = 0, width = 0.2, alpha = 0.5, show.legend = FALSE) +
+    geom_jitter(aes(color = variable), alpha = 0.5, size = 1, show.legend = FALSE) +
+    scale_y_continuous(labels = scales::comma) +
+    theme_bw() +
+    labs(y = paste0(cellname, "  genes (log10 scaled)"),
+         title = paste0(cellname, " signature genes ")) +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 90, hjust=1, size=14),
+      panel.grid.major.x = element_blank(),
+      axis.title.y = element_text(size = 14),  # y 축 레이블 폰트 크기 설정
+      plot.title = element_text(size = 20)
+    )
+  return(p)
+}
+
+```
+
+
+```{r,echo=T, eval=TRUE}
+mks.violinplot(cellname = "B cell", tpm=tpm.sample)
+```
+
+```{r,echo=T, eval=TRUE}
+mks.violinplot(cellname = "Dendritic cell", tpm=tpm.sample)
+```
+
+
+<br><br>
+More example analyses will be updated.  
+
+<br><br>
+
