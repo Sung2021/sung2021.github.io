@@ -29,7 +29,7 @@ library(reshape)
 ```
 
 
-<a href="index.html">Back to Main Page </a>  
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
 
 <br>
 <span style="font-size: 30px; font-weight: bold;color: blue;">Processing peak files</span>

@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
 
 
 
-<a href="index.html">Back to Main Page </a>  
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
 
 # Preparation  
 
