@@ -110,7 +110,10 @@ chmod +x run_peak_calling.sh
 ```
 <br>
 
-## Broad Peak option  
+## Broad Peak option   
+
+Broad Peak for Extended Regions:  
+Focuses on large, spread-out areas suited for markers such as H3K27me3 or H3K36me3.   
 ```{bash}
 #!/bin/bash
 
@@ -247,6 +250,9 @@ coverage_data <- data.table(
 # Print the data frame to see its content
 print(coverage_data)
 ```
+<br><br>
+Modify coverage bed files based on the experimental purpose in the downstream analysis.  
+
 
 
 <br><br>

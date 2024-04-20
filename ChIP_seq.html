@@ -4213,6 +4213,9 @@ files</span></p>
 </div>
 <div id="broad-peak-option" class="section level2">
 <h2>Broad Peak option</h2>
+<p>Broad Peak for Extended Regions:<br />
+Focuses on large, spread-out areas suited for markers such as H3K27me3
+or H3K36me3.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># BAM file</span></span>
@@ -4250,8 +4253,8 @@ files</span></p>
 <h1>Peak filtering</h1>
 <div id="narrowpeak-column-information" class="section level2">
 <h2>Narrowpeak column information</h2>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-8b7ca579f2778271918f" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-8b7ca579f2778271918f">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["chrom","chromStart","chromEnd","name","score","strand","signalValue","pValue","qValue","peak"],["Name of the chromosome.","Start position of the peak (0-based).","End position of the peak (1-based).","Name of the peak.","Score of the peak, the significance of the peak.","The DNA strand.","Signal value in the peak region, the intensity or density of the peak.","P-value.","Adjusted p-value.","The peak summit relative to chromStart, the highest point within the peak."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Column<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Column","targets":1},{"name":"Description","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-59edd8acce51c423d406" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-59edd8acce51c423d406">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["chrom","chromStart","chromEnd","name","score","strand","signalValue","pValue","qValue","peak"],["Name of the chromosome.","Start position of the peak (0-based).","End position of the peak (1-based).","Name of the peak.","Score of the peak, the significance of the peak.","The DNA strand.","Signal value in the peak region, the intensity or density of the peak.","P-value.","Adjusted p-value.","The peak summit relative to chromStart, the highest point within the peak."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Column<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Column","targets":1},{"name":"Description","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="filtering-and-sorting" class="section level2">
 <h2>Filtering and Sorting</h2>
@@ -4318,6 +4321,8 @@ sample/condition-specific peaks like peak length)</p></li>
 ## 3:   chr2   200   300         5             0.20
 ## 4:   chr2   800   900        20             1.00
 ## 5:   chr3   150   250        15             0.85</code></pre>
+<p><br><br> Modify coverage bed files based on the experimental purpose
+in the downstream analysis.</p>
 <p><br><br> <span style="font-size: 30px; font-weight: bold;color: blue;">Peak
 analysis</span></p>
 <p><br></p>
