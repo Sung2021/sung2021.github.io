@@ -25,13 +25,54 @@ knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
 
 <a href="https://sung2021.github.io/">Back to Main Page </a>  
 
-# Preparation  
+
+# 1. Raw data processing  
+
+**cellranger** : 10x Genomics's Chromium system to process single cell RNA-seq raw data. Easy to use but need large computing resources and Linux environment.   
+Input : Fastq files, cellranger genome index  
+
+## cellranger count/aggr  
+```{bash}
+# cellranger count for transcriptome data processing 
+cellranger count --id=SampleA_GEX \
+--transcriptome=/path/to/reference/transcriptomes/Mouse_GEX_2020/refdata-gex-mm10-2020-A \
+--fastqs=/path/to/raw_data/SampleA \
+--sample=SampleA \
+--expect-cells=10000
+
+# cellranger aggr to aggregate multiple cellranger count output to one file 
+cellranger aggr --id=Aggregate_GEX \
+--csv=/path/to/aggregate_info/Aggregate_GEX.csv
+
+```
+
+
+## Aggregate_GEX.csv example  
+```{bash}
+library_id,molecule_h5
+SampleA,/path/to/SampleA/outs/molecule_info.h5
+SampleB,/path/to/SampleB/outs/molecule_info.h5
+SampleC,/path/to/SampleC/outs/molecule_info.h5
+
+```
+
+## Output  
+
+**Aggregated Feature-Barcode Matrices**   
+
+matrix.mtx   
+genes.tsv   
+barcodes.tsv   
+
+
+
+
+# 2. Matrices processing and filtering     
 
 ## Load packages   
 ```{r, echo=T}
 library(dplyr)
 library(ggplot2)
-library(Seurat)
 library(reshape)
 library(dplyr)
 ```
@@ -39,9 +80,10 @@ library(dplyr)
 
 # Sample data  
 
-Data import from the cellranger output.  
+Data import from the cellranger output (above).  
 Create Seurat Object  
 ```{r, }
+library(Seurat)
 obj.raw = Read10X('raw_data/Path/filtered_feature_bc_matrix/')
 obj.srt = CreateSeuratObject(counts = obj.raw, project = 'project_name')
 ```
@@ -98,6 +140,8 @@ obj.srt %>% saveRDS("path/saved.obj.rds")
 obj.srt@meta.data %>% select(predicted_doublet) %>% table()
 ```
 
+
+# 3. Data Analysis   
 
 # Perform default analysis 
 **This process includes the following.**  
