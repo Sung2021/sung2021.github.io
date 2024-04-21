@@ -1,0 +1,98 @@
+---
+title: "Data Processing"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, eval = F,
+                      fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+```{r, echo=FALSE, eval=T}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+```
+
+
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
+
+<br>
+
+**List**   
+
+- StarFusion  
+  
+
+
+# StarFusion  
+
+**Background Information**   
+One of my collaborators induced T cell lymphoma in mice using the ITK-SYK fused gene model. Because ITK-SYK originates from humans, it wasn't detected with the usual mouse genome reference in STAR. To confirm ITK-SYK gene expression in the dataset, we applied the StarFusion method using the human genome as the reference.      
+
+Two FASTQ files (R1.fastq and R2.fastq)   
+StarFusion requires the use of STAR to align initial RNA-seq data.
+
+CTAT genome index :  
+(Cancer Transcriptome Analysis Toolkit)   
+https://data.broadinstitute.org/Trinity/CTAT_RESOURCE_LIB/__genome_libs_StarFv1.10/
+
+
+## RNA-seq data alignment   
+```{bash}
+STAR --genomeDir /path/to/star_genome_index \
+     --readFilesIn R1.fastq R2.fastq \
+     --outFileNamePrefix star_output \
+     --readFilesCommand zcat \
+     --outSAMtype BAM SortedByCoordinate
+
+```
+
+
+## Run StarFusion  
+```{bash}
+StarFusion --genome_lib_dir /path/to/ctat_genome_lib_build_dir \
+           --bam star_outputAligned.sortedByCoord.out.bam \
+           --output_dir star_fusion_out # Output directory 
+```
+
+## Outputs  
+
+star-fusion.fusion_predictions.tsv   
+**star-fusion.fusion_predictions.abridged.tsv**   
+star-fusion.fusion_evidence_reads_1.fq.gz   
+star-fusion.fusion_evidence_reads_2.fq.gz   
+
+
+
+```{r, echo=F, eval=TRUE}
+# Load the data into a data frame
+data <- data.frame(
+  FusionName = c("TMPRSS2--ERG", "BCR--ABL1"),
+  JunctionReadCount = c(35, 50),
+  SpanningFragCount = c(10, 20),
+  SpliceType = c("ONLY_REF_SPLICE", "REF_SPLICE"),
+  LeftGene = c("TMPRSS2", "BCR"),
+  LeftBreakpoint = c("chr21:42880012:+", "chr22:23680011:+"),
+  RightGene = c("ERG", "ABL1"),
+  RightBreakpoint = c("chr21:38780045:-", "chr9:133700500:-"),
+  LargeAnchorSupport = c("YES", "YES"),
+  FFPM = c(0.1, 0.2)
+)
+data %>% DT::datatable(caption = "star-fusion.fusion_predictions.abridged.tsv")
+```
+
