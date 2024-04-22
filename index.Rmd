@@ -36,7 +36,15 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 <span style="font-size: 22px;">Cell type annotation database (will be updated)</span><br> 
 <span style="font-size: 22px;">Plot gallery (will be updated) </span><br>  
 
+<br><br>
 
+## First/co-first authorship publications  
+
+<a href="info/papers/NI_Sung_s41590-023-01720-w_reduced_size2.pdf" style="font-size: 14px;">The transcriptional cofactor Tle3 reciprocally controls effector and central memory CD8+ T cell fates. (Nature Immunology, 2024)</a><br>
+
+<a href="info/papers/CellReports.2020.Sung_reduced_size2.pdf" style="font-size: 14px;">Single cell transcriptome analysis of colon cancer cell response to 5-fluorouracil-induced DNA damage (Cell Reports, 2020)</a><br>
+
+<a href="info/papers/American_Journal_of_Physiology.2020.Sung_reduced_size.pdf" style="font-size: 14px;">Holistic Characterization of Single Hepatocyte Transcriptome Responses to High Fat Diet (American Journal of Physiology-Endocrionlogy and Metabolism, 2020)</a><br>
 
 
 
