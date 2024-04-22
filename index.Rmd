@@ -38,7 +38,13 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 
 <br><br>
 
-## First/co-first authorship publications  
+
+### LinkedIn Profile   
+
+<a href="https://www.linkedin.com/in/sung-rye-park-8a130098/" style="font-size: 18px;">Work History in LinkedIn</a><br>
+<br><br>
+
+## First/co-first authorship publications (pdf)  
 
 <a href="info/papers/NI_Sung_s41590-023-01720-w_reduced_size2.pdf" style="font-size: 14px;">The transcriptional cofactor Tle3 reciprocally controls effector and central memory CD8+ T cell fates. (Nature Immunology, 2024)</a><br>
 
@@ -66,10 +72,22 @@ Guiding and mentoring interns in bioinformatics practices and project work
 * Managing documentation and workflow sharing across collaborative platforms
 * Keeping meticulous records of both raw and processed data storage
 
-
+<br>
 
 ## Experience
-* Senior Bioinformatics scientist at Dana Farber Cancer Institute 2022-
+* Senior Bioinformatics scientist at Dana Farber Cancer Institute 2022-  
+
+  - DGK inhibitor efficacy testing in combination with Nivolumab for SCLC     
+  - DS-1062 and Pembrolizumab testing for SCLC   
+  - EZH2 inhibitor candidates searching using ChIP-seq   
+  - Evaluation of STING agonist (ADU-100) effects in mouse PBMCs and the tumor immune environment   
+  - TAK-676 and PD-1 blockade in SCLC   
+  - Immune cell trafficking within in-house device culture   
+  - Integrative analysis ofanti-CD47 therapy efficacy in PTCL-resistant mouse models   
+  - Supporting manuscript writings.  
+  - (more)
+<br><br>
+
 * Postdoctoral Fellow at Hackensack Meridian Health 
 * Postdoctoral Fellow at University of Michigan
 
