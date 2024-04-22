@@ -515,6 +515,39 @@ enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
 ```
 
 
+# Imputation  
+
+MAGIC (Cell, 2018)   
+https://github.com/KrishnaswamyLab/MAGIC   
+Markov Affinity-based Graph Imputation of Cells (MAGIC) is an algorithm for denoising high-dimensional data most commonly applied to single-cell RNA sequencing data. MAGIC learns the manifold data, using the resultant graph to smooth the features and restore the structure of the data.   
+<br>
+
+```{python}
+# Import the necessary libraries.
+import pandas as pd
+import magic
+import csv
+
+# Load the CSV file into a DataFrame.
+data_path = '~/path/data.csv'
+x = pd.read_csv(data_path)
+
+# Remove the 'Unnamed: 0'
+del x['Unnamed: 0']
+
+# Initialize the MAGIC algorithm. the number of nearest neighbors (knn) is set to 5, and the diffusion time (t) is set to 3.
+magic_operator = magic.MAGIC(knn=5, t=3)
+
+# Apply the MAGIC algorithm to the data.
+x_magic = magic_operator.fit_transform(x)
+
+# Save the data to a CSV file.
+output_path = '~/path/data.magic.csv'
+x_magic.to_csv(output_path)
+
+```
+
+
 
 # Further analysis
 

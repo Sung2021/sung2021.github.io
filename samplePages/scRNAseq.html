@@ -6,7 +6,7 @@
     <meta name="generator" content="pandoc" />
 
     
-        <meta name="date" content="2024-04-21" />
+        <meta name="date" content="2024-04-22" />
     
     <title>scRNA-seq analysis workflow</title>
 
@@ -1647,12 +1647,13 @@ margin-left: 0 !important;
           plot for the individual pathway</a></li>
           </ul></li>
           </ul></li>
+          <li><a href="#imputation" id="toc-imputation">Imputation</a></li>
           <li><a href="#further-analysis" id="toc-further-analysis">Further analysis</a></li>
           </ul>
         </nav>
         <ul class="authors">
           <li class="divider"></li>
-                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-04-21</span></li>
+                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-04-22</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -2108,6 +2109,38 @@ across diverse datasets.</p>
 <span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>enrichplot<span class="sc">::</span><span class="fu">gseaplot2</span>(gsea.res, <span class="at">geneSetID =</span> id1, <span class="at">title =</span> id1)</span></code></pre></div>
 </div>
 </div>
+</div>
+<div id="imputation" class="section level1">
+<h1>Imputation</h1>
+<p>MAGIC (Cell, 2018)<br />
+<a href="https://github.com/KrishnaswamyLab/MAGIC" class="uri">https://github.com/KrishnaswamyLab/MAGIC</a><br />
+Markov Affinity-based Graph Imputation of Cells (MAGIC) is an algorithm
+for denoising high-dimensional data most commonly applied to single-cell
+RNA sequencing data. MAGIC learns the manifold data, using the resultant
+graph to smooth the features and restore the structure of the
+data.<br />
+<br></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Import the necessary libraries.</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="im">import</span> magic</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="im">import</span> csv</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="co"># Load the CSV file into a DataFrame.</span></span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>data_path <span class="op">=</span> <span class="st">&#39;~/path/data.csv&#39;</span></span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>x <span class="op">=</span> pd.read_csv(data_path)</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="co"># Remove the &#39;Unnamed: 0&#39;</span></span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="kw">del</span> x[<span class="st">&#39;Unnamed: 0&#39;</span>]</span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a><span class="co"># Initialize the MAGIC algorithm. the number of nearest neighbors (knn) is set to 5, and the diffusion time (t) is set to 3.</span></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a>magic_operator <span class="op">=</span> magic.MAGIC(knn<span class="op">=</span><span class="dv">5</span>, t<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a><span class="co"># Apply the MAGIC algorithm to the data.</span></span>
+<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a>x_magic <span class="op">=</span> magic_operator.fit_transform(x)</span>
+<span id="cb22-18"><a href="#cb22-18" tabindex="-1"></a></span>
+<span id="cb22-19"><a href="#cb22-19" tabindex="-1"></a><span class="co"># Save the data to a CSV file.</span></span>
+<span id="cb22-20"><a href="#cb22-20" tabindex="-1"></a>output_path <span class="op">=</span> <span class="st">&#39;~/path/data.magic.csv&#39;</span></span>
+<span id="cb22-21"><a href="#cb22-21" tabindex="-1"></a>x_magic.to_csv(output_path)</span></code></pre></div>
 </div>
 <div id="further-analysis" class="section level1">
 <h1>Further analysis</h1>
