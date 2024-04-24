@@ -20,7 +20,7 @@ I am an experienced bioinformatician with extensive research experience in immun
 * Postdoctoral Fellow at University of Michigan
 
 ## Publications 
-* X.Zhao, W.Hu, S.R.Park, S.Zhu, S.S.Hu, C.Zang, W.Peng, Q.Shan ,H.H. Xue. Reprogramming fate of central memory CD8+ T cells by targeting the transcriptional cofactor Tle3. (Nature Immunology, Oct 2023, accepted) **co-first**
+* X.Zhao, W.Hu, S.R.Park, S.Zhu, S.S.Hu, C.Zang, W.Peng, Q.Shan ,H.H. Xue. Reprogramming fate of central memory CD8+ T cells by targeting the transcriptional cofactor Tle3. (Nature Immunology, 2023) **co-first**
 * Jingyue Xi, Sung Rye Park, Jun Hee Lee and Hyun Min Kang. SiftCell: A robust framework to detect and isolate cell-containing droplets from single-cell RNA sequence reads. (Cell Systems, 2023) https://doi.org/10.1016/j.cels.2023.06.002)
 * Mohammad Heidarian, Iassac J Jensen, Shravan Kumar Kannan, Lecia L Pewe, Mariah Hassert, Sung Rye Park, Hai-Hui Xue, John Harty, Vladimir Badovinac. Sublethal whole-body irradiation induces permanent loss and dysfunction in pathogen-specific circulating memory CD8T cell populations. (PNAS, July 2023) (doi: 10.1073/pnas.2302785120.)
 * Chun-Seok Cho, Jingyue Xi, Yichen Si, Sung-Rye Park, Jer-En Hsu, Myungjin Kim, Goo Jun, Hyun-Min Kang, Jun Hee Lee. Seq-Scope: Microscopic examination of spatial transcriptome using Seq-Scope. (Cell, 2021) (https://doi.org/10.1016/j.cell.2021.05.010)

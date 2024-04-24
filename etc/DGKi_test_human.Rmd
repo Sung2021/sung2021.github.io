@@ -1,0 +1,465 @@
+---
+title: "Combinational test of DGKi with PD-1 blocker"
+subtitle: "scTCR-seq + scRNA-seq"
+author: "Sung Rye Park"
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+  code_folding: hide 
+  number_sections: FALSE
+  toc_depth: 6
+  toc_float: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+# DGKi 
+
+- DGKs are physiological regulators of T-cell development,differentiation, and function.   
+- Inhibition of DGK may restore the T-cell activation program   
+- Enhanced effects may be seen with combination therapy (Nivolumab + DGKi)   
+ 
+<br>
+
+
+```{r, echo=F}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+library(Seurat)
+library(ggthemes)
+```
+
+# Data  
+
+Sample name: P*****  
+Condition (1 control, 3 test conditions): CONTROL, CND1, CND2, COMBO  
+Number of cells : 8096 cells     
+
+```{r}
+dir="~/Desktop/DF/DFCI_Paweletz/2023_Lauren_BMS_DGKi_23.03.07/"
+obj.srt = readRDS(paste0(dir,'rds/P30276.8096cells.23.07.15.rds'))
+```
+
+## Initial Processing  
+
+```{r, results='hide', eval=TRUE, echo=TRUE}
+## perform default analysis
+perform_default_analysis <- function(obj.srt, n_features = 2000, n_pcs = 20, 
+                                     dims_for_neighbors = 1:10, 
+                                     resolutions = c(0.2, 0.5), 
+                                     umap_dims = 1:10) {
+  # Step 1: Find variable features
+  obj.srt <- FindVariableFeatures(obj.srt, 
+                                  selection.method = 'vst', 
+                                  nfeatures = n_features)
+  
+  # Step 2: Scale and normalize data
+  all_genes <- rownames(obj.srt)
+  obj.srt <- NormalizeData(obj.srt)
+  obj.srt <- ScaleData(obj.srt, features = all_genes)
+  
+  # Step 3: Run PCA
+  obj.srt <- RunPCA(obj.srt, 
+                    features = VariableFeatures(object = obj.srt), npcs = n_pcs)
+  
+  # Step 4: Find neighbors
+  obj.srt <- FindNeighbors(obj.srt, dims = dims_for_neighbors)
+  
+  # Step 5: Find clusters
+  obj.srt <- FindClusters(obj.srt, resolution = resolutions)
+  
+  # Step 6: Run UMAP
+  obj.srt <- RunUMAP(obj.srt, dims = umap_dims)
+  
+  # Return the Seurat object with analysis results
+  return(obj.srt)
+}
+
+# apply
+obj.srt <- perform_default_analysis(obj.srt)
+```
+
+
+## Numer of cells  
+```{r}
+obj.srt@meta.data  = obj.srt@meta.data %>% 
+  mutate(condition = ifelse(sample == "C276", "CTRL", 
+                            ifelse(sample == "D276","CND1",
+                                   ifelse(sample =="N276", "CND2",
+                                          ifelse(sample == "DN276", "COMB","NO")))))
+
+obj.srt@meta.data$condition = factor(obj.srt@meta.data$condition, 
+                                     levels = c("CTRL","CND1","CND2","COMB"))
+obj.srt@meta.data$condition %>% table() %>% data.frame() %>% 
+  DT::datatable(rownames = F, colnames = c("Condition","Number of Cells"))
+```
+
+
+## UMAP (sample) {.tabset}
+
+### Colored by condition  
+
+```{r}
+wes = c("#f5c600","#d8460b","#9b4923","#007291")
+```
+
+```{r, fig.width=5, fig.height=4}
+DimPlot(obj.srt, group.by = "condition", pt.size = 0.1, 
+        cols = wes)
+```
+
+
+### Colored by each condition   
+```{r}
+umap_one_population = function(cond, color2="orangered4"){
+  obj.srt@meta.data = obj.srt@meta.data %>% mutate(color=ifelse(condition == cond, cond,"other"))
+  obj.srt$color = factor(obj.srt$color, levels = c(cond,"other"))
+  
+  df = obj.srt@reductions$umap@cell.embeddings %>% 
+    data.frame(check.names = F) 
+  df$color= obj.srt$color
+  df$color = factor(df$color, levels = c(cond,"other"))
+  
+  # Plot with ggplot
+  ggplot(df, aes(umap_1 ,umap_2 , color=color)) +  # Assume the columns are V1 and V2, replace with actual column names
+    geom_point(data = df %>% filter(color == "other"), aes(color = color), size = 0.2, alpha = 0.6) +
+    geom_point(data = df %>% filter(color == cond), aes(color = color), size = 0.2, alpha = 0.6) +
+    scale_color_manual(values = c( "grey88",  color2)) +  # Replace 'cond' with the actual condition value
+    theme_bw() +
+    xlab("UMAP1") + ylab("UMAP2") +
+    guides(colour = guide_legend(override.aes = list(size = 5))) +
+    theme(legend.title = element_blank())
+  
+}
+
+p1 =umap_one_population(cond = "CTRL", color2 = wes[1])
+p2 =umap_one_population(cond = "CND1", color2 = wes[2])
+p3 =umap_one_population(cond = "CND2", color2 = wes[3])
+p4 =umap_one_population(cond = "COMB", color2 = wes[4])
+
+cowplot::plot_grid(p1,p2,p3,p4, ncol = 2)
+```
+
+# Clustering {.tabset}   
+
+## UMAP colored by cluster (two resolutions)   
+```{r, fig.width=12, fig.height=5}
+DimPlot(obj.srt, group.by = c("RNA_snn_res.0.2", "RNA_snn_res.0.5"), size=0.1)
+```
+
+
+## Distribution of cells by cluster and condition (res 0.1)   
+```{r, fig.width=5, fig.height=4}
+obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.2, fill=condition)) + geom_bar(position = "fill") + scale_fill_manual(values = wes) + theme_bw()
+```
+
+
+## TABLE : Distribution of cells by cluster and condition (res 0.1)    
+```{r}
+obj.srt@meta.data %>% select(RNA_snn_res.0.2, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% DT::datatable(rownames = F)
+```
+## HEATMAP : Distribution of cells by cluster and condition (res 0.1)    
+```{r, fig.width=5, fig.height=4}
+df = obj.srt@meta.data %>% select(RNA_snn_res.0.2, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% select(2:5) 
+for(i in 1:length(colnames(df))){
+  df[,i]= df[,i]/sum(df[,i])*100
+}
+
+df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", cluster_rows = F, cluster_cols = F, color= colorRampPalette(colors = c("white","brown"))(1000), main = "Number of cells (%)", border_color = "grey99")
+```
+
+
+
+## Distribution of cells by cluster and condition (res 0.5)   
+```{r, fig.width=7, fig.height=4}
+obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.5, fill=condition)) + geom_bar(position = "fill") + scale_fill_manual(values = wes) + theme_bw()
+```
+
+## TABLE : Distribution of cells by cluster and condition (res 0.5)    
+```{r}
+obj.srt@meta.data %>% select(RNA_snn_res.0.5, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% DT::datatable(rownames = F)
+```
+
+
+## HEATMAP : Distribution of cells by cluster and condition (res 0.5)    
+```{r, fig.width=5, fig.height=4}
+df = obj.srt@meta.data %>% select(RNA_snn_res.0.5, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% select(2:5) 
+for(i in 1:length(colnames(df))){
+  df[,i]= df[,i]/sum(df[,i])*100
+}
+
+df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", cluster_rows = F, cluster_cols = F, color= colorRampPalette(colors = c("white","brown"))(1000), main = "Number of cells (%)", border_color = "grey99")
+```
+
+<br><br>
+# Clonotype Analysis     
+
+# Clonotype Diversity {.tabset}  
+
+```{r}
+# Define function 
+library(packcircles)
+bubbleplot= function(data){
+  data[,1] = stringr::str_replace(data[,1],"clonotype", "clon")
+  
+  # Generate the layout. This function return a dataframe with one line per bubble. 
+  # It gives its center (x and y) and its radius, proportional of the value
+  packing <- circleProgressiveLayout(data$Freq, sizetype='area')
+  
+  # We can add these packing information to the initial data frame
+  data <- cbind(data, packing)
+  colnames(data)[1] ='clonotype'
+  dat.gg <- circleLayoutVertices(packing, npoints=50)
+  
+  p=ggplot() + 
+    # Make the bubbles
+    geom_polygon(data = dat.gg, aes(x, y, group = id, 
+                                    fill=as.factor(id)), colour = "#424949", alpha = 0.6) +
+    # General theme:
+    theme_void() + 
+    theme(legend.position="none") +
+    coord_equal() +
+    
+    # Add text in the center of each bubble + control its size
+    geom_text(data = data, aes(x, y, size=Freq, label = clonotype)) +
+    scale_size_continuous(range = c(1,6)) +
+    labs(title="Clonotype Diversity")
+  return(p)
+}
+
+```
+
+## CTRL clonotype diversity  
+```{r}
+C276= obj.srt@meta.data %>% filter(condition == "CTRL") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
+bubbleplot(data = C276)
+```
+
+## CND1 clonotype diversity  
+```{r}
+D276= obj.srt@meta.data %>% filter(condition == "CND1") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
+bubbleplot(data = D276)
+```
+
+
+## CND2 clonotype diversity  
+```{r}
+N276= obj.srt@meta.data %>% filter(condition == "CND2") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
+bubbleplot(data = N276)
+```
+
+
+## COMB clonotype diversity  
+```{r}
+DN276= obj.srt@meta.data %>% filter(condition == "COMB") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
+bubbleplot(data = DN276)
+```
+
+
+
+# scRepertoire  
+
+Clonotype analysis using scRepertoire   
+```{r}
+library(scRepertoire)
+# obj.srt@meta.data[1:3,]
+
+l1 = obj.srt@meta.data %>% filter(condition=="CTRL") %>% select(14:43)
+l2 = obj.srt@meta.data %>% filter(condition=="CND1") %>% select(14:43)
+l3 = obj.srt@meta.data %>% filter(condition=="CND2") %>% select(14:43)
+l4 = obj.srt@meta.data %>% filter(condition=="COMB") %>% select(14:43)
+
+
+contig_list = list(l1=l1,l2=l2,l3=l3,l4=l4)
+
+combined <- combineTCR(contig_list, samples =  unique(obj.srt@meta.data$condition), cells = "T-AB")
+```
+
+
+## Quantify Clonotypes
+```{r}
+quantContig(combined, cloneCall="gene+nt", scale = T)
+```
+
+## Unique clonotypes by TRA chain      
+```{r}
+quantContig(combined, cloneCall="gene+nt", chain = "TRA")
+```
+
+## Unique clonotypes by TRB chain      
+```{r}
+quantContig(combined, cloneCall="gene+nt", chain = "TRB")
+```
+
+# Clonotype Abundance   
+
+```{r}
+abundanceContig(combined, cloneCall = "gene", scale = F)
+```
+
+
+# Length of Clonotypes  
+
+```{r}
+lengthContig(combined, cloneCall="aa", chain = "both") 
+```
+
+```{r}
+lengthContig(combined, cloneCall="nt", chain = "TRA") + ggtitle("TRA")
+```
+
+
+```{r}
+lengthContig(combined, cloneCall="nt", chain = "TRB") + ggtitle("TRB")
+```
+
+
+# Compare Clonotypes  
+
+```{r}
+compareClonotypes(combined, 
+                  numbers = 5, 
+                  samples = c("CTRL","CND1","CND2","COMB"), 
+                  cloneCall="aa", 
+                  graph = "alluvial")
+```
+
+
+# Visualize Gene Usage   
+
+```{r}
+vizGenes(combined, gene = "V", 
+         chain = "TRB", 
+         plot = "bar", 
+         order = "variance", 
+         scale = TRUE)
+```
+
+```{r}
+#Peripheral Blood
+vizGenes(combined, 
+         gene = "V", 
+         chain = "TRB", 
+         y.axis = "J", 
+         plot = "heatmap", 
+         scale = TRUE, 
+         order = "gene")
+```
+
+# More Advanced Clonal Analysis   
+
+```{r}
+clonalHomeostasis(combined, cloneCall = "gene", 
+                  cloneTypes = c(Rare = 1e-04, 
+                                 Small = 0.001, 
+                                 Medium = 0.01, 
+                                 Large = 0.1, 
+                                 Hyperexpanded = 1)) + ggtitle("cloneCall = gene")
+```
+
+```{r}
+clonalHomeostasis(combined, cloneCall = "aa") + ggtitle("cloneCall = aa")
+```
+
+# Diversity Analysis 
+
+```{r}
+clonalDiversity(combined, 
+                cloneCall = "gene", 
+                group.by = "sample",
+                n.boots = 100)
+```
+
+
+```{r}
+# seurat <- combineExpression(combined, obj.srt, 
+#                  cloneCall="gene",
+#                  proportion = TRUE)
+```
+
+
+```{r, eval=FALSE}
+# library(ggraph)
+# 
+# #No Identity filter
+# clonalNetwork(seurat, 
+#               reduction = "umap", 
+#               identity = "sample",
+#               filter.clones = NULL,
+#               filter.identity = NULL,
+#               cloneCall = "aa")
+```
+
+
+
+
+
+```{r}
+# library(circlize)
+# library(scales)
+# 
+# circles <- getCirclize(seurat, 
+#                        group.by = "sample")
+# 
+# #Just assigning the normal colors to each cluster
+# grid.cols <- scales::hue_pal()(length(unique(seurat@active.ident)))
+# names(grid.cols) <- levels(seurat@active.ident)
+# 
+# #Graphing the chord diagram
+# circlize::chordDiagram(circles,
+#                        self.link = 1, 
+#                       grid.col = grid.cols)
+```
+
+<br>
+
+# Further Analysis (Specific cell type+clonotype)   
+
+Cytotoxic Markers and associated clonotypes  
+
+```{r, eval=TRUE, fig.width=6, fig.height=6}
+# obj.srt@meta.data[1:3,]
+
+df = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
+  select(raw_clonotype_id) %>% table() %>% data.frame() %>% 
+  arrange(desc(Freq))
+df = df[1:10,]
+# df[1:3,]
+
+# cytotoxic T cell clonotypes 
+
+obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
+  filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% nrow()
+
+
+df.anno = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
+  filter(raw_clonotype_id %in% df$raw_clonotype_id)
+df.anno= df.anno[,c("raw_clonotype_id","condition")] %>% arrange(desc(raw_clonotype_id))
+obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
+  filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% select(IFNG,GZMA,GZMB, NKG7) %>% 
+  pheatmap::pheatmap(show_rownames = F, color = colorRampPalette(colors=c('ivory',"salmon"))(100),
+                     annotation_row = df.anno, fontsize_col = 15)
+
+```
+
+```{r, fig.width=6, fig.height=6}
+
+df.input = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
+  filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% select(IFNG,GZMA,GZMB, NKG7)
+df.input[rownames(df.anno),] %>% 
+  pheatmap::pheatmap(show_rownames = F, color = colorRampPalette(colors=c("white","salmon"))(100),
+                     annotation_row = df.anno, cluster_rows = F)
+
+
+```
+
+
