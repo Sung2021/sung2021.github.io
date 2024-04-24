@@ -28,19 +28,21 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 
 
 <br>
-<a href="etc/Data_Processing.html" style="font-size: 24px;">Simple_shiny_app</a><br>
-<br>
+<a href="etc/Data_Processing.html" style="font-size: 24px;">Data_Processing</a><br>
 <a href="samplePages/Simple_RShiny_app_gene_gene_scatterplot.html" style="font-size: 24px;">Simple_shiny_app</a><br>
 
 <br>
 
-<span style="font-size: 22px;">WES (will be updated)</span><br>
-<br>
-<span style="font-size: 22px;">Cell type annotation database (will be updated)</span><br> 
-<span style="font-size: 22px;">Plot gallery (will be updated) </span><br>  
 
+<span style="font-size: 20px;">Cell type annotation database processing(will be updated)</span><br> 
+<span style="font-size: 20px;">Plot gallery (will be updated) </span><br>  
+<span style="font-size: 20px;">WES (will be updated)</span><br>
+<br>
 <br><br>
 
+
+### Github   
+https://github.com/Sung2021 
 
 ### LinkedIn Profile   
 
