@@ -428,6 +428,301 @@ mks.violinplot(cellname = "Dendritic cell", tpm=tpm.sample)
 ```
 
 
+# DEG analysis sample analysis {.tabset} 
+
+
+```{r, echo=FALSE, eval=TRUE}
+count.mtx = read.csv("../sampledata/RNAseq_sample_count.mtx.csv", row.names = 1)
+```
+
+```{r, echo=FALSE, eval=TRUE}
+# Function 1 
+# condition1 = CTRL 
+DEG_out = function(count.raw= count.mtx, condition1, condition2){
+  df1 = count.raw %>% select(contains(condition1)) 
+  df2 = count.raw %>% select(contains(condition2)) 
+  
+  count.mtx = cbind(df1,df2)
+  
+  # Generate info table
+  info <- data.frame(matrix(nrow = ncol(count.mtx), ncol = 2))
+  colnames(info) <- c('sample', 'cond')
+  info$sample <- colnames(count.mtx)
+  info = info %>% mutate(cond = ifelse(sample %in% colnames(df1), condition1,condition2)) 
+  info$cond = factor(info$cond, levels = c(condition1, condition2))
+  # info
+  
+  # DESeq: DEG analysis 
+  dds <- DESeqDataSetFromMatrix(count.mtx, info, ~ cond)
+  dds <- DESeq(dds)
+  res <- results(dds)
+  
+  # make DEG output a data frame for downstream analysis
+  res <- data.frame(res)
+  res <- res %>% filter(baseMean != 0)
+  
+  # p value == NA adjustment 
+  res[is.na(res)] <- 1
+  
+  # res[is.na(res$pvalue),]
+  return(res)
+}
+
+
+# Function 2 for volcanoplot  
+DEG_volcanoplot = function(res= res ,pval=0.05, fc = 1.2, 
+                           condition1=condition1, 
+                           condition2=condition2){
+  res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & pvalue <= pval, 'UP',
+                                 ifelse(log2FoldChange <= -log2(fc) & pvalue <= pval, 'DN','no_sig')))
+  res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
+  
+  # Draw plot 
+  res %>% 
+    filter(pvalue !=1) %>% # remove the NA values 
+    ggplot(aes(log2FoldChange, -log10(pvalue), color=DE)) + 
+    geom_point(size=1, alpha=0.5) + 
+    scale_color_manual(values = c('red','blue','grey')) +
+    theme_classic() +
+    geom_vline(xintercept = c(-log2(fc),log2(fc)), color='grey') +
+    geom_hline(yintercept = -log10(0.05),color='grey') +
+    guides(colour = guide_legend(override.aes = list(size=5))) +
+    ggtitle(paste0(condition2, " / ", condition1)) +
+    ggeasy::easy_center_title() ## to center title
+  
+}
+
+# Function 3 
+DEG_info = function(res, n=20, pval=0.05, fc = 1.2){
+  res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & pvalue <= pval, 'UP',
+                                 ifelse(log2FoldChange <= -log2(fc) & pvalue <= pval, 'DN','no_sig')))
+  res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
+  
+  df = res$DE %>% table() %>% data.frame()
+  colnames(df) = c("DEG", "Number of genes")
+  
+  up = res %>% filter(DE == "UP") %>% arrange(desc(log2FoldChange)) %>% 
+    rownames() %>% head(n) %>% paste0(collapse = ",")
+  dn = res %>% filter(DE == "DN") %>% arrange(log2FoldChange) %>% 
+    rownames() %>% head(n) %>% paste0(collapse = ",")
+  
+  df$top_genes_by_Log2FC =""
+  df[1,3] = up
+  df[2,3] = dn
+  
+  return(df)
+}
+
+DEG_table=function(res, pval=0.05, fc = 1.2){
+  res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & pvalue <= pval, 'UP',ifelse(log2FoldChange <= -log2(fc) & pvalue <= pval, 'DN','no_sig')))
+  res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
+  return(res)
+}
+```
+
+
+## DEG CND1 vs CTRL  
+
+1. DEG information table  
+2. Volcanoplot  
+3. DEG output. 
+
+```{r, echo=FALSE, eval=TRUE}
+
+DEG1 = DEG_out(count.raw = count.mtx, 
+                   condition1 = "CTRL", condition2 = "CND1")
+
+df = DEG_info(res = DEG1) 
+df %>% DT::datatable(extensions = "Responsive")
+
+DEG_volcanoplot(res = DEG1, condition1 = "CTRL", condition2= "CND1")
+
+DEG1 %>% DEG_table() %>% DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
+```
+
+
+
+## DEG CND2 vs CTRL  
+
+1. DEG information table  
+2. Volcanoplot  
+3. DEG output. 
+
+```{r, echo=FALSE, eval=TRUE}
+
+DEG2 = DEG_out(count.raw = count.mtx, 
+                   condition1 = "CTRL", condition2 = "CND2")
+
+df = DEG_info(res = DEG2) 
+df %>% DT::datatable(extensions = "Responsive")
+
+DEG_volcanoplot(res = DEG2, condition1 = "CTRL", condition2= "CND2")
+
+DEG2 %>% DEG_table() %>% DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
+```
+
+
+
+## DEG CND2 vs CND1  
+
+1. DEG information table  
+2. Volcanoplot  
+3. DEG output. 
+
+```{r, echo=FALSE, eval=TRUE}
+
+DEG3 = DEG_out(count.raw = count.mtx, 
+                   condition1 = "CND1", condition2 = "CND2")
+
+df = DEG_info(res = DEG3) 
+df %>% DT::datatable(extensions = "Responsive")
+
+DEG_volcanoplot(res = DEG3, condition1 = "CTRL", condition2= "CND2")
+
+DEG3 %>% DEG_table() %>% DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
+```
+
+
+
+## Select the signicant DEGs  
+
+From three comparisons   
+
+* DEG1   
+* DEG2  
+* DEG3  
+
+```{r, echo=FALSE, eval=TRUE}
+significant_genes = function(res){
+  pval=0.05
+  fc = 1.2
+  res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & pvalue <= pval, 'UP',
+                                 ifelse(log2FoldChange <= -log2(fc) & pvalue <= pval, 'DN','no_sig')))
+  res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
+  genes = res %>% filter(DE != 'no_sig') %>% rownames()
+  return(genes)
+}
+
+```
+
+
+```{r, echo=FALSE, eval=TRUE}
+# Significant genes from each DEG outputs 
+set1 = significant_genes(res = DEG1)
+set2 = significant_genes(res = DEG2)
+set3 = significant_genes(res = DEG3)
+
+# Merge all outs 
+significant_genes_all = union(set1,union(set2,set3))
+
+# Check the number of genes 
+#significant_genes_all %>% length()
+```
+
+
+<br><br>
+
+
+# Kmeans clustering {.tabset}  
+
+Significant genes X samples matrix was used for kmeans clustering to identify any patterns across data.  
+Clustering method: Kmeans  
+Adjustable parameter : k (number of clusters)   
+
+```{r, echo=FALSE, eval=TRUE}
+
+tpm = read.csv("../sampledata/RNAseq_sample_tpm.csv", row.names = 1)
+tpm = tpm[significant_genes_all,]
+
+############## kmeans clustering #####################
+## zscore function 
+zscore <- function(input.data = input.data){
+  input.data.rowsums <- rowSums(input.data)
+  input.data.mean <- rowMeans(input.data)
+  input.data.sd <- matrixStats::rowSds(as.matrix(input.data))
+  names(input.data.sd) <- rownames(input.data)
+  zscore <- (input.data-input.data.mean)/input.data.sd
+  return(zscore)
+}
+
+# Create input data with zscaled 
+input.data <- zscore(tpm[significant_genes_all,])
+input.data <- na.omit(input.data)
+
+
+# Perform kmeans clustering 
+kmeans_clustering = function(k=3, input.data= input.data){
+  set.seed(1234)
+  fitout <- kmeans(input.data, centers = k, nstart = k)
+  fitout.cluster <- fitout$cluster
+  # table(fitout.cluster)
+  df = fitout.cluster %>% as.data.frame()
+  colnames(df) = "cluster"
+  rownames(df) = names(fitout.cluster)
+  df = df %>% arrange(cluster)
+  df$cluster = paste0("Cluster", df$cluster)
+  df$cluster = factor(df$cluster)
+  return(df)
+}
+
+df3 = kmeans_clustering(k = 3, input.data = input.data)
+df4 = kmeans_clustering(k = 4, input.data = input.data)
+df5 = kmeans_clustering(k = 5, input.data = input.data)
+df6 = kmeans_clustering(k = 6, input.data = input.data)
+
+# Draw heatmap 
+kmeans_heatmap = function(input.df, input.data){
+  df.tmp = input.df$cluster %>% table() %>% data.frame()
+  my.color=c(colorRampPalette(colors = c("royalblue","white"))(80),
+             colorRampPalette(colors = c("white","indianred2"))(90))
+  
+  p =input.data[rownames(input.df),] %>% 
+    pheatmap::pheatmap(cluster_cols = F, cluster_rows = F,
+                       show_rownames = F,
+                       annotation_row = input.df,
+                       col = my.color,
+                       fontsize_row = 6,fontsize_col = 10, 
+                       border_color = 'NA', 
+                       gaps_col = c(4,8), 
+                       gaps_row = cumsum(df.tmp$Freq))
+  print(p)
+}
+```
+
+
+## K = 3 
+```{r, echo=FALSE, eval=TRUE}
+kmeans_heatmap(input.df = df3, input.data = input.data)
+
+cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+```
+
+
+## K = 4 
+```{r, echo=FALSE, eval=TRUE}
+
+kmeans_heatmap(input.df = df4, input.data = input.data)
+
+cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+```
+
+## K = 5 
+```{r, echo=FALSE, eval=TRUE}
+
+kmeans_heatmap(input.df = df5, input.data = input.data)
+
+cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+```
+
+## K = 6 
+```{r, echo=FALSE, eval=TRUE}
+
+kmeans_heatmap(input.df = df6, input.data = input.data)
+
+cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+```
+
+
 <br><br>
 More example analyses will be updated.  
 
