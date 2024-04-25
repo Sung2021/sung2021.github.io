@@ -1,5 +1,5 @@
 ---
-title: "Data Processing"
+title: "Data Processing in Linux"
 subtitle: ""
 date: "`r format(Sys.Date())`"
 output:  
@@ -35,9 +35,49 @@ library(reshape)
 
 **List**   
 
+- Conda environment (for macs2 callpeak)
 - StarFusion (with STAR) 
 - Cut&Run fastq processing (bowtie2)  
 
+
+# Conda environment for macs2 callpeak  
+
+```{bash}
+# Create the environment 
+conda create --name testenv python=3.6 
+conda activate testenv
+
+# Install macs2 (if don't have it already)
+conda install -c bioconda macs2
+
+macs2 # to check if macs2 was installed correctly
+
+# Single run
+macs2 callpeak -t path/my_sample.bam -c -f BAMPE -g mm -n test -B -q 0.05 --outdir ~/Downloads
+
+# Multiple sample run
+
+cd /path/to/your/bam/files  
+
+mkdir macs2
+
+for i in *.bam;do macs2 callpeak -t ${i} -c -f BAMPE -g mm -n ${i} -B -q 0.05 --outdir macs2;done
+
+# Deactivate the environment 
+conda deactivate
+```
+
+**Parameters**  
+The -t option specifies the target file,     
+The -c option should specify the control file, which is missing here and should be provided,     
+The -f option sets the file format,     
+The -g option specifies the genome,     
+The -n option sets the name for the output files,     
+The -B option generates additional BED files for broad peaks,     
+The -q option sets the p-value cutoff for peak detection,     
+The --outdir option specifies the output directory.     
+    
+<br>
 
 # StarFusion  
 

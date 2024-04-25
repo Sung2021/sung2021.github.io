@@ -33,17 +33,6 @@ library(reshape)
 
 
 ```{r, echo=FALSE}
-# Gene length information from : mm10.refGene.gtf (UCSC)   
-# About this TPM 
-# count matrix 
-dir="~/Desktop/DF/MGH_Salvia/ITK-SYK/RNA_seq_SJ/"
-tpm = read.csv(paste0(dir, "rds/tpm/ITK_SYK_RNASeq_mm10.GTF.tpm.nofilteronTPM.24.04.16.csv"), row.names = 1)
-
-tpm = tpm[,c(1:4,7:9,10:13)]
-colnames(tpm) = c(paste0("CND1_", 1:4), 
-                  paste0("CND2_", 1:4),
-                  paste0("CTRL_", 1:3))
-
 # Read filtered count matrix 
 count.raw = read.csv(paste0(dir,"rds/ITK_SYK_raw.count.filtered.24.04.12.csv"), row.names = 1)
 count.raw = count.raw[,1:14]
@@ -51,7 +40,12 @@ count.mtx = count.raw[,c(1:4,7:9,10:13)]
 colnames(count.mtx) = c(paste0("CND1_", 1:4), 
                         paste0("CND2_", 1:4),
                         paste0("CTRL_", 1:3))
-
+tpm=read.csv(paste0(dir,"rds/tpm/RNA_seq.TPM.23.03.16.csv"), row.names = 1)
+tpm = tpm[,1:14]
+tpm = tpm[,c(1:4,7:9,10:13)]
+colnames(tpm) = c(paste0("CND1_", 1:4), 
+                        paste0("CND2_", 1:4),
+                        paste0("CTRL_", 1:3))
 ```
 
 
