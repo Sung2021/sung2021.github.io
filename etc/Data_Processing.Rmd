@@ -42,6 +42,9 @@ library(reshape)
 
 # Conda environment for macs2 callpeak  
 
+In HPC, setting up a conda environment for specific software or pipelines improves reproducibility. For example, I use Python 3.6 in a conda environment for MACS2 callpeak, allowing easy updates later.     
+
+
 ```{bash}
 # Create the environment 
 conda create --name testenv python=3.6 
