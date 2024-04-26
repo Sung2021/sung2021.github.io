@@ -142,16 +142,31 @@ res %>%
 
 # Gene set enrichment analysis {.tabset}
 
+## Geneset   
+
+```{r}
+hallmark <- msigdbr::msigdbr(species = "Mus musculus", category = "H") %>% 
+  dplyr::select(gs_name, gene_symbol) 
+# If you like "entrez_gene", change gene_symbol to entrez_gene
+gobp <- msigdbr::msigdbr(species = "Mus musculus", category = "C5") %>% 
+  dplyr::select(gs_name, gene_symbol)
+```
+
+
 ## Perform GSEA  
 ```{r}
 library(clusterProfiler)
-gobp <- msigdbr::msigdbr(species = "Mus musculus", 
-                         category = "C5", subcategory = "GO:BP") %>% 
-  dplyr::select(gs_name, gene_symbol)
 
 perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
   ranking <- function(res) {
-    df <- res$avg_log2FC
+    # Check the name of log2fc related 
+    if ("avg_log2FC" %in% names(res)) {
+      df <- res$avg_log2FC
+    } else if ("log2FoldChange" %in% names(res)) {
+      df <- res$log2FoldChange
+    } else {
+      stop("Neither avg_log2FC nor log2FoldChange columns found in the data frame.")
+    }
     names(df) <- rownames(res)
     df <- sort(df, decreasing = TRUE)
     return(df)
@@ -171,8 +186,9 @@ perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
   return(result)
 }
 
+
 # Application 
-gsea.res = perform_GSEA(res = deg.cluster3, ref = gpbp)
+gsea.res1 = perform_GSEA(res = res, ref = hallmark, pvalueCutoff = 1)
 
 ```
 
@@ -180,29 +196,81 @@ gsea.res = perform_GSEA(res = deg.cluster3, ref = gpbp)
 ## NES plot  
 ```{r}
 # GESA Plot 
-gsea_nes_plot =function(gsea.res, title){
-  gsea.res %>% ggplot(aes(reorder(ID, NES), NES)) +
-    geom_col(aes(fill=p.adjust)) +
+gsea_nes_plot <- function(gsea.res, title, color="p.adjust") {
+  gsea.res = gsea.res %>% mutate(sig=ifelse(p.adjust <= 0.05, "FDR <= 0.05", "FDX >= 0.05"))
+  # basic plot
+  p <- gsea.res %>%
+    ggplot(aes(reorder(ID, NES), NES)) +
+    geom_col(aes(fill=!!sym(color))) +
     coord_flip() +
-    labs(x="Pathway", y="Normalized Enrichment Score",
-         title= "GSEA") + 
+    labs(x="Pathway", y="Normalized Enrichment Score", title="GSEA") +
     theme_classic() +
-    scale_fill_gradient(low = 'red', high = '#E5E7E9') +
-    theme(axis.text.x= element_text(size=5, face = 'bold'),
-          axis.text.y= element_text(size=6, face = 'bold'), 
-          axis.title =element_text(size=10)) +ggtitle(title)
+    theme(axis.text.x = element_text(size=5, face = 'bold'),
+          axis.text.y = element_text(size=6, face = 'bold'),
+          axis.title = element_text(size=10)) +
+    ggtitle(title)
+
+  # color by color input type
+  if (color == "p.adjust") {
+    p <- p + scale_fill_gradient(low = 'red', high = '#E5E7E9')
+  } else if (color == "sig") {
+    p <- p + scale_fill_manual(values = c("red", "#E5E7E9"))
+  }
+  return(p)
 }
 
 # Application 
-gsea_nes_plot(gsea.res[gsea.res$p.adjust <= 0.05,], title = "Cluster3")
+
+gsea_nes_plot(gsea.res = gsea.res1, title = "Test1", color = "p.adjust") # color by p.adjust
+gsea_nes_plot(gsea.res = gsea.res1, title = "Test2", color = "sig") # color by significance
+
 ```
 
 
 ## Enrichment plot for the individual pathway  
 
-```{r}
-id1 = "GOBP_NUCLEOSOME_POSITIONING 
-enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
+```{r, eval=FALSE}
+# enrichplot::gseaplot2 function 
+perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
+  ranking <- function(res) {
+    # Check the name of log2fc related 
+    if ("avg_log2FC" %in% names(res)) {
+      df <- res$avg_log2FC
+    } else if ("log2FoldChange" %in% names(res)) {
+      df <- res$log2FoldChange
+    } else {
+      stop("Neither avg_log2FC nor log2FoldChange columns found in the data frame.")
+    }
+    names(df) <- rownames(res)
+    df <- sort(df, decreasing = TRUE)
+    return(df)
+  }
+  
+  ranked.res <- ranking(res)
+  
+  x <- clusterProfiler::GSEA(geneList = ranked.res,
+                             TERM2GENE = ref,
+                             pvalueCutoff = pvalueCutoff,
+                             pAdjustMethod = "BH",
+                             verbose = TRUE,
+                             seed = TRUE)
+  return(x)
+}
+
+gsea.res = perform_GSEA(res = res, ref = hallmark, pvalueCutoff = 1)
+
+# Significant pathways 
+ids = gsea.res@result %>% filter(p.adjust <= 0.05) %>% rownames()
+
+```
+
+
+```{r, eval=FALSE, fig.width=7, fig.height=6, out.width="60%"}
+
+enrichplot::gseaplot2(gsea.res, geneSetID = ids[1], title = ids[1])
+enrichplot::gseaplot2(gsea.res, geneSetID = ids[2], title = ids[2])
+enrichplot::gseaplot2(gsea.res, geneSetID = ids[3], title = ids[3])
+enrichplot::gseaplot2(gsea.res, geneSetID = ids[4], title = ids[4])
 
 ```
 
