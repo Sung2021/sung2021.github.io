@@ -1,0 +1,89 @@
+---
+title: "Data Processing in Linux"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, eval = F,
+                      fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+```{r, echo=FALSE, eval=T}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+```
+
+
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
+
+<br>
+
+### Step 1: Create a Local Repository
+- **Create a local directory** for your repository:
+  ```bash
+  mkdir my_repository.io
+  ```
+- **Navigate into your directory**:
+  ```bash
+  cd path/my_repository.io
+  ```
+
+### Step 2: Initialize the Local Repository
+- **Initialize Git** in your local directory:
+  ```bash
+  git init
+  ```
+
+### Step 3: Connect Your Local Repository to GitHub
+- **Add a remote repository** URL to your local repository:
+  ```bash
+  git remote add origin https://github.com/Sung2021/my_repository.io
+  ```
+
+### Step 4: Add and Commit Files
+- **Add files** to the staging area:
+  ```bash
+  git add . # Add all files
+  git add filename # Add a specific file
+  ```
+- **Check the status** of your changes:
+  ```bash
+  git status
+  ```
+- **Commit your changes** with a message:
+  ```bash
+  git commit -m "commit message"
+  ```
+
+### Step 5: Push Changes to GitHub
+- **Check which branch you are on**:
+  ```bash
+  git branch
+  ```
+- **Push your changes** to GitHub:
+  ```bash
+  git push origin main # Push to the main branch
+  git push -f origin main # Force push to overwrite changes in the remote
+  ```
+
+### Step 6: Pull Latest Changes from GitHub
+- **Pull changes** from the remote repository to your local repository:
+  ```bash
+  git pull origin main
+  ```
+
