@@ -36,7 +36,7 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 <a href="samplePages/Simple_RShiny_app_gene_gene_scatterplot.html" style="font-size: 24px;">Simple_shiny_app</a><br>
 
 <br>
-<a href="etc/Basic_github.html" style="font-size: 24px;">Basic Github usage<br>
+<a href="etc/Basic_github.html" style="font-size: 24px;">Basic Github usage</a><br>
 
 <br>
 
