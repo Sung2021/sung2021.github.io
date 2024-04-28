@@ -24,7 +24,8 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 
 ## Work Sample pages<a id="samples"></a>     
 
-<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq</a><br>
+<a href="samplePages/NI.html" style="font-size: 24px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
+<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq</a><br>      
 <a href="samplePages/RNAseq.html" style="font-size: 24px;">bulk RNA-seq</a><br>
 <a href="samplePages/ChIP_seq.html" style="font-size: 24px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
 <a href="samplePages/TCR_seq.html" style="font-size: 24px;">TCR-seq</a><br>
