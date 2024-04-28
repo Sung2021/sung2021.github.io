@@ -2,7 +2,6 @@
 title: "Sung Rye Park"
 subtitle: "Bioinformatics Scientist"
 author: ""
-
 output: html_document
 ---
 
@@ -119,5 +118,9 @@ Guiding and mentoring interns in bioinformatics practices and project work
 ## Education  <a id="education"></a>
 * Ph.D. Plant Biology, University of Texas at Austin 2017
 * MA. Biology Seoul National University 2010   
+
+<br><br>
+
+Last update: `r format(Sys.Date())`
 
 <br><br>
