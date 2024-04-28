@@ -19,11 +19,11 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 
 <br>
 
-## Resume (pdf)   
+## Resume (pdf) <a id="resume-pdf"></a>   
 <a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 20px;">Sung Rye Park's resume</a><br>
 
 
-## Work Sample pages  
+## Work Sample pages<a id="samples"></a>     
 
 <a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq</a><br>
 <a href="samplePages/RNAseq.html" style="font-size: 24px;">bulk RNA-seq</a><br>
@@ -48,15 +48,16 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 <br><br>
 
 
-### Github   
+### Github  <a id="github"></a>     
 https://github.com/Sung2021 
 
-### LinkedIn Profile   
+### LinkedIn Profile  <a id="linkedin"></a>   
 
 <a href="https://www.linkedin.com/in/sung-rye-park-8a130098/" style="font-size: 18px;">Work History in LinkedIn</a><br>
 <br><br>
 
-## First/co-first authorship publications (pdf)  
+
+## First/co-first authorship publications (pdf)  <a id="first_author"></a>  
 
 <a href="info/papers/NI_Sung_s41590-023-01720-w_reduced_size2.pdf" style="font-size: 14px;">The transcriptional cofactor Tle3 reciprocally controls effector and central memory CD8+ T cell fates. (Nature Immunology, 2024)</a><br>
 
@@ -68,7 +69,7 @@ https://github.com/Sung2021
 
 <br>
 
-## Skills 
+## Skills  <a id="skills"></a>  
 * Proficient in a wide array of NGS data pipelines and bioinformatics analyses including scRNA-seq, TCR-seq, CITE-Seq, ATAC-seq, bulk RNA-seq, as well as integrative approaches with TCGA and CCLE for genomic and epigenomic studies 
 * Proficient in Linux, with programming skills in Python and R, and skilled use of bioinformatics tools including Cellranger, Salmon, and a suite of sequence alignment and analysis utilities 
 * Well-versed in peak calling, genomic visualization, and analysis using open- source platforms such as Seurat, scanpy, and the USCC Genome Browser
@@ -86,7 +87,7 @@ Guiding and mentoring interns in bioinformatics practices and project work
 
 <br>
 
-## Experience
+## Experience  <a id="experience"></a>
 * Senior Bioinformatics scientist at Dana Farber Cancer Institute 2022-  
 
   - DGK inhibitor efficacy testing in combination with Nivolumab for SCLC     
@@ -103,7 +104,7 @@ Guiding and mentoring interns in bioinformatics practices and project work
 * Postdoctoral Fellow at Hackensack Meridian Health 
 * Postdoctoral Fellow at University of Michigan
 
-## Publications 
+## Publications  <a id="publications"></a> 
 * The transcriptional cofactor Tle3 reciprocally controls effector and central memory CD8+ T cell fates. (Nature Immunology, 2024. X.Zhao, W.Hu, S.R.Park, S.Zhu, S.S.Hu, C.Zang, W.Peng, Q.Shan ,H.H. Xue. **co-first** (Zhao, W.Hu, Park and Zhu as co-first authors with equal contribution) (https://doi.org/10.1038/s41590-023-01720-w)
 * SiftCell: A robust framework to detect and isolate cell-containing droplets from single-cell RNA sequence reads. (Cell Systems, 2023) Jingyue Xi, Sung Rye Park, Jun Hee Lee and Hyun Min Kang. (https://doi.org/10.1016/j.cels.2023.06.002)
 * Sublethal whole-body irradiation induces permanent loss and dysfunction in pathgen-specific circulating memory CD8T cell populations. (PNAS, July 2023) Mohammad Heidarian, Iassac J Jensen, Shravan Kumar Kannan, Lecia L Pewe, Mariah Hassert, Sung Rye Park, Hai-Hui Xue, John Harty, Vladimir Badovinac. (https://doi.org/10.1073/pnas.2302785120.)
@@ -115,7 +116,7 @@ Guiding and mentoring interns in bioinformatics practices and project work
 
 
 
-## Education
+## Education  <a id="education"></a>
 * Ph.D. Plant Biology, University of Texas at Austin 2017
 * MA. Biology Seoul National University 2010   
 

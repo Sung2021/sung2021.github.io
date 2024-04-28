@@ -349,6 +349,90 @@ DimPlot(obj.srt, reduction = "umap", label = TRUE, repel = TRUE,
 ```
 
 
+# AUC (Area Under the Curve)   
+
+To assess the activation of gene sets (custom) in assigned cell types (by scType), I calculate AUC scores by determining the level of activation of specific gene sets in each cell.  
+
+
+```{r}
+library(Seurat)
+library(AUCell)
+library(GSEABase)
+```
+
+```{r}
+# import data from single-cell experiment
+exprMatrix <- obj.srt@assays$RNA@data
+# Convert to sparse:
+exprMatrix <- as(exprMatrix, "dgCMatrix")
+```
+
+```{r}
+# Create genesets to test
+# getting them from msigDB or make custom ones 
+gmt 
+```
+
+## Build gene-expression rankings for each cell   
+```{r}
+cells_rankings <- AUCell_buildRankings(exprMatrix, plotStats=TRUE)
+```
+
+## Calculate enrichment for the gene signatures (AUC)   
+```{r}
+cells_AUC <- AUCell_calcAUC(gmt, cells_rankings)
+```
+
+## Determine the cells with the given gene signatures or active gene sets   
+```{r}
+cells_assignment <- AUCell_exploreThresholds(cells_AUC, plotHist=TRUE, assign=TRUE) 
+```
+
+## Threshold check  
+```{r}
+# check the length inside 
+n <- length(cells_assignment)
+
+aucThr <- matrix(nrow = n, ncol = 1) # 필요한 경우 열의 수를 조정하세요.
+
+# This is an example rownames
+rownames(aucThr) <- c("B", "Fibroblast", "Myeloid", "T_NK", "Tumor")[1:n]
+
+for (i in 1:n) {
+  aucThr[i, ] <- cells_assignment[[i]]$aucThr$selected
+}
+
+# Data frame 
+aucThr %>% data.frame() %>% DT::datatable()
+```
+
+## Add AUC output to metadata   
+```{r}
+# Add the calculated AUC scores as metadata to the Seurat object
+obj.srt <- AddMetaData(obj.srt, data.frame(t(cells_AUC@assays@data$AUC)))
+
+# This is an additional part
+Category = c("B" ,"Fibroblast","Myeloid","T_NK","Tumor")
+
+for (cat in Category) {
+  rows <- cells_assignment[[cat]]$assignment
+  auc_column_name <- paste0("AUC_designated_", cat)
+  obj.srt@meta.data[, auc_column_name] <- "FALSE"
+  obj.srt@meta.data[rows, auc_column_name] <- "TRUE"
+}
+```
+
+## Visualize AUC score in UMAP   
+
+**Note**   
+
+Once obtaining AUC output, I check the information that can be transferred to seurat object metadata. There should be various visualization methods for the transferred data. I usually use UMAP visualization to check the general patterns of them.      
+```{r}
+DimPlot(obj.srt, group.by = "AUC_designated_my_category")
+FeaturePlot(obj.srt, features = "AUC_score_for_my_geneset")
+```
+
+
 # Marker gene analysis  
 
 ## Find markers  

@@ -6,7 +6,7 @@
     <meta name="generator" content="pandoc" />
 
     
-        <meta name="date" content="2024-04-22" />
+        <meta name="date" content="2024-04-27" />
     
     <title>scRNA-seq analysis workflow</title>
 
@@ -1616,6 +1616,22 @@ margin-left: 0 !important;
           <li><a href="#cell-cycle-scoring" id="toc-cell-cycle-scoring">Cell cycle scoring</a></li>
           <li><a href="#cell-type-annotation-by-sctype" id="toc-cell-type-annotation-by-sctype">Cell type annotation
           by scType</a></li>
+          <li><a href="#auc-area-under-the-curve" id="toc-auc-area-under-the-curve">AUC (Area Under the
+          Curve)</a>
+          <ul>
+          <li><a href="#build-gene-expression-rankings-for-each-cell" id="toc-build-gene-expression-rankings-for-each-cell">Build
+          gene-expression rankings for each cell</a></li>
+          <li><a href="#calculate-enrichment-for-the-gene-signatures-auc" id="toc-calculate-enrichment-for-the-gene-signatures-auc">Calculate
+          enrichment for the gene signatures (AUC)</a></li>
+          <li><a href="#determine-the-cells-with-the-given-gene-signatures-or-active-gene-sets" id="toc-determine-the-cells-with-the-given-gene-signatures-or-active-gene-sets">Determine
+          the cells with the given gene signatures or active gene
+          sets</a></li>
+          <li><a href="#threshold-check" id="toc-threshold-check">Threshold check</a></li>
+          <li><a href="#add-auc-output-to-metadata" id="toc-add-auc-output-to-metadata">Add AUC output to
+          metadata</a></li>
+          <li><a href="#visualize-auc-score-in-umap" id="toc-visualize-auc-score-in-umap">Visualize AUC score in
+          UMAP</a></li>
+          </ul></li>
           <li><a href="#marker-gene-analysis" id="toc-marker-gene-analysis">Marker gene analysis</a>
           <ul>
           <li><a href="#find-markers" id="toc-find-markers">Find
@@ -1653,7 +1669,7 @@ margin-left: 0 !important;
         </nav>
         <ul class="authors">
           <li class="divider"></li>
-                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-04-22</span></li>
+                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-04-27</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -1961,39 +1977,110 @@ across diverse datasets.</p>
 <span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="fu">DimPlot</span>(obj.srt, <span class="at">reduction =</span> <span class="st">&quot;umap&quot;</span>, <span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">repel =</span> <span class="cn">TRUE</span>, </span>
 <span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>        <span class="at">group.by =</span> <span class="st">&#39;sctype_classification&#39;</span>)        </span></code></pre></div>
 </div>
+<div id="auc-area-under-the-curve" class="section level1">
+<h1>AUC (Area Under the Curve)</h1>
+<p>To assess the activation of gene sets (custom) in assigned cell types
+(by scType), I calculate AUC scores by determining the level of
+activation of specific gene sets in each cell.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">library</span>(Seurat)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">library</span>(AUCell)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">library</span>(GSEABase)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># import data from single-cell experiment</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>exprMatrix <span class="ot">&lt;-</span> obj.srt<span class="sc">@</span>assays<span class="sc">$</span>RNA<span class="sc">@</span>data</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># Convert to sparse:</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>exprMatrix <span class="ot">&lt;-</span> <span class="fu">as</span>(exprMatrix, <span class="st">&quot;dgCMatrix&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Create genesets to test</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co"># getting them from msigDB or make custom ones </span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>gmt </span></code></pre></div>
+<div id="build-gene-expression-rankings-for-each-cell" class="section level2">
+<h2>Build gene-expression rankings for each cell</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>cells_rankings <span class="ot">&lt;-</span> <span class="fu">AUCell_buildRankings</span>(exprMatrix, <span class="at">plotStats=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="calculate-enrichment-for-the-gene-signatures-auc" class="section level2">
+<h2>Calculate enrichment for the gene signatures (AUC)</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>cells_AUC <span class="ot">&lt;-</span> <span class="fu">AUCell_calcAUC</span>(gmt, cells_rankings)</span></code></pre></div>
+</div>
+<div id="determine-the-cells-with-the-given-gene-signatures-or-active-gene-sets" class="section level2">
+<h2>Determine the cells with the given gene signatures or active gene
+sets</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>cells_assignment <span class="ot">&lt;-</span> <span class="fu">AUCell_exploreThresholds</span>(cells_AUC, <span class="at">plotHist=</span><span class="cn">TRUE</span>, <span class="at">assign=</span><span class="cn">TRUE</span>) </span></code></pre></div>
+</div>
+<div id="threshold-check" class="section level2">
+<h2>Threshold check</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># check the length inside </span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(cells_assignment)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>aucThr <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> n, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="co"># 필요한 경우 열의 수를 조정하세요.</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co"># This is an example rownames</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="fu">rownames</span>(aucThr) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;B&quot;</span>, <span class="st">&quot;Fibroblast&quot;</span>, <span class="st">&quot;Myeloid&quot;</span>, <span class="st">&quot;T_NK&quot;</span>, <span class="st">&quot;Tumor&quot;</span>)[<span class="dv">1</span><span class="sc">:</span>n]</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  aucThr[i, ] <span class="ot">&lt;-</span> cells_assignment[[i]]<span class="sc">$</span>aucThr<span class="sc">$</span>selected</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>}</span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co"># Data frame </span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>aucThr <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>() <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>()</span></code></pre></div>
+</div>
+<div id="add-auc-output-to-metadata" class="section level2">
+<h2>Add AUC output to metadata</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># Add the calculated AUC scores as metadata to the Seurat object</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>obj.srt <span class="ot">&lt;-</span> <span class="fu">AddMetaData</span>(obj.srt, <span class="fu">data.frame</span>(<span class="fu">t</span>(cells_AUC<span class="sc">@</span>assays<span class="sc">@</span>data<span class="sc">$</span>AUC)))</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co"># This is an additional part</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>Category <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;B&quot;</span> ,<span class="st">&quot;Fibroblast&quot;</span>,<span class="st">&quot;Myeloid&quot;</span>,<span class="st">&quot;T_NK&quot;</span>,<span class="st">&quot;Tumor&quot;</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="cf">for</span> (cat <span class="cf">in</span> Category) {</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>  rows <span class="ot">&lt;-</span> cells_assignment[[cat]]<span class="sc">$</span>assignment</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>  auc_column_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;AUC_designated_&quot;</span>, cat)</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>  obj.srt<span class="sc">@</span>meta.data[, auc_column_name] <span class="ot">&lt;-</span> <span class="st">&quot;FALSE&quot;</span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a>  obj.srt<span class="sc">@</span>meta.data[rows, auc_column_name] <span class="ot">&lt;-</span> <span class="st">&quot;TRUE&quot;</span></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="visualize-auc-score-in-umap" class="section level2">
+<h2>Visualize AUC score in UMAP</h2>
+<p><strong>Note</strong></p>
+<p>Once obtaining AUC output, I check the information that can be
+transferred to seurat object metadata. There should be various
+visualization methods for the transferred data. I usually use UMAP
+visualization to check the general patterns of them.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">DimPlot</span>(obj.srt, <span class="at">group.by =</span> <span class="st">&quot;AUC_designated_my_category&quot;</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">FeaturePlot</span>(obj.srt, <span class="at">features =</span> <span class="st">&quot;AUC_score_for_my_geneset&quot;</span>)</span></code></pre></div>
+</div>
+</div>
 <div id="marker-gene-analysis" class="section level1">
 <h1>Marker gene analysis</h1>
 <div id="find-markers" class="section level2">
 <h2>Find markers</h2>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Find markers based on the selected cluster </span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">Idents</span>(obj.srt) <span class="ot">=</span> <span class="st">&#39;RNA_snn_res.0.1&#39;</span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>fc<span class="ot">=</span><span class="fl">1.2</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>all.markers <span class="ot">=</span> <span class="fu">FindAllMarkers</span>(obj.srt, <span class="at">logfc.threshold =</span> <span class="fu">log2</span>(fc), </span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>                             <span class="at">only.pos =</span> T, <span class="at">test.use =</span> <span class="st">&#39;wilcox&#39;</span>,<span class="at">min.pct =</span> <span class="fl">0.5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Find markers based on the selected cluster </span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="fu">Idents</span>(obj.srt) <span class="ot">=</span> <span class="st">&#39;RNA_snn_res.0.1&#39;</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>fc<span class="ot">=</span><span class="fl">1.2</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>all.markers <span class="ot">=</span> <span class="fu">FindAllMarkers</span>(obj.srt, <span class="at">logfc.threshold =</span> <span class="fu">log2</span>(fc), </span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>                             <span class="at">only.pos =</span> T, <span class="at">test.use =</span> <span class="st">&#39;wilcox&#39;</span>,<span class="at">min.pct =</span> <span class="fl">0.5</span>)</span></code></pre></div>
 </div>
 <div id="create-downloadable-link-of-markers" class="section level2">
 <h2>Create downloadable link of markers</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>all.markers <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>(<span class="at">extensions =</span> <span class="st">&quot;Buttons&quot;</span>, </span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>                <span class="at">options =</span> <span class="fu">list</span>(<span class="at">autoWidth =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>                               <span class="at">fixedHeader =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>                               <span class="at">dom=</span><span class="st">&quot;Bfrtip&quot;</span>, <span class="at">buttons=</span><span class="fu">c</span>(<span class="st">&quot;csv&quot;</span>,<span class="st">&quot;excel&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>all.markers <span class="sc">%&gt;%</span> DT<span class="sc">::</span><span class="fu">datatable</span>(<span class="at">extensions =</span> <span class="st">&quot;Buttons&quot;</span>, </span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>                <span class="at">options =</span> <span class="fu">list</span>(<span class="at">autoWidth =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>                               <span class="at">fixedHeader =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>                               <span class="at">dom=</span><span class="st">&quot;Bfrtip&quot;</span>, <span class="at">buttons=</span><span class="fu">c</span>(<span class="st">&quot;csv&quot;</span>,<span class="st">&quot;excel&quot;</span>)))</span></code></pre></div>
 </div>
 <div id="visualize-the-marker-gene-expression" class="section level2 tabset">
 <h2 class="tabset">Visualize the marker gene expression</h2>
 <div id="dotplot" class="section level3">
 <h3>Dotplot</h3>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>gs <span class="ot">=</span> genes_selected <span class="co"># Selected genes from the marker list</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>obj.srt<span class="sc">$</span>rev.res.<span class="fl">0.1</span> <span class="ot">=</span> <span class="fu">factor</span>(obj.srt<span class="sc">$</span>RNA_snn_res.<span class="fl">0.1</span>, </span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">levels</span>(obj.srt<span class="sc">$</span>RNA_snn_res.<span class="fl">0.1</span>)))</span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="fu">DotPlot</span>(obj.srt, <span class="at">group.by =</span> <span class="st">&quot;rev.res.0.1&quot;</span>, </span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>        <span class="at">features =</span> gs, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&quot;grey&quot;</span>,<span class="st">&quot;red&quot;</span>)) <span class="sc">+</span><span class="fu">RotatedAxis</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>gs <span class="ot">=</span> genes_selected <span class="co"># Selected genes from the marker list</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>obj.srt<span class="sc">$</span>rev.res.<span class="fl">0.1</span> <span class="ot">=</span> <span class="fu">factor</span>(obj.srt<span class="sc">$</span>RNA_snn_res.<span class="fl">0.1</span>, </span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>                             <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">levels</span>(obj.srt<span class="sc">$</span>RNA_snn_res.<span class="fl">0.1</span>)))</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="fu">DotPlot</span>(obj.srt, <span class="at">group.by =</span> <span class="st">&quot;rev.res.0.1&quot;</span>, </span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>        <span class="at">features =</span> gs, <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&quot;grey&quot;</span>,<span class="st">&quot;red&quot;</span>)) <span class="sc">+</span><span class="fu">RotatedAxis</span>()</span></code></pre></div>
 </div>
 <div id="heatmap" class="section level3">
 <h3>Heatmap</h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>gs <span class="ot">=</span> genes_selected <span class="co"># Selected genes from the marker list</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">DoHeatmap</span>(obj.srt, <span class="at">features =</span> gs, <span class="at">group.by =</span> <span class="st">&quot;RNA_snn_res.0.1&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>gs <span class="ot">=</span> genes_selected <span class="co"># Selected genes from the marker list</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="fu">DoHeatmap</span>(obj.srt, <span class="at">features =</span> gs, <span class="at">group.by =</span> <span class="st">&quot;RNA_snn_res.0.1&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -2001,112 +2088,112 @@ across diverse datasets.</p>
 <h1>DEG analysis between two conditions</h1>
 <div id="find-degs" class="section level2">
 <h2>Find DEGs</h2>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Generating DEGs bewteen condition 1 and condition 2</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>DEG.two_groups<span class="ot">=</span> <span class="cf">function</span>(obj.srt,<span class="at">cluster=</span><span class="dv">0</span>, <span class="at">cond1=</span><span class="st">&quot;ADU&quot;</span>, <span class="at">cond2=</span><span class="st">&quot;CTL&quot;</span>){</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  obj.srt<span class="sc">@</span>meta.data<span class="ot">=</span>obj.srt<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> </span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">compare =</span> <span class="fu">ifelse</span>(RNA_snn_res.<span class="fl">0.1</span> <span class="sc">==</span> cluster <span class="sc">&amp;</span> sample <span class="sc">==</span> cond1, </span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>                            <span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cond1), </span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>                            <span class="fu">ifelse</span>(RNA_snn_res.<span class="fl">0.1</span> <span class="sc">==</span> cluster <span class="sc">&amp;</span> sample <span class="sc">==</span> cond2, </span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>                                   <span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cond2), <span class="st">&quot;others&quot;</span>)))</span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>  g2<span class="ot">=</span><span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cond1)</span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  g1<span class="ot">=</span><span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cnod2)</span>
-<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  <span class="fu">Idents</span>(obj.srt) <span class="ot">=</span> <span class="st">&#39;compare&#39;</span></span>
-<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>  logfc<span class="ot">=</span><span class="fu">log2</span>(<span class="dv">1</span>)</span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  mks <span class="ot">=</span><span class="fu">FindMarkers</span>(obj.srt, <span class="at">ident.1 =</span> g2, <span class="at">ident.2 =</span> g1, </span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>                   <span class="at">logfc.threshold =</span> logfc, <span class="at">assay =</span> <span class="st">&quot;count&quot;</span>)</span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>  pval<span class="ot">=</span><span class="fl">0.05</span></span>
-<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>  fc<span class="ot">=</span><span class="fl">1.2</span></span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>  mks <span class="ot">=</span> mks <span class="sc">%&gt;%</span> </span>
-<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">DE=</span><span class="fu">ifelse</span>(avg_log2FC <span class="sc">&gt;=</span> <span class="fu">log2</span>(fc) <span class="sc">&amp;</span> p_val_adj <span class="sc">&lt;</span> pval, <span class="st">&#39;UP&#39;</span>,</span>
-<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>                                 <span class="fu">ifelse</span>(avg_log2FC <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fu">log2</span>(fc) <span class="sc">&amp;</span> p_val_adj <span class="sc">&lt;</span> pval, <span class="st">&#39;DN&#39;</span>,</span>
-<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>                                        <span class="st">&#39;no_sig&#39;</span>)))</span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>  mks<span class="sc">$</span>DE <span class="ot">=</span> <span class="fu">factor</span>(mks<span class="sc">$</span>DE, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;UP&#39;</span>,<span class="st">&#39;DN&#39;</span>,<span class="st">&#39;no_sig&#39;</span>))</span>
-<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a>  </span>
-<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a>  mks<span class="sc">$</span>gene <span class="ot">=</span> <span class="fu">rownames</span>(mks)</span>
-<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>  mks <span class="ot">=</span>mks <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">labels=</span> <span class="fu">ifelse</span>(DE <span class="sc">==</span> <span class="st">&#39;UP&#39;</span>, gene, <span class="fu">ifelse</span>(DE<span class="sc">==</span><span class="st">&#39;DN&#39;</span>,gene,<span class="st">&#39;&#39;</span>)))</span>
-<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>  mks <span class="ot">=</span>mks <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(avg_log2FC))</span>
-<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a>  <span class="fu">return</span>(mks)</span>
-<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Application  </span></span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>deg.cluster0 <span class="ot">=</span> <span class="fu">DEG.two_groups</span>(<span class="at">obj.srt =</span> obj.srt, <span class="at">cluster =</span> <span class="dv">0</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>deg.cluster1 <span class="ot">=</span> <span class="fu">DEG.two_groups</span>(<span class="at">obj.srt =</span> obj.srt, <span class="at">cluster =</span> <span class="dv">1</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>deg.cluster2 <span class="ot">=</span> <span class="fu">DEG.two_groups</span>(<span class="at">obj.srt =</span> obj.srt, <span class="at">cluster =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="co"># Generating DEGs bewteen condition 1 and condition 2</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>DEG.two_groups<span class="ot">=</span> <span class="cf">function</span>(obj.srt,<span class="at">cluster=</span><span class="dv">0</span>, <span class="at">cond1=</span><span class="st">&quot;ADU&quot;</span>, <span class="at">cond2=</span><span class="st">&quot;CTL&quot;</span>){</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  obj.srt<span class="sc">@</span>meta.data<span class="ot">=</span>obj.srt<span class="sc">@</span>meta.data <span class="sc">%&gt;%</span> </span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">compare =</span> <span class="fu">ifelse</span>(RNA_snn_res.<span class="fl">0.1</span> <span class="sc">==</span> cluster <span class="sc">&amp;</span> sample <span class="sc">==</span> cond1, </span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>                            <span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cond1), </span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>                            <span class="fu">ifelse</span>(RNA_snn_res.<span class="fl">0.1</span> <span class="sc">==</span> cluster <span class="sc">&amp;</span> sample <span class="sc">==</span> cond2, </span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>                                   <span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cond2), <span class="st">&quot;others&quot;</span>)))</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>  g2<span class="ot">=</span><span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cond1)</span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>  g1<span class="ot">=</span><span class="fu">paste0</span>(cluster,<span class="st">&quot;_&quot;</span>, cnod2)</span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>  <span class="fu">Idents</span>(obj.srt) <span class="ot">=</span> <span class="st">&#39;compare&#39;</span></span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a>  logfc<span class="ot">=</span><span class="fu">log2</span>(<span class="dv">1</span>)</span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a>  mks <span class="ot">=</span><span class="fu">FindMarkers</span>(obj.srt, <span class="at">ident.1 =</span> g2, <span class="at">ident.2 =</span> g1, </span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a>                   <span class="at">logfc.threshold =</span> logfc, <span class="at">assay =</span> <span class="st">&quot;count&quot;</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a>  pval<span class="ot">=</span><span class="fl">0.05</span></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a>  fc<span class="ot">=</span><span class="fl">1.2</span></span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a>  mks <span class="ot">=</span> mks <span class="sc">%&gt;%</span> </span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">DE=</span><span class="fu">ifelse</span>(avg_log2FC <span class="sc">&gt;=</span> <span class="fu">log2</span>(fc) <span class="sc">&amp;</span> p_val_adj <span class="sc">&lt;</span> pval, <span class="st">&#39;UP&#39;</span>,</span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a>                                 <span class="fu">ifelse</span>(avg_log2FC <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fu">log2</span>(fc) <span class="sc">&amp;</span> p_val_adj <span class="sc">&lt;</span> pval, <span class="st">&#39;DN&#39;</span>,</span>
+<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a>                                        <span class="st">&#39;no_sig&#39;</span>)))</span>
+<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a>  mks<span class="sc">$</span>DE <span class="ot">=</span> <span class="fu">factor</span>(mks<span class="sc">$</span>DE, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;UP&#39;</span>,<span class="st">&#39;DN&#39;</span>,<span class="st">&#39;no_sig&#39;</span>))</span>
+<span id="cb25-21"><a href="#cb25-21" tabindex="-1"></a>  </span>
+<span id="cb25-22"><a href="#cb25-22" tabindex="-1"></a>  mks<span class="sc">$</span>gene <span class="ot">=</span> <span class="fu">rownames</span>(mks)</span>
+<span id="cb25-23"><a href="#cb25-23" tabindex="-1"></a>  mks <span class="ot">=</span>mks <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">labels=</span> <span class="fu">ifelse</span>(DE <span class="sc">==</span> <span class="st">&#39;UP&#39;</span>, gene, <span class="fu">ifelse</span>(DE<span class="sc">==</span><span class="st">&#39;DN&#39;</span>,gene,<span class="st">&#39;&#39;</span>)))</span>
+<span id="cb25-24"><a href="#cb25-24" tabindex="-1"></a>  mks <span class="ot">=</span>mks <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(avg_log2FC))</span>
+<span id="cb25-25"><a href="#cb25-25" tabindex="-1"></a>  <span class="fu">return</span>(mks)</span>
+<span id="cb25-26"><a href="#cb25-26" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># Application  </span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>deg.cluster0 <span class="ot">=</span> <span class="fu">DEG.two_groups</span>(<span class="at">obj.srt =</span> obj.srt, <span class="at">cluster =</span> <span class="dv">0</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>deg.cluster1 <span class="ot">=</span> <span class="fu">DEG.two_groups</span>(<span class="at">obj.srt =</span> obj.srt, <span class="at">cluster =</span> <span class="dv">1</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>deg.cluster2 <span class="ot">=</span> <span class="fu">DEG.two_groups</span>(<span class="at">obj.srt =</span> obj.srt, <span class="at">cluster =</span> <span class="dv">2</span>)</span></code></pre></div>
 </div>
 <div id="visualize-the-deg-output" class="section level2">
 <h2>Visualize the DEG output</h2>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Volcano plot   </span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>input.data <span class="ot">=</span> deg.cluster0</span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co"># Draw plot </span></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>input.data <span class="sc">%&gt;%</span> </span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(avg_log2FC, <span class="sc">-</span><span class="fu">log10</span>(p_val_adj), <span class="at">color=</span>DE)) <span class="sc">+</span> </span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">1</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&#39;red&#39;</span>,<span class="st">&#39;blue&#39;</span>,<span class="st">&#39;grey&#39;</span>)) <span class="sc">+</span></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fu">log2</span>(fc),<span class="fu">log2</span>(fc)), <span class="at">color=</span><span class="st">&#39;grey&#39;</span>) <span class="sc">+</span></span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>),<span class="at">color=</span><span class="st">&#39;grey&#39;</span>) <span class="sc">+</span></span>
-<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">5</span>))) <span class="sc">+</span></span>
-<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">&quot;Plot Title here&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> labels), <span class="at">size =</span> <span class="fl">2.5</span>, </span>
-<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>            <span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">nudge_x =</span> <span class="fl">0.01</span>) <span class="sc">+</span></span>
-<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a>  ggeasy<span class="sc">::</span><span class="fu">easy_center_title</span>() </span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># Volcano plot   </span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>input.data <span class="ot">=</span> deg.cluster0</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a><span class="co"># Draw plot </span></span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>input.data <span class="sc">%&gt;%</span> </span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(avg_log2FC, <span class="sc">-</span><span class="fu">log10</span>(p_val_adj), <span class="at">color=</span>DE)) <span class="sc">+</span> </span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">1</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&#39;red&#39;</span>,<span class="st">&#39;blue&#39;</span>,<span class="st">&#39;grey&#39;</span>)) <span class="sc">+</span></span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fu">log2</span>(fc),<span class="fu">log2</span>(fc)), <span class="at">color=</span><span class="st">&#39;grey&#39;</span>) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>),<span class="at">color=</span><span class="st">&#39;grey&#39;</span>) <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">5</span>))) <span class="sc">+</span></span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">&quot;Plot Title here&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> labels), <span class="at">size =</span> <span class="fl">2.5</span>, </span>
+<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a>            <span class="at">show.legend =</span> <span class="cn">FALSE</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">nudge_x =</span> <span class="fl">0.01</span>) <span class="sc">+</span></span>
+<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a>  ggeasy<span class="sc">::</span><span class="fu">easy_center_title</span>() </span></code></pre></div>
 </div>
 </div>
 <div id="gene-set-enrichment-analysis-of-degs" class="section level1">
 <h1>Gene set enrichment analysis of DEGs</h1>
 <p>This analysis uses hallmark pathways for the analaysis.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">library</span>(clusterProfiler)</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>hallmark <span class="ot">&lt;-</span> msigdbr<span class="sc">::</span><span class="fu">msigdbr</span>(<span class="at">species =</span> <span class="st">&quot;Mus musculus&quot;</span>, <span class="at">category =</span> <span class="st">&quot;H&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gs_name, gene_symbol)</span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>perform_GSEA <span class="ot">&lt;-</span> <span class="cf">function</span>(res, ref, <span class="at">pvalueCutoff =</span> <span class="dv">1</span>) {</span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  ranking <span class="ot">&lt;-</span> <span class="cf">function</span>(res) {</span>
-<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>    df <span class="ot">&lt;-</span> res<span class="sc">$</span>avg_log2FC</span>
-<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>    <span class="fu">names</span>(df) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)</span>
-<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">sort</span>(df, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>    <span class="fu">return</span>(df)</span>
-<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a>  }</span>
-<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>  </span>
-<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a>  ranked.res <span class="ot">&lt;-</span> <span class="fu">ranking</span>(res)</span>
-<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a>  </span>
-<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a>  x <span class="ot">&lt;-</span> clusterProfiler<span class="sc">::</span><span class="fu">GSEA</span>(<span class="at">geneList =</span> ranked.res,</span>
-<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a>                             <span class="at">TERM2GENE =</span> ref,</span>
-<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a>                             <span class="at">pvalueCutoff =</span> pvalueCutoff,</span>
-<span id="cb19-18"><a href="#cb19-18" tabindex="-1"></a>                             <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
-<span id="cb19-19"><a href="#cb19-19" tabindex="-1"></a>                             <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb19-20"><a href="#cb19-20" tabindex="-1"></a>                             <span class="at">seed =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-21"><a href="#cb19-21" tabindex="-1"></a>  </span>
-<span id="cb19-22"><a href="#cb19-22" tabindex="-1"></a>  result <span class="ot">&lt;-</span> x<span class="sc">@</span>result <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(NES))</span>
-<span id="cb19-23"><a href="#cb19-23" tabindex="-1"></a>  result <span class="ot">&lt;-</span> result[, <span class="fu">c</span>(<span class="st">&#39;NES&#39;</span>, <span class="st">&#39;pvalue&#39;</span>, <span class="st">&#39;p.adjust&#39;</span>, <span class="st">&#39;core_enrichment&#39;</span>, <span class="st">&#39;ID&#39;</span>)]</span>
-<span id="cb19-24"><a href="#cb19-24" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
-<span id="cb19-25"><a href="#cb19-25" tabindex="-1"></a>}</span>
-<span id="cb19-26"><a href="#cb19-26" tabindex="-1"></a></span>
-<span id="cb19-27"><a href="#cb19-27" tabindex="-1"></a><span class="co"># Application </span></span>
-<span id="cb19-28"><a href="#cb19-28" tabindex="-1"></a>gsea.res <span class="ot">=</span> <span class="fu">perform_GSEA</span>(<span class="at">res =</span> deg.cluster3, <span class="at">ref =</span> hallmark)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">library</span>(clusterProfiler)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>hallmark <span class="ot">&lt;-</span> msigdbr<span class="sc">::</span><span class="fu">msigdbr</span>(<span class="at">species =</span> <span class="st">&quot;Mus musculus&quot;</span>, <span class="at">category =</span> <span class="st">&quot;H&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(gs_name, gene_symbol)</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>perform_GSEA <span class="ot">&lt;-</span> <span class="cf">function</span>(res, ref, <span class="at">pvalueCutoff =</span> <span class="dv">1</span>) {</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>  ranking <span class="ot">&lt;-</span> <span class="cf">function</span>(res) {</span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>    df <span class="ot">&lt;-</span> res<span class="sc">$</span>avg_log2FC</span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>    <span class="fu">names</span>(df) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res)</span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">sort</span>(df, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>    <span class="fu">return</span>(df)</span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a>  }</span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>  </span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a>  ranked.res <span class="ot">&lt;-</span> <span class="fu">ranking</span>(res)</span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a>  </span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a>  x <span class="ot">&lt;-</span> clusterProfiler<span class="sc">::</span><span class="fu">GSEA</span>(<span class="at">geneList =</span> ranked.res,</span>
+<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a>                             <span class="at">TERM2GENE =</span> ref,</span>
+<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a>                             <span class="at">pvalueCutoff =</span> pvalueCutoff,</span>
+<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a>                             <span class="at">pAdjustMethod =</span> <span class="st">&quot;BH&quot;</span>,</span>
+<span id="cb28-19"><a href="#cb28-19" tabindex="-1"></a>                             <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb28-20"><a href="#cb28-20" tabindex="-1"></a>                             <span class="at">seed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-21"><a href="#cb28-21" tabindex="-1"></a>  </span>
+<span id="cb28-22"><a href="#cb28-22" tabindex="-1"></a>  result <span class="ot">&lt;-</span> x<span class="sc">@</span>result <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(NES))</span>
+<span id="cb28-23"><a href="#cb28-23" tabindex="-1"></a>  result <span class="ot">&lt;-</span> result[, <span class="fu">c</span>(<span class="st">&#39;NES&#39;</span>, <span class="st">&#39;pvalue&#39;</span>, <span class="st">&#39;p.adjust&#39;</span>, <span class="st">&#39;core_enrichment&#39;</span>, <span class="st">&#39;ID&#39;</span>)]</span>
+<span id="cb28-24"><a href="#cb28-24" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb28-25"><a href="#cb28-25" tabindex="-1"></a>}</span>
+<span id="cb28-26"><a href="#cb28-26" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" tabindex="-1"></a><span class="co"># Application </span></span>
+<span id="cb28-28"><a href="#cb28-28" tabindex="-1"></a>gsea.res <span class="ot">=</span> <span class="fu">perform_GSEA</span>(<span class="at">res =</span> deg.cluster3, <span class="at">ref =</span> hallmark)</span></code></pre></div>
 <div id="gsea-output-visualization" class="section level2 tabset">
 <h2 class="tabset">GSEA output visualization</h2>
 <div id="nes-plot" class="section level3">
 <h3>NES plot</h3>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># GESA Plot </span></span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>gsea_nes_plot <span class="ot">=</span><span class="cf">function</span>(gsea.res, title){</span>
-<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  gsea.res <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(ID, NES), NES)) <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill=</span>p.adjust)) <span class="sc">+</span></span>
-<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Pathway&quot;</span>, <span class="at">y=</span><span class="st">&quot;Normalized Enrichment Score&quot;</span>,</span>
-<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a>         <span class="at">title=</span> <span class="st">&quot;GSEA&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a>    <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">&#39;red&#39;</span>, <span class="at">high =</span> <span class="st">&#39;#E5E7E9&#39;</span>) <span class="sc">+</span></span>
-<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x=</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">5</span>, <span class="at">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
-<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a>          <span class="at">axis.text.y=</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">6</span>, <span class="at">face =</span> <span class="st">&#39;bold&#39;</span>), </span>
-<span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a>          <span class="at">axis.title =</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>)) <span class="sc">+</span><span class="fu">ggtitle</span>(title)</span>
-<span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a>}</span>
-<span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a></span>
-<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a><span class="co"># Application </span></span>
-<span id="cb20-16"><a href="#cb20-16" tabindex="-1"></a><span class="fu">gsea_nes_plot</span>(gsea.res[gsea.res<span class="sc">$</span>p.adjust <span class="sc">&lt;=</span> <span class="fl">0.05</span>,], <span class="at">title =</span> <span class="st">&quot;Cluster3&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="co"># GESA Plot </span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>gsea_nes_plot <span class="ot">=</span><span class="cf">function</span>(gsea.res, title){</span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>  gsea.res <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(ID, NES), NES)) <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill=</span>p.adjust)) <span class="sc">+</span></span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Pathway&quot;</span>, <span class="at">y=</span><span class="st">&quot;Normalized Enrichment Score&quot;</span>,</span>
+<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a>         <span class="at">title=</span> <span class="st">&quot;GSEA&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb29-8"><a href="#cb29-8" tabindex="-1"></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb29-9"><a href="#cb29-9" tabindex="-1"></a>    <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">&#39;red&#39;</span>, <span class="at">high =</span> <span class="st">&#39;#E5E7E9&#39;</span>) <span class="sc">+</span></span>
+<span id="cb29-10"><a href="#cb29-10" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x=</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">5</span>, <span class="at">face =</span> <span class="st">&#39;bold&#39;</span>),</span>
+<span id="cb29-11"><a href="#cb29-11" tabindex="-1"></a>          <span class="at">axis.text.y=</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">6</span>, <span class="at">face =</span> <span class="st">&#39;bold&#39;</span>), </span>
+<span id="cb29-12"><a href="#cb29-12" tabindex="-1"></a>          <span class="at">axis.title =</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">10</span>)) <span class="sc">+</span><span class="fu">ggtitle</span>(title)</span>
+<span id="cb29-13"><a href="#cb29-13" tabindex="-1"></a>}</span>
+<span id="cb29-14"><a href="#cb29-14" tabindex="-1"></a></span>
+<span id="cb29-15"><a href="#cb29-15" tabindex="-1"></a><span class="co"># Application </span></span>
+<span id="cb29-16"><a href="#cb29-16" tabindex="-1"></a><span class="fu">gsea_nes_plot</span>(gsea.res[gsea.res<span class="sc">$</span>p.adjust <span class="sc">&lt;=</span> <span class="fl">0.05</span>,], <span class="at">title =</span> <span class="st">&quot;Cluster3&quot;</span>)</span></code></pre></div>
 </div>
 <div id="enrichment-plot-for-the-individual-pathway" class="section level3">
 <h3>Enrichment plot for the individual pathway</h3>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>id1 <span class="ot">=</span> <span class="st">&quot;GOBP_T_CELL_ACTIVATION&quot;</span> <span class="co"># Selected pathway&quot; </span></span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>enrichplot<span class="sc">::</span><span class="fu">gseaplot2</span>(gsea.res, <span class="at">geneSetID =</span> id1, <span class="at">title =</span> id1)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>id1 <span class="ot">=</span> <span class="st">&quot;GOBP_T_CELL_ACTIVATION&quot;</span> <span class="co"># Selected pathway&quot; </span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>enrichplot<span class="sc">::</span><span class="fu">gseaplot2</span>(gsea.res, <span class="at">geneSetID =</span> id1, <span class="at">title =</span> id1)</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -2120,27 +2207,27 @@ RNA sequencing data. MAGIC learns the manifold data, using the resultant
 graph to smooth the features and restore the structure of the
 data.<br />
 <br></p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Import the necessary libraries.</span></span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="im">import</span> magic</span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="im">import</span> csv</span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a><span class="co"># Load the CSV file into a DataFrame.</span></span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>data_path <span class="op">=</span> <span class="st">&#39;~/path/data.csv&#39;</span></span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>x <span class="op">=</span> pd.read_csv(data_path)</span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a></span>
-<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a><span class="co"># Remove the &#39;Unnamed: 0&#39;</span></span>
-<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="kw">del</span> x[<span class="st">&#39;Unnamed: 0&#39;</span>]</span>
-<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a><span class="co"># Initialize the MAGIC algorithm. the number of nearest neighbors (knn) is set to 5, and the diffusion time (t) is set to 3.</span></span>
-<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a>magic_operator <span class="op">=</span> magic.MAGIC(knn<span class="op">=</span><span class="dv">5</span>, t<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a></span>
-<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a><span class="co"># Apply the MAGIC algorithm to the data.</span></span>
-<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a>x_magic <span class="op">=</span> magic_operator.fit_transform(x)</span>
-<span id="cb22-18"><a href="#cb22-18" tabindex="-1"></a></span>
-<span id="cb22-19"><a href="#cb22-19" tabindex="-1"></a><span class="co"># Save the data to a CSV file.</span></span>
-<span id="cb22-20"><a href="#cb22-20" tabindex="-1"></a>output_path <span class="op">=</span> <span class="st">&#39;~/path/data.magic.csv&#39;</span></span>
-<span id="cb22-21"><a href="#cb22-21" tabindex="-1"></a>x_magic.to_csv(output_path)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="co"># Import the necessary libraries.</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a><span class="im">import</span> magic</span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a><span class="im">import</span> csv</span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a><span class="co"># Load the CSV file into a DataFrame.</span></span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a>data_path <span class="op">=</span> <span class="st">&#39;~/path/data.csv&#39;</span></span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>x <span class="op">=</span> pd.read_csv(data_path)</span>
+<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a><span class="co"># Remove the &#39;Unnamed: 0&#39;</span></span>
+<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a><span class="kw">del</span> x[<span class="st">&#39;Unnamed: 0&#39;</span>]</span>
+<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a><span class="co"># Initialize the MAGIC algorithm. the number of nearest neighbors (knn) is set to 5, and the diffusion time (t) is set to 3.</span></span>
+<span id="cb31-14"><a href="#cb31-14" tabindex="-1"></a>magic_operator <span class="op">=</span> magic.MAGIC(knn<span class="op">=</span><span class="dv">5</span>, t<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb31-15"><a href="#cb31-15" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" tabindex="-1"></a><span class="co"># Apply the MAGIC algorithm to the data.</span></span>
+<span id="cb31-17"><a href="#cb31-17" tabindex="-1"></a>x_magic <span class="op">=</span> magic_operator.fit_transform(x)</span>
+<span id="cb31-18"><a href="#cb31-18" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" tabindex="-1"></a><span class="co"># Save the data to a CSV file.</span></span>
+<span id="cb31-20"><a href="#cb31-20" tabindex="-1"></a>output_path <span class="op">=</span> <span class="st">&#39;~/path/data.magic.csv&#39;</span></span>
+<span id="cb31-21"><a href="#cb31-21" tabindex="-1"></a>x_magic.to_csv(output_path)</span></code></pre></div>
 </div>
 <div id="further-analysis" class="section level1">
 <h1>Further analysis</h1>
