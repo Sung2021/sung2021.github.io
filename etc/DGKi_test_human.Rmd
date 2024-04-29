@@ -184,12 +184,12 @@ df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", fontsize_
 
 
 
-## Distribution of cells by cluster and condition (res 0.5)   
+## cluster and condition (res 0.5)   
 ```{r, fig.width=7, fig.height=4}
 obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.5, fill=condition)) + geom_bar(position = "fill", color="grey33") + scale_fill_manual(values = wes) + theme_bw()
 ```
 
-## TABLE2 : Distribution of cells by cluster and condition (res 0.5)    
+## TABLE2 : Number of cells (res 0.5)    
 ```{r}
 obj.srt@meta.data %>% select(RNA_snn_res.0.5, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% DT::datatable(rownames = F)
 ```
