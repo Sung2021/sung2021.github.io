@@ -9,10 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content />
 
+<meta name="date" content="2024-04-28" />
 
-<title>Sung Rye Park</title>
+<title>CellRanger Docker</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -208,6 +208,83 @@ window.buildTabsets = function(tocID) {
 };
 
 </script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
+  rCodeBlocks.each(function() {
+    // skip if the block has fold-none class
+    if ($(this).hasClass('fold-none')) return;
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Show') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm code-folding-btn pull-right float-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-bs-toggle', 'collapse') // BS5
+        .attr('data-target', '#' + id)
+        .attr('data-bs-target', '#' + id)   // BS5
+        .attr('aria-expanded', showThis)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
+    // update state of button on show/hide
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
+      showCodeText.text('Show');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
+    });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
+  });
+
+}
+</script>
 <style type="text/css">.hljs-literal {
 color: #990073;
 }
@@ -331,6 +408,9 @@ display: none;
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -347,209 +427,87 @@ display: none;
 
 <div id="header">
 
-
-
-<h1 class="title toc-ignore">Sung Rye Park</h1>
-<h3 class="subtitle">Bioinformatics Scientist</h3>
-<h4 class="author"></h4>
-
-</div>
-
-
-<p><br></p>
-<div id="professional-summary" class="section level2">
-<h2>Professional summary</h2>
-<p>Current position at <strong>Dana Farber Cancer
-Institute</strong><br />
-<br> Senior Bioinformatics Scientist with over 6 years of hands-on
-experience in various NGS data analysis and a strong publication record,
-including a co-first authorship in Nature Immunology (2024) for CD8+
-Memory T cell fate. Proficient in the integration of comprehensive
-multi-omic datasets, encompassing transcriptomic, genomic, epigenomic,
-and clinical data, to drive research and development in immuno-oncology.
-At Dana Farber Cancer Institute, played a pivotal role in analyzing
-complex drug combination testing datasets and provided critical
-bioinformatics consultation. Passionate about applying a blend of
-technical proficiency and biological insights to enhance team success,
-particularly within innovative personalized cancer therapy programs.</p>
-<p><br></p>
-</div>
-<div id="resume-pdf" class="section level2">
-<h2>Resume (pdf) <a id="resume-pdf"></a></h2>
-<p><a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 20px;">Sung
-Rye Park’s resume</a><br></p>
-</div>
-<div id="work-sample-pages" class="section level2">
-<h2>Work Sample pages<a id="samples"></a></h2>
-<p><a href="samplePages/NI.html" style="font-size: 24px;">Tle3 as a
-co-activator (Nature Immunology work)</a><br>
-<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell
-RNA-seq</a><br><br />
-<a href="samplePages/RNAseq.html" style="font-size: 24px;">bulk
-RNA-seq</a><br>
-<a href="samplePages/ChIP_seq.html" style="font-size: 24px;">ChIP-seq
-(applicable to ATAC-seq, Cut&amp;Run)</a><br>
-<a href="samplePages/TCR_seq.html" style="font-size: 24px;">TCR-seq</a><br></p>
-<p><br></p>
-<p><br> <a href="etc/Data_Processing.html">Data_Processing in Linux
-env</a><br />
-<a href="samplePages/Simple_RShiny_app_gene_gene_scatterplot.html">Simple
-shiny app</a><br />
-<a href="etc/Basic_github.html">Basic Github usage</a><br />
-<a href="etc/cellranger_docker.html">cellranger docker setup</a><br />
-<br></p>
-<p><span style="font-size: 20px;">Cell type annotation database
-processing(will be updated)</span><br> <span style="font-size: 20px;">Plot gallery (will be updated)
-</span><br><br />
-<span style="font-size: 20px;">WES (will be updated)</span><br> <br>
-<br><br></p>
-<div id="github" class="section level3">
-<h3>Github <a id="github"></a></h3>
-<p><a href="https://github.com/Sung2021" class="uri">https://github.com/Sung2021</a></p>
-</div>
-<div id="linkedin-profile" class="section level3">
-<h3>LinkedIn Profile <a id="linkedin"></a></h3>
-<p><a href="https://www.linkedin.com/in/sung-rye-park-8a130098/" style="font-size: 18px;">Work
-History in LinkedIn</a><br> <br><br></p>
-</div>
-</div>
-<div id="firstco-first-authorship-publications-pdf" class="section level2">
-<h2>First/co-first authorship publications (pdf)
-<a id="first_author"></a></h2>
-<p><a href="info/papers/NI_Sung_s41590-023-01720-w_reduced_size2.pdf" style="font-size: 14px;">The
-transcriptional cofactor Tle3 reciprocally controls effector and central
-memory CD8+ T cell fates. (Nature Immunology, 2024)</a><br></p>
-<p><a href="info/papers/CellReports.2020.Sung_reduced_size2.pdf" style="font-size: 14px;">Single
-cell transcriptome analysis of colon cancer cell response to
-5-fluorouracil-induced DNA damage (Cell Reports, 2020)</a><br></p>
-<p><a href="info/papers/American_Journal_of_Physiology.2020.Sung_reduced_size.pdf" style="font-size: 14px;">Holistic
-Characterization of Single Hepatocyte Transcriptome Responses to High
-Fat Diet (American Journal of Physiology-Endocrionlogy and Metabolism,
-2020)</a><br></p>
-<p><br></p>
-</div>
-<div id="skills" class="section level2">
-<h2>Skills <a id="skills"></a></h2>
-<ul>
-<li>Proficient in a wide array of NGS data pipelines and bioinformatics
-analyses including scRNA-seq, TCR-seq, CITE-Seq, ATAC-seq, bulk RNA-seq,
-as well as integrative approaches with TCGA and CCLE for genomic and
-epigenomic studies</li>
-<li>Proficient in Linux, with programming skills in Python and R, and
-skilled use of bioinformatics tools including Cellranger, Salmon, and a
-suite of sequence alignment and analysis utilities</li>
-<li>Well-versed in peak calling, genomic visualization, and analysis
-using open- source platforms such as Seurat, scanpy, and the USCC Genome
-Browser</li>
-<li>Expertise in pathway and network analysis to elucidate complex
-biological pathways, and statistical analysis for robust genomic data
-interpretation</li>
-<li>Familiarity with high-performance computing environments and adept
-at managing in-lab NGS pipelines, ensuring quality and
-reproducibility</li>
-<li>Skilled in data visualization and presentation, utilizing tools like
-ggplot2, Shiny, and Rmarkdown, to effectively communicate complex data
-to diverse audiences</li>
-<li>Expertise in immunology, oncology, and molecular biology with
-practical experience in public dataset analysis</li>
-<li>Developed and maintained specialized assay platforms including
-Drop-seq, Seq-well, and Seq-scope</li>
-<li>Proficient in NGS library generation, particularly with single cell
-10X genomics and RNA-seq</li>
-<li>Autonomous work style, efficiently conducting research with minimal
-oversight Guiding and mentoring interns in bioinformatics practices and
-project work</li>
-<li>Consulting with collaborators to identify and apply novel
-bioinformatics analysis methods</li>
-<li>Managing documentation and workflow sharing across collaborative
-platforms</li>
-<li>Keeping meticulous records of both raw and processed data
-storage</li>
-</ul>
-<p><br></p>
-</div>
-<div id="experience" class="section level2">
-<h2>Experience <a id="experience"></a></h2>
-<ul>
-<li><p>Senior Bioinformatics scientist at Dana Farber Cancer Institute
-2022-</p>
-<ul>
-<li>DGK inhibitor efficacy testing in combination with Nivolumab for
-SCLC<br />
-</li>
-<li>DS-1062 and Pembrolizumab testing for SCLC<br />
-</li>
-<li>EZH2 inhibitor candidates searching using ChIP-seq<br />
-</li>
-<li>Evaluation of STING agonist (ADU-100) effects in mouse PBMCs and the
-tumor immune environment<br />
-</li>
-<li>TAK-676 and PD-1 blockade in SCLC<br />
-</li>
-<li>Immune cell trafficking within in-house device culture<br />
-</li>
-<li>Integrative analysis ofanti-CD47 therapy efficacy in PTCL-resistant
-mouse models<br />
-</li>
-<li>Supporting manuscript writings.<br />
-</li>
-<li>(more) <br><br></li>
-</ul></li>
-<li><p>Postdoctoral Fellow at Hackensack Meridian Health</p></li>
-<li><p>Postdoctoral Fellow at University of Michigan</p></li>
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
 </ul>
 </div>
-<div id="publications" class="section level2">
-<h2>Publications <a id="publications"></a></h2>
-<ul>
-<li>The transcriptional cofactor Tle3 reciprocally controls effector and
-central memory CD8+ T cell fates. (Nature Immunology, 2024. X.Zhao,
-W.Hu, S.R.Park, S.Zhu, S.S.Hu, C.Zang, W.Peng, Q.Shan ,H.H. Xue.
-<strong>co-first</strong> (Zhao, W.Hu, Park and Zhu as co-first authors
-with equal contribution) (<a href="https://doi.org/10.1038/s41590-023-01720-w" class="uri">https://doi.org/10.1038/s41590-023-01720-w</a>)</li>
-<li>SiftCell: A robust framework to detect and isolate cell-containing
-droplets from single-cell RNA sequence reads. (Cell Systems, 2023)
-Jingyue Xi, Sung Rye Park, Jun Hee Lee and Hyun Min Kang. (<a href="https://doi.org/10.1016/j.cels.2023.06.002" class="uri">https://doi.org/10.1016/j.cels.2023.06.002</a>)</li>
-<li>Sublethal whole-body irradiation induces permanent loss and
-dysfunction in pathgen-specific circulating memory CD8T cell
-populations. (PNAS, July 2023) Mohammad Heidarian, Iassac J Jensen,
-Shravan Kumar Kannan, Lecia L Pewe, Mariah Hassert, Sung Rye Park,
-Hai-Hui Xue, John Harty, Vladimir Badovinac. (<a href="https://doi.org/10.1073/pnas.2302785120" class="uri">https://doi.org/10.1073/pnas.2302785120</a>.)</li>
-<li>Simultaneous loss of TSC1 and DEPDC5 in skeletal and cardiac muscles
-produces early-onset myopathy and cardiac dysfunction associated with
-oxidative damage and SQSTM1/p62 accumulation. (Autophagy, 2021)
-Chun-Seok Cho, Yongsung Kim, Sung-Rye Park, Boyoung Kim, Carol Davis,
-Irene Hwang, Susan V Brooks, Jun Hee Lee, Myungjin Kim. (<a href="https://doi.org/10.1080/15548627.2021.2016255" class="uri">https://doi.org/10.1080/15548627.2021.2016255</a>)</li>
-<li>Seq-Scope: Microscopic examination of spatial transcriptome using
-Seq-Scope. (Cell, 2021) Chun-Seok Cho, Jingyue Xi, Yichen Si, Sung-Rye
-Park, Jer-En Hsu, Myungjin Kim, Goo Jun, Hyun-Min Kang, Jun Hee Lee. (<a href="https://doi.org/10.1016/j.cell.2021.05.010" class="uri">https://doi.org/10.1016/j.cell.2021.05.010</a>)</li>
-<li>Single cell transcriptome analysis of colon cancer cell response to
-5-fluorouracil-induced DNA damage (Cell Reports, 2020) Sung Rye Park,
-Sim Namkoong, Zac Zezhi Zhang, Leon Friesen, Euisik Yoon, Chang H. Kim,
-Hojoong Kwak, Hyun Min Kang and Jun Hee Lee. (<a href="https://doi.org/10.1016/j.celrep.2020.108077" class="uri">https://doi.org/10.1016/j.celrep.2020.108077</a>)
-<strong>first</strong></li>
-<li>Holistic Characterization of Single Hepatocyte Transcriptome
-Responses to High Fat Diet (American Journal of Physiology-Endocrionlogy
-and Metabolism, 2020) Sung Rye Park, Chun-Seok Cho, Hyun Min Kang and
-Jun Hee Lee. (<a href="https://doi.org/10.1152/ajpendo.00391.2020" class="uri">https://doi.org/10.1152/ajpendo.00391.2020</a>)
-<strong>first</strong></li>
-<li>Concurrent activation of growth factor and nutrient arms of mTORC1
-induces oxidative liver injury. Cell Discovery volume 5, Article number:
-60 (2019) Chun-Seok Cho, Allison Ho, Sim Namkoong, Sung-Rye Park,
-Shuangcheng Wu, Boyoung Kim, Amanda James, Bondong Gu, Ian A. Semple,
-Mohamed A. Tohamy, Sumeet Solanki, Uhn-Soo Cho, Joel K. Greenson, Yatrik
-Shah, Myungjin Kim, Jun Hee Lee. (<a href="https://doi.org/10.1152/ajpendo.00391.2020" class="uri">https://doi.org/10.1152/ajpendo.00391.2020</a>)</li>
-</ul>
+
+
+
+<h1 class="title toc-ignore">CellRanger Docker</h1>
+<h4 class="date">2024-04-28</h4>
+
 </div>
-<div id="education" class="section level2">
-<h2>Education <a id="education"></a></h2>
-<ul>
-<li>Ph.D. Plant Biology, University of Texas at Austin 2017</li>
-<li>MA. Biology Seoul National University 2010</li>
-</ul>
+
+
+<div id="hardware-requirements" class="section level1">
+<h1>Hardware Requirements</h1>
+<p>CPU:Minimum: 8 cores, 16 or more cores recommended.<br />
+RAM: Minimum: 16 GB, Recommended: 64 GB or more.<br />
+Disk Space: Minimum: 500 GB of available space. Recommended: 1 TB or
+more.<br />
+Operating System: Linux (Ubuntu 16.04 or later, CentOS 6 or later)
+Dependencies:GCC 6.1 or higher. Python 3.6 or later</p>
+<p><strong>Example of Recommended System Configuration</strong><br />
+CPU: 32-core<br />
+Memory: 128 GB RAM.<br />
+Storage: 2 TB SSD<br />
+OS: CentOS 7. Python Version: Python 3.7.</p>
+</div>
+<div id="docker-file" class="section level1">
+<h1>Docker file</h1>
+<pre class="bash"><code># Use Ubuntu as the base image
+FROM ubuntu:20.04
+
+# Install necessary packages
+RUN apt-get update &amp;&amp; apt-get install -y wget bzip2
+
+# Download and install CellRanger
+RUN wget -qO- https://cf.10xgenomics.com/releases/cell-exp/cellranger-7.0.0.tar.gz | tar xz
+
+# Set the environment variable to include CellRanger in the PATH
+ENV PATH=&quot;/cellranger-7.0.0:$PATH&quot;
+
+# Set the working directory
+WORKDIR /data
+
+# Default command
+CMD [&quot;cellranger&quot;]</code></pre>
+<pre class="bash"><code>docker build -t cellranger-docker .</code></pre>
 <p><br><br></p>
-<p>Last update: 2024-04-28</p>
+<p>Sample run</p>
+<pre class="bash"><code>docker run -v /path/to/your/data:/data cellranger-docker count --id=SampleA_GEX \
+--transcriptome=/data/reference/transcriptomes/Mouse_GEX_2020/refdata-gex-mm10-2020-A \
+--fastqs=/data/raw_data/SampleA \
+--sample=SampleA \
+--expect-cells=10000</code></pre>
 <p><br><br></p>
+<div id="cellranger-reference" class="section level2">
+<h2>Cellranger Reference</h2>
+<p>Human : refdata-gex-GRCh38-2020-A<br />
+Mouse : refdata-gex-mm10-2020-A<br />
+Human+Mouse : refdata-gex-mm10-GRCh38-2020-A<br />
+(I will update cellranger reference location in rcapps5 later.I have
+them in the server.)</p>
+<p><br><br></p>
+</div>
+<div id="for-cellranger-aggr" class="section level2">
+<h2>For cellranger aggr</h2>
+<p>To combine data from multiple samples processed by the cellranger
+count command.</p>
+<p>csv file: required</p>
+<pre class="bash"><code>library_id,molecule_h5
+SampleA,/data/SampleA/outs/molecule_info.h5
+SampleB,/data/SampleB/outs/molecule_info.h5</code></pre>
+<p><br><br></p>
+<p>Sample run</p>
+<pre class="bash"><code>docker run -v /path/to/local_data:/data cellranger:7.0.0 aggr \
+--id=aggregated_output \
+--csv=/data/aggregation.csv </code></pre>
+</div>
 </div>
 
 
@@ -585,6 +543,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

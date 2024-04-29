@@ -32,12 +32,13 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 
 
 <br>
-<a href="etc/Data_Processing.html" style="font-size: 24px;">Data_Processing in Linux env</a><br>
-<a href="samplePages/Simple_RShiny_app_gene_gene_scatterplot.html" style="font-size: 24px;">Simple_shiny_app</a><br>
+
 
 <br>
-<a href="etc/Basic_github.html" style="font-size: 24px;">Basic Github usage</a><br>
-
+[Data_Processing in Linux env](etc/Data_Processing.html)  
+[Simple shiny app](samplePages/Simple_RShiny_app_gene_gene_scatterplot.html)  
+[Basic Github usage](etc/Basic_github.html)  
+[cellranger docker setup](etc/cellranger_docker.html)  
 <br>
 
 
