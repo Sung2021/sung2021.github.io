@@ -25,15 +25,10 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 ## Work Sample pages<a id="samples"></a>     
 
 <a href="samplePages/NI.html" style="font-size: 24px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
-<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq</a><br>      
+<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq</a><br>
 <a href="samplePages/RNAseq.html" style="font-size: 24px;">bulk RNA-seq</a><br>
 <a href="samplePages/ChIP_seq.html" style="font-size: 24px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
 <a href="samplePages/TCR_seq.html" style="font-size: 24px;">TCR-seq</a><br>
-
-
-<br>
-
-
 <br>
 [Data_Processing in Linux env](etc/Data_Processing.html)  
 [Simple shiny app](samplePages/Simple_RShiny_app_gene_gene_scatterplot.html)  
@@ -41,11 +36,9 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 [cellranger docker setup](etc/cellranger_docker.html)  
 <br>
 
-
-<span style="font-size: 20px;">Cell type annotation database processing(will be updated)</span><br> 
-<span style="font-size: 20px;">Plot gallery (will be updated) </span><br>  
+<span style="font-size: 20px;">Cell type annotation database processing(will be updated)</span><br>
+<span style="font-size: 20px;">Plot gallery (will be updated) </span><br>
 <span style="font-size: 20px;">WES (will be updated)</span><br>
-<br>
 <br><br>
 
 
