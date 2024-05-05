@@ -32,7 +32,7 @@ library(reshape)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=TRUE}
 # Read filtered count matrix 
 count.raw = read.csv(paste0(dir,"rds/ITK_SYK_raw.count.filtered.24.04.12.csv"), row.names = 1)
 count.raw = count.raw[,1:14]
@@ -117,6 +117,20 @@ ggplot(pcaData, aes(x = PC1, y = PC2, fill = cond)) +
   theme(legend.title = element_blank()) +
   facet_wrap(.~cond, ncol = 2)
 ```
+
+## PCA plot zoom in    
+```{r, fig.width=6.5, fig.height=5}
+# Create a PCA plot
+ggplot(pcaData, aes(x = PC1, y = PC2, fill = cond)) +
+  geom_point(size = 5, alpha = 0.6, shape = 21, color = "black", stroke = 0.5)  +
+  ggrepel::geom_text_repel(aes(label=sample), color="grey6", size=3, hjust= -0.3, vjust=-0.3) +
+  labs(x = paste("PC1: ", round(100 * PCA_var[1]), "% variance"),
+       y = paste("PC2: ", round(100 * PCA_var[2]), "% variance")) +
+  theme_bw() +
+  theme(legend.title = element_blank()) +
+  xlim(c(-15,-5)) + ylim(c(-2,2))
+```
+
 
 
 # DEG analysis {.tabset} 
@@ -213,8 +227,7 @@ DEG_table=function(res, pval=0.05, fc = 1.2){
 2. Volcanoplot  
 3. DEG output. 
 
-```{r}
-
+```{r, eval=TRUE}
 DEG1 = DEG_out(count.raw = count.mtx, 
                    condition1 = "CTRL", condition2 = "CND1")
 
@@ -306,7 +319,7 @@ significant_genes_all = union(set1,union(set2,set3))
 ```
 
 ```{r}
-significant_genes_all
+significant_genes_all[230:250]
 ```
 <br><br>
 
@@ -379,7 +392,11 @@ kmeans_heatmap = function(input.df, input.data){
 ```{r}
 kmeans_heatmap(input.df = df3, input.data = input.data)
 
-cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+rows = intersect(rownames(df3), rownames(tpm))
+
+cbind(df3[rows,],tpm[rows,]) %>% data.frame(check.names = F) %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value", 
+                colnames = c("cluster", colnames(tpm)))
 ```
 
 
@@ -388,7 +405,11 @@ cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(
 
 kmeans_heatmap(input.df = df4, input.data = input.data)
 
-cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+rows = intersect(rownames(df4), rownames(tpm))
+
+cbind(df4[rows,],tpm[rows,]) %>% data.frame(check.names = F) %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value", 
+                colnames = c("cluster", colnames(tpm)))
 ```
 
 ## K = 5 
@@ -396,7 +417,11 @@ cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(
 
 kmeans_heatmap(input.df = df5, input.data = input.data)
 
-cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+rows = intersect(rownames(df5), rownames(tpm))
+
+cbind(df5[rows,],tpm[rows,]) %>% data.frame(check.names = F) %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value", 
+                colnames = c("cluster", colnames(tpm)))
 ```
 
 ## K = 6 
@@ -404,13 +429,152 @@ cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(
 
 kmeans_heatmap(input.df = df6, input.data = input.data)
 
-cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+rows = intersect(rownames(df6), rownames(tpm))
+
+cbind(df6[rows,],tpm[rows,]) %>% data.frame(check.names = F) %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value", 
+                colnames = c("cluster", colnames(tpm)))
 ```
+
+
+# Selected pathway analysis  {.tabset} 
+
+
+```{r, fig.width=5, fig.height=5}
+# enrichplot::gseaplot2 function 
+perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
+  ranking <- function(res) {
+    # Check the name of log2fc related 
+    if ("avg_log2FC" %in% names(res)) {
+      df <- res$avg_log2FC
+    } else if ("log2FoldChange" %in% names(res)) {
+      df <- res$log2FoldChange
+    } else {
+      stop("Neither avg_log2FC nor log2FoldChange columns found in the data frame.")
+    }
+    names(df) <- rownames(res)
+    df <- sort(df, decreasing = TRUE)
+    return(df)
+  }
+  
+  ranked.res <- ranking(res)
+  
+  x <- clusterProfiler::GSEA(geneList = ranked.res,
+                             TERM2GENE = ref,
+                             pvalueCutoff = pvalueCutoff,
+                             pAdjustMethod = "BH",
+                             verbose = TRUE,
+                             seed = TRUE)
+  return(x)
+}
+
+enrichplot_leadingGenes_list = function(df, tpm){
+  # Filter the dataframe such that only rows where the gene column values are in the row names of tpm are retained
+  df = df[df$gene %in% rownames(tpm), ]
+  
+  genesUp = df %>% filter(position==1) %>% select(gene) %>% pull() %>% head(10)
+  genesDN = df %>% filter(position==1) %>% arrange(desc(x)) %>% select(gene) %>% pull() %>% head(10)
+  # Check the number of rows in the filtered data
+  n = nrow(df)
+  # Select the top 10 genes (use all data if there are less than 10 rows)
+  # Create a dataframe and set up the structure
+  df1 = data.frame(gene = c(genesUp, genesDN))
+  # Assign "UP" and "DOWN" labels to the leading genes
+  leading_at = c(rep("UP", length(genesUp)), rep("DOWN", length(genesDN)))
+  df1$leading_at = leading_at
+  # Return the dataframe
+  return(df1)
+}
+enrichplot_leadingGenes_heatmap = function(df,red=50, blue=20, id=id){
+  df = df[rownames(df)[df$gene %in% rownames(tpm)],]
+  genesUp = df %>% filter(position==1) %>% select(gene) %>% pull() %>% head(10)
+  genesDN = df %>% filter(position==1) %>% arrange(desc(x)) %>% select(gene) %>% pull() %>% head(10)
+  
+  zscore <- function(input.data = input.data){
+    input.data.rowsums <- rowSums(input.data)
+    input.data.mean <- rowMeans(input.data)
+    input.data.sd <- matrixStats::rowSds(as.matrix(input.data))
+    names(input.data.sd) <- rownames(input.data)
+    zscore <- (input.data-input.data.mean)/input.data.sd
+    return(zscore)
+  }
+  
+  my.colors <- c(colorRampPalette(colors = c("navy","white"))(blue), 
+                 colorRampPalette(colors = c("white","red"))(red))
+  p = zscore(tpm[c(genesUp,genesDN),]) %>% 
+    pheatmap::pheatmap(color = my.colors, cluster_cols = F, cluster_rows = F,
+                       border_color = "grey3", 
+                       main = id, fontsize_row = 8)
+  
+  print(p)
+}
+
+
+```
+
+
+## IL6_JAK_STAT3_SIGNALING    
+
+
+```{r}
+# Input data part
+id = "HALLMARK_IL6_JAK_STAT3_SIGNALING"
+res = DEG1
+```
+
+
+```{r, fig.width=5, fig.height=4}
+
+gsea.res = perform_GSEA(res = res, ref = hallmark, pvalueCutoff = 1)
+enrichplot::gseaplot2(gsea.res, geneSetID = id, title = id)
+
+# Getting leading gene information
+gsea.res2 = enrichplot::gseaplot2(gsea.res, geneSetID = id, title = id)
+
+# gsea.res2[[1]] # figure top
+# gsea.res2[[2]] # figure middle
+# gsea.res2[[2]] # figure bottom
+
+df = gsea.res2[[1]]$data
+
+enrichplot_leadingGenes_list(df=df, tpm=tpm) %>% DT::datatable()
+enrichplot_leadingGenes_heatmap(df=df, red=40, blue=30, id=id)
+
+```
+
+
+## INFLAMMATORY RESPONSE   
+
+```{r}
+# Input data part
+id = "HALLMARK_INFLAMMATORY_RESPONSE"
+res = DEG2
+```
+
+
+```{r, fig.width=5, fig.height=4}
+
+gsea.res = perform_GSEA(res = res, ref = hallmark, pvalueCutoff = 1)
+enrichplot::gseaplot2(gsea.res, geneSetID = id, title = id)
+
+# Getting leading gene information
+gsea.res2 = enrichplot::gseaplot2(gsea.res, geneSetID = id, title = id)
+
+# gsea.res2[[1]] # figure top
+# gsea.res2[[2]] # figure middle
+# gsea.res2[[2]] # figure bottom
+
+df = gsea.res2[[1]]$data
+
+enrichplot_leadingGenes_list(df=df, tpm=tpm) %>% DT::datatable()
+enrichplot_leadingGenes_heatmap(df=df, red=50, blue=35, id=id)
+
+```
+
 
 
 # Next work  
 
-Decide the number of clusters to go with.   
 
 Any application to reduce high variance across samples.  
 
