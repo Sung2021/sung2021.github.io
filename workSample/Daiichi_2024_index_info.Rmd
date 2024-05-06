@@ -1,0 +1,72 @@
+---
+title: "DS-1062a"
+subtitle: "2024 * * project"
+author: "Sung Rye Park"
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: hide 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, fig.align = "left", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(DT)
+```
+
+
+# Introduction    
+    
+**TROP2**
+
+* Trophoblast cell surface antigen 2 (TROP2), also known as tumor-associated calcium signal transducer 2 (TACSTD2), is a cell surface glycoprotein that acts as a transmembrane transducer of intracellular (IC) calcium signals.  
+* Trop2 has stem cell-like qualities and regulates cell growth, transformation, regeneration, and proliferation, which explains why its overexpression can lead to tumor progression. It is expressed on the surface of many stem/progenitor cells and has a role in maintaining tight junction integrity. 
+
+  [Paper: Precision Oncology; April 2024; A new TROP2-targeting antibody-drug conjugate shows potent antitumor efficacy in breast and lung cancers](https://www.nature.com/articles/s41698-024-00584-z)
+
+
+**Dxd**
+
+* Deruxtecan, topoisomerase inhibitor.
+* Cause DNA damage leading cells to apoptosis. 
+
+
+**DS-1062a**
+
+* datopotamab deruxtecan 
+* (TROP2)-targeting antibody drug conjugate with Dxd. 
+* NCI info : An antibody-drug conjugate (ADC) composed of a humanized monoclonal antibody against tumor-associated antigen (TAA) trophoblast cell surface protein 2 (calcium signal transducer 2; TROP2; TROP-2; TACSTD2) conjugated, via an enzymatically cleavable tetrapeptide-based linker, to the cytotoxic DNA topoisomerase I inhibitor and exatecan (DX-8951) derivative DXd (MAAA-1181a; MAAA-1181), with potential antineoplastic activity. Upon administration of the datopotamab deruxtecan, the anti-TROP2 antibody targets and binds to TROP2 expressed on tumor cells. Upon cellular uptake and lysosomal degradation of the linker, DXd targets and binds to DNA topoisomerase I, thereby stabilizing the cleavable complex between topoisomerase I and DNA, resulting in DNA breaks, inhibition of DNA replication and apoptosis. This inhibits tumor cell proliferation of TROP2-expressing tumor cells. TROP2 is a transmembrane protein overexpressed in various tumors while its expression is low and/or restricted in normal, healthy tissues. Its expression is associated with enhanced tumor aggressiveness, metastasis, drug resistance and increased tumor cell survival. The ADC allows for reduced systemic exposure and enhanced delivery of the cytotoxic agent DXd.
+
+  [NCI link](https://www.cancer.gov/publications/dictionaries/cancer-drug/def/datopotamab-deruxtecan) 
+
+  [Daiichi Sankyo Expands DS-1062 Study to Include Patients with Triple Negative Breast Cancer; July 02, 2020](https://www.daiichisankyo.com/media/press_release/detail/index_3131.html)
+
+
+<br>
+
+# Guidelines for the project  
+
+* Validation of sole Dxd effect in patient samples 
+* Validation of non-specific antibody conjugated Dxd effect in patient samples
+* Validation of DS-1062a effect in patient samples
+
+* Evaluation of three testing conditions comparing each other. 
+
+
+* Conclusion 
+
+
+<br><br>
