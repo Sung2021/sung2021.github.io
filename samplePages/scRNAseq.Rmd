@@ -75,6 +75,8 @@ library(dplyr)
 library(ggplot2)
 library(reshape)
 library(dplyr)
+library(paletteer)
+
 ```
 
 
@@ -93,6 +95,24 @@ obj.srt = CreateSeuratObject(counts = obj.raw, project = 'project_name')
 
 scrublet runs in python env.  
 Input file is the count matrix from seurat object.  
+
+
+```{bash}
+# If needed, install python pacakges first
+
+# Create and activate a new conda environment
+conda create -n bioinfo_env python=3.8 -y
+conda activate bioinfo_env
+
+# Install pip if not already installed
+conda install pip -y
+
+# Install necessary packages with pip
+pip install numpy pandas scanpy scrublet
+
+# run python
+python
+```
 
 
 ```{python}
@@ -140,6 +160,118 @@ obj.srt %>% saveRDS("path/saved.obj.rds")
 obj.srt@meta.data %>% select(predicted_doublet) %>% table()
 ```
 
+
+# Filtering by UMI & mitocondrial content ratio {.tabset} 
+
+
+## UMI distribution  
+
+(This code shows the UMI distribution by treatments)
+```{r}
+obj.srt@meta.data %>%
+  ggplot(aes(x = treatment, y = nCount_RNA)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, size = 0.2, alpha = 0.1) +
+  scale_y_log10()
+```
+
+
+##  Mitochondrial content  
+(This code shows the Mitochondrial content distribution by treatments)
+```{r}
+# Add mitochondrial content (human: "-MT")
+obj.srt[["percent.mt"]] <- PercentageFeatureSet(obj.srt, pattern = "^MT-")
+
+
+obj.srt@meta.data %>%
+  ggplot(aes(x = treatment, y = percent.mt)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, size = 0.2, alpha = 0.1) +
+  scale_y_sqrt()
+```
+
+
+## UMI vs mitochondrial contents    
+
+scatterplot  
+
+```{r}
+obj.srt@meta.data %>%
+  ggplot(aes(x = nCount_RNA, y = percent.mt)) +
+  geom_point(size = 0.3, alpha = 0.5, color = "grey55") +
+  stat_density_2d(aes(fill = ..level..), geom = "density_2d", color = "red", alpha=0.6) +
+  facet_wrap(. ~ treatment, ncol = 2) +
+  scale_fill_gradient(low = "grey", high = "red") +
+  scale_x_sqrt() +
+  geom_vline(xintercept = 100, color = "pink") +
+  geom_vline(xintercept = 500, color = "pink") +
+  geom_vline(xintercept = 1000, color = "pink") +
+  geom_hline(yintercept = c(10, 25), color = "pink") +
+  annotate("text", x = 100, y = max(obj.srt@meta.data$percent.mt) * 0.95, label = "100", color = "red", vjust = -1, size=3) +
+  annotate("text", x = 500, y = max(obj.srt@meta.data$percent.mt) * 0.92, label = "500", color = "red", vjust = -1, size=3) +
+  annotate("text", x = 1000, y = max(obj.srt@meta.data$percent.mt) * 0.89, label = "1000", color = "red", vjust = -1, size=3) +
+  annotate("text", x = max(obj.srt@meta.data$nCount_RNA) * 0.95, y = 10, label = "10", color = "red", hjust = -0.1) +
+  annotate("text", x = max(obj.srt@meta.data$nCount_RNA) * 0.95, y = 25, label = "25", color = "red", hjust = -0.1) +
+  theme_minimal() 
+
+```
+
+
+# Number of cells with selected cutoffs {.tabset} 
+
+## nCount_RNA >= 500 & percent.mt <= 25  
+```{r}
+obj.srt@meta.data %>% filter(predicted_doublet == "False") %>% 
+  filter(nCount_RNA >= 500 & percent.mt <= 25) %>% 
+  select(treatment) %>% table() %>% data.frame() %>% 
+  DT::datatable(colnames = c("sample", "Number of cells"), 
+                caption = "nCount_RNA >= 500 & percent.mt <= 25")
+```
+
+## nCount_RNA >= 1000 & percent.mt <= 25  
+```{r}
+obj.srt@meta.data %>% filter(predicted_doublet == "False") %>% 
+  filter(nCount_RNA >= 1000 & percent.mt <= 25) %>% 
+  select(treatment) %>% table() %>% data.frame() %>% 
+  DT::datatable(colnames = c("sample", "Number of cells"), 
+                caption = "nCount_RNA >= 1000 & percent.mt <= 25")
+```
+
+
+## nCount_RNA >= 500 & percent.mt <= 10  
+```{r}
+obj.srt@meta.data %>% filter(predicted_doublet == "False") %>% 
+  filter(nCount_RNA >= 500 & percent.mt <= 10) %>% 
+  select(treatment) %>% table() %>% data.frame() %>% 
+  DT::datatable(colnames = c("sample", "Number of cells"), 
+                caption = "nCount_RNA >= 500 & percent.mt <= 10")
+```
+
+
+
+## nCount_RNA >= 1000 & percent.mt <= 10  
+```{r}
+obj.srt@meta.data %>% filter(predicted_doublet == "False") %>% 
+  filter(nCount_RNA >= 1000 & percent.mt <= 10) %>% 
+  select(treatment) %>% table() %>% data.frame() %>% 
+  DT::datatable(colnames = c("sample", "Number of cells"), 
+                caption = "nCount_RNA >= 1000 & percent.mt <= 10")
+```
+<br><br>
+
+## Subset data based on the cutoffs  
+<br>
+
+* nCount_RNA >= 1000
+* percent.mt <= 10
+* no doublets (predicted_doublet == "False")
+
+
+```{r}
+obj.srt = subset(obj.srt, nCount_RNA >= 1000 & percent.mt <= 10 & predicted_doublet == "False")
+```
+
+<br><br>
 
 # 3. Data Analysis   
 
@@ -261,6 +393,255 @@ https://github.com/immunogenomics/harmony
 LIGER  
 https://github.com/welch-lab/liger  
 <br>
+
+
+# UMAP {.tabset}  
+
+## Color by treatment
+
+
+```{r, fig.width=7, fig.height=6, out.width='80%'}
+DimPlot(obj.srt, group.by = 'treatment', alpha = 0.8) +
+  scale_color_paletteer_d("ggsci::nrc_npg") + theme_bw()
+```
+
+## Split by sample  
+```{r, fig.width=11, fig.height=9}
+DimPlot(obj.srt, group.by = 'treatment', 
+        split.by = 'treatment', ncol = 2, alpha = 0.5) +
+  scale_color_paletteer_d("ggsci::nrc_npg") + theme_bw()
+```
+
+## Cell Distribution 
+
+```{r, fig.width=5, fig.height=4}
+# If you want the table with numbers, use the code below
+obj.srt@meta.data %>% select(treatment) %>% 
+  table() %>% data.frame() %>% 
+  DT::datatable(caption = 'Number of Cells by sample')
+
+# Color palette for the plot 
+orig.ident_fils = scale_fill_paletteer_d("ggsci::nrc_npg") 
+
+# If you like the table as a barplot, use the code below
+obj.srt@meta.data %>% ggplot(aes(treatment, fill=treatment)) + 
+  geom_bar(alpha=0.7, color="grey5", size=0.1) +
+  geom_text(stat="count", aes(label= ..count..), vjust=-0.5, size=3) +
+  orig.ident_fils + xlab("") + 
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust=0.5)) 
+```
+
+
+# Clustering {.tabset} 
+
+Two default clustering resolutions are provided, but the optimal resolution for downstream analysis will depend on the specific goals and requirements of each individual project.   
+<br>
+
+* resolution 0.2  
+* resolution 0.4  
+<br>
+
+```{r}
+resolution_values <- c(0.2, 0.4)
+```
+
+<br><br>
+
+
+## Resolution 0.2 UMAP
+
+```{r}
+# Resolution and color palette
+i=1
+res= paste0("RNA_snn_res.", resolution_values[i])
+palette <- wesanderson::wes_palette("FantasticFox1", length(levels(obj.srt@meta.data[,res])), type = "continuous")
+```
+
+
+
+```{r,fig.width=7, fig.height=6, out.width='80%'}
+DimPlot(obj.srt, group.by = res, cols = palette, alpha = 0.8) + 
+  theme(plot.title = element_blank()) + xlab("UMAP1") + ylab("UMAP2")
+```
+
+## Resolution 0.2 UMAP (label)
+```{r,fig.width=7, fig.height=6, out.width='80%'}
+DimPlot(obj.srt, group.by = res, alpha = 0.8,
+        label = T, label.box = T, label.size = 3, cols = palette) + theme(plot.title = element_blank())
+```
+
+
+## Cell numbers 
+```{r}
+
+obj.srt@meta.data %>% ggplot(aes(!!sym(res), fill=!!sym(res))) + 
+  geom_bar(alpha=0.7, color="grey5", size=0.1) +
+  geom_text(stat="count", aes(label= ..count..), vjust=-0.5, size=3) +
+  scale_fill_manual(values=palette) + 
+  xlab("") + 
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust=0.5)) +
+  ggtitle("Cluster")
+
+
+# obj.srt@meta.data %>% select(!!sym(res)) %>% table() %>% data.frame() %>% 
+#   DT::datatable(caption = 'Number of Cells by clusters',
+#     options = list(pageLength = length(levels(obj.srt@meta.data[[res]]))), rownames = F)
+# obj.srt@meta.data %>%
+#   select(!!sym(res), orig.ident) %>%
+#   table() %>%
+#   data.frame() %>%
+#   tidyr::spread(orig.ident, Freq) %>%
+#   DT::datatable(
+#     caption = 'Number of Cells by clusters and treatment',
+#     options = list(pageLength = length(levels(obj.srt@meta.data[[res]]))), rownames = F
+#   )
+# obj.srt@meta.data %>% select(!!sym(res), orig.ident, sample) %>% table() %>% data.frame() %>% tidyr::spread(sample, Freq) %>% DT::datatable(caption = 'Number of Cells by clusters and treatment')
+```
+
+
+## Proportion1
+```{r, fig.width=8, fig.height=4}
+obj.srt@meta.data %>% ggplot(aes(orig.ident, fill=!!sym(res))) + 
+  geom_bar(position = "fill", color="grey9",size = 0.2) +coord_flip() +
+  theme(legend.title = element_blank()) +
+  scale_fill_manual(values=palette) +xlab("") +ylab("Fraction") 
+```
+
+## Proportion2
+```{r}
+obj.srt@meta.data %>% ggplot(aes(!!sym(res), fill=orig.ident)) + 
+  geom_bar(position = "fill", color="grey9",size = 0.2, alpha=0.8) + scale_fill_paletteer_d("ggsci::nrc_npg") + theme_classic()+ 
+  theme(legend.title = element_blank()) +
+  ylab("Fraction")
+
+```
+
+
+
+
+
+## Resolution 0.4 UMAP
+
+```{r}
+# Resolution and color palette
+i=2
+res= paste0("RNA_snn_res.", resolution_values[i])
+palette <- wesanderson::wes_palette("FantasticFox1", length(levels(obj.srt@meta.data[,res])), type = "continuous")
+```
+
+
+```{r,fig.width=7, fig.height=6, out.width='80%'}
+DimPlot(obj.srt, group.by = res, cols = palette, alpha = 0.8) + 
+  theme(plot.title = element_blank()) + xlab("UMAP1") + ylab("UMAP2")
+```
+
+## Resolution 0.4 UMAP (label)
+```{r,fig.width=7, fig.height=6, out.width='80%'}
+DimPlot(obj.srt, group.by = res, alpha = 0.8,
+        label = T, label.box = T, label.size = 3, cols = palette) + theme(plot.title = element_blank())
+```
+
+## Cell numbers 
+```{r}
+
+obj.srt@meta.data %>% ggplot(aes(!!sym(res), fill=!!sym(res))) + 
+  geom_bar(alpha=0.7, color="grey5", size=0.1) +
+  geom_text(stat="count", aes(label= ..count..), vjust=-0.5, size=3) +
+  scale_fill_manual(values=palette) + 
+  xlab("") + 
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_text(angle = 45, vjust=0.5)) +
+  ggtitle("Cluster")
+```
+
+
+## Proportion1
+```{r, fig.width=8, fig.height=4}
+obj.srt@meta.data %>% ggplot(aes(orig.ident, fill=!!sym(res))) + 
+  geom_bar(position = "fill", color="grey9",size = 0.2) +coord_flip() +
+  scale_fill_manual(values=palette) +xlab("") +ylab("Fraction")
+```
+
+## Proportion2
+```{r}
+obj.srt@meta.data %>% ggplot(aes(!!sym(res), fill=orig.ident)) + 
+  geom_bar(position = "fill", color="grey9",size = 0.2, alpha=0.8) + scale_fill_paletteer_d("ggsci::nrc_npg") + theme_classic()+ 
+  theme(legend.title = element_blank()) +
+  ylab("Fraction")
+
+```
+
+## Sankey plot 
+
+```{r}
+## sankey plot 
+library(ggsankey)
+library(ggplot2)
+library(dplyr)
+
+cols = c('orig.ident','RNA_snn_res.0.2','RNA_snn_res.0.4')
+data =obj.srt@meta.data[, cols]
+
+# Function to create a Sankey plot
+create_sankey_plot <- function(data, column_names, title, show_labels = FALSE){
+  df <- data %>%
+    make_long(!!column_names[1], !!column_names[2], !!column_names[3])
+  
+  dagg <- df %>%
+    group_by(node) %>%
+    tally()
+  
+  df2 <- merge(df, dagg, by.x = 'node', by.y = 'node', all.x = TRUE)
+  
+  pl <- ggplot(df2, aes(x = x,
+                        next_x = next_x,
+                        node = node,
+                        next_node = next_node,
+                        fill = factor(node),
+                        label = paste0(node," n=", n))
+  )
+  
+  pl <- pl + geom_sankey(flow.alpha = 0.5, color = "gray40", show.legend = show_labels)
+  if (show_labels) {
+    pl <- pl + geom_sankey_label(size = 3, color = "white", fill = "gray40", hjust = 1)  # Change hjust value to 1 (right-aligned)
+  }
+  
+  pl <- pl + theme_bw()
+  pl <- pl + theme(legend.position = "none")
+  pl <- pl + theme(axis.title = element_blank(),
+                   axis.text.y = element_blank(),
+                   axis.ticks = element_blank(),
+                   panel.grid = element_blank())
+  pl <- pl + scale_fill_viridis_d(option = "plasma")
+  pl <- pl + labs(title = "")
+  
+  pl <- pl + labs(fill = 'Nodes')
+  
+  return(pl)
+}
+
+# Assuming obj.srt@meta.data is your data and you want to use specific columns for the Sankey plot
+column_names <- cols
+
+# Create the Sankey plot using the specified columns
+sankey_plot <- create_sankey_plot(data = obj.srt@meta.data, column_names, 
+                                  title = "Test", show_labels = TRUE)
+```
+
+
+```{r,fig.height=6, fig.width=10}
+# Display the plot
+print(sankey_plot)
+```
+
+<br><br>
+
+
 
 # Cell cycle scoring 
 
