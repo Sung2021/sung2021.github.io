@@ -1,0 +1,285 @@
+---
+title: "Cell type Annotation"
+subtitle: " "
+author: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, fig.align = "left", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+```{r}
+## load required packages
+library(Seurat)
+library(cowplot)
+library(dplyr)
+library(ggplot2)
+library(DT)
+library(paletteer)
+library(viridis)
+```
+
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
+
+
+<br>
+
+
+* Annotation Immune cell types using scType (scRNA-seq)   
+* [**scType link**](https://github.com/IanevskiAleksandr/sc-type)  
+
+
+```{r, echo=FALSE}
+dir= "~/Desktop/DF/DFCI_Paweletz/2024_Daiichi_DXD/"
+obj.srt = readRDS(paste0(dir,"rds/P30342.24.05.07.rds"))
+```
+
+# scType application  
+```{r, echo=TRUE}
+
+suppressPackageStartupMessages(invisible(lapply(c("dplyr", "Seurat", "HGNChelper", "openxlsx"), library, character.only = TRUE)))
+
+
+# load gene set preparation function
+source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
+# load cell type annotation function
+source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/sctype_score_.R")
+
+
+# DB file (Human)
+db_ <- "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx";
+tissue <- "Immune system" # e.g. Immune system,Pancreas,Liver,Eye,Kidney,Brain,Lung,Adrenal,Heart,Intestine,Muscle,Placenta,Spleen,Stomach,Thymus 
+
+# prepare gene sets
+gs_list <- gene_sets_prepare(db_, tissue)
+
+# extract scaled scRNA-seq matrix
+scRNAseqData_scaled <- as.matrix(obj.srt[["RNA"]]@scale.data)
+
+# run ScType
+es.max <- sctype_score(scRNAseqData = scRNAseqData_scaled, 
+                       scaled = TRUE, 
+                       gs = gs_list$gs_positive, 
+                       gs2 = gs_list$gs_negative)
+
+```
+
+```{r, echo=T}
+url <- "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx"
+temp_file <- tempfile(fileext = ".xlsx")
+download.file(url, temp_file, mode = "wb", quiet = TRUE) 
+
+# Read excel file 
+sheets <- openxlsx::getSheetNames(temp_file)
+data_list <- lapply(sheets, function(sheet) openxlsx::read.xlsx(temp_file, sheet = sheet))
+
+# The first sheet includes the information 
+table_data <- data_list[[1]][data_list[[1]]$tissueType == "Immune system",c(1,2,5,3)]
+```
+
+
+
+# Cluster annotaion (res 0.2) {.tabset}
+
+## Annotaion report 
+```{r, echo=TRUE}
+# Merge by cluster
+
+# Select resolution
+res <- paste0("RNA_snn_res.", 0.2)
+
+# Annotation report 
+if (res %in% colnames(obj.srt@meta.data)) {
+  cL_results <- do.call("rbind", 
+                        lapply(unique(obj.srt@meta.data[, res]), function(cl) {
+                          cl_data <- obj.srt@meta.data[obj.srt@meta.data[, res] == cl, ]
+                          es_sum <- rowSums(es.max[, rownames(cl_data)])
+                          es_sorted <- sort(es_sum, decreasing = TRUE)
+                          top_es <- head(data.frame(cluster = cl, 
+                                                    type = names(es_sorted), 
+                                                    scores = es_sorted, 
+                                                    ncells = nrow(cl_data)), 10)
+                          return(top_es)
+                        })
+  )
+} else {
+  stop(paste("Column", res, "not found in obj.srt@meta.data"))
+}
+
+```
+
+## Table  
+```{r}
+cL_results %>% DT::datatable(caption = "Top 10 Cell types")
+```
+
+
+```{r}
+sctype_scores <- cL_results %>% group_by(cluster) %>% top_n(n = 5, wt = scores)  
+
+df = sctype_scores %>% as.data.frame() %>% arrange(cluster) 
+rownames(df) = paste0(df$cluster, "_",df$type)
+df2 = df[,c("scores")] %>% as.data.frame()
+rownames(df2) = rownames(df)
+colnames(df2) = "scType Score"
+anno.row = data.frame(df$cluster)
+rownames(anno.row) = rownames(df)
+colnames(anno.row) = "cluster"
+```
+
+## Heatmap    
+```{r, fig.width=5, fig.height=12}
+# Load palette 
+zissou1_palette <- wesanderson::wes_palette("Zissou1", n = 100, type = "continuous")
+
+df2 %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F, 
+                           gaps_row = seq(5, 5*length(unique(cL_results$cluster)), by=5), 
+                           display_numbers = T, number_format = "%.0f",
+                           color = zissou1_palette,
+                           border_color = "grey8", number_color = "grey1",
+                           fontsize_row = 7,
+                           annotation_row = anno.row, main = "Top 5 cell types")
+
+```
+
+
+## Suggested Cell type  
+
+```{r}
+sctype_top1 <- cL_results %>% group_by(cluster) %>% top_n(n = 1, wt = scores)  
+suggested_celltype = sctype_top1 %>% arrange(cluster) %>% select(cluster, type) %>% data.frame() 
+suggested_celltype$genes = ""
+
+for(i in 1:nrow(suggested_celltype)){
+  type = suggested_celltype[i, "type"]
+  celltype_genes = table_data %>% filter(cellName == type) %>% select(geneSymbolmore1) %>% pull()
+  celltype_genes = unlist(strsplit(celltype_genes, split = ","))
+  celltype_genes = celltype_genes[celltype_genes %in% rownames(obj.srt)]
+  suggested_celltype[i, "genes"] = paste0(celltype_genes, collapse = ",")
+}
+
+suggested_celltype %>% DT::datatable(options = list(pageLength=nrow(suggested_celltype)), rownames = F)
+```
+
+
+
+# Cluster annotaion (res 0.4) {.tabset}
+
+## Annotaion report 
+```{r, echo=TRUE}
+# Merge by cluster
+
+# Select resolution
+res <- paste0("RNA_snn_res.", 0.4)
+
+# Annotation report 
+if (res %in% colnames(obj.srt@meta.data)) {
+  cL_results <- do.call("rbind", 
+                        lapply(unique(obj.srt@meta.data[, res]), function(cl) {
+                          cl_data <- obj.srt@meta.data[obj.srt@meta.data[, res] == cl, ]
+                          es_sum <- rowSums(es.max[, rownames(cl_data)])
+                          es_sorted <- sort(es_sum, decreasing = TRUE)
+                          top_es <- head(data.frame(cluster = cl, 
+                                                    type = names(es_sorted), 
+                                                    scores = es_sorted, 
+                                                    ncells = nrow(cl_data)), 10)
+                          return(top_es)
+                        })
+  )
+} else {
+  stop(paste("Column", res, "not found in obj.srt@meta.data"))
+}
+```
+
+## Table    
+```{r}
+# 결과 확인
+cL_results %>% DT::datatable(caption = "Top 10 Cell types")
+
+```
+
+
+
+```{r}
+sctype_scores <- cL_results %>% group_by(cluster) %>% top_n(n = 5, wt = scores)  
+
+df = sctype_scores %>% as.data.frame() %>% arrange(cluster) 
+rownames(df) = paste0(df$cluster, "_",df$type)
+df2 = df[,c("scores")] %>% as.data.frame()
+rownames(df2) = rownames(df)
+colnames(df2) = "scType Score"
+anno.row = data.frame(df$cluster)
+rownames(anno.row) = rownames(df)
+colnames(anno.row) = "cluster"
+
+```
+
+
+## Heatmap    
+```{r, fig.width=5, fig.height=12}
+# Load palette 
+zissou1_palette <- wesanderson::wes_palette("Zissou1", n = 100, type = "continuous")
+
+df2 %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F, 
+                           gaps_row = seq(5, 5*length(unique(cL_results$cluster)), by=5), 
+                           display_numbers = T, number_format = "%.0f",
+                           color = zissou1_palette,
+                           border_color = "grey8", number_color = "grey1",
+                           fontsize_row = 7,
+                           annotation_row = anno.row, main = "Top 5 cell types")
+
+```
+
+## Suggested Cell type  
+
+```{r}
+sctype_top1 <- cL_results %>% group_by(cluster) %>% top_n(n = 1, wt = scores)  
+suggested_celltype = sctype_top1 %>% arrange(cluster) %>% select(cluster, type) %>% data.frame() 
+suggested_celltype$genes = ""
+
+for(i in 1:nrow(suggested_celltype)){
+  type = suggested_celltype[i, "type"]
+  celltype_genes = table_data %>% filter(cellName == type) %>% select(geneSymbolmore1) %>% pull()
+  celltype_genes = unlist(strsplit(celltype_genes, split = ","))
+  celltype_genes = celltype_genes[celltype_genes %in% rownames(obj.srt)]
+  suggested_celltype[i, "genes"] = paste0(celltype_genes, collapse = ",")
+}
+
+suggested_celltype %>% DT::datatable(options = list(pageLength=nrow(suggested_celltype)), rownames = F)
+```
+
+
+<hr>
+
+# scType DB full list  
+
+[download](https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx)
+```{r}
+url <- "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx"
+temp_file <- tempfile(fileext = ".xlsx")
+download.file(url, temp_file, mode = "wb", quiet = TRUE) 
+
+# 엑셀 파일의 모든 시트 읽기
+sheets <- openxlsx::getSheetNames(temp_file)
+data_list <- lapply(sheets, function(sheet) openxlsx::read.xlsx(temp_file, sheet = sheet))
+
+# 특정 시트 예시 (첫 번째 시트)
+table_data <- data_list[[1]][data_list[[1]]$tissueType == "Immune system",c(1,2,5,3)]
+
+# 마크다운 테이블로 표시
+knitr::kable(table_data, caption = "ScTypeDB")
+```
+
