@@ -24,18 +24,19 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 
 ## Work Sample pages<a id="samples"></a>     
 
-<a href="samplePages/NI.html" style="font-size: 24px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
-<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq (update for filtering, UMAP, and clustering 24.05.09)</a><br>
-<a href="samplePages/RNAseq.html" style="font-size: 24px;">bulk RNA-seq</a><br>
-<a href="samplePages/ChIP_seq.html" style="font-size: 24px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
-<a href="samplePages/TCR_seq.html" style="font-size: 24px;">TCR-seq</a><br>
+<a href="samplePages/NI.html" style="font-size: 20px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
+<a href="samplePages/scRNAseq.html" style="font-size: 20px;">single cell RNA-seq (update for filtering, UMAP, and clustering 24.05.09)</a><br>
+<a href="samplePages/RNAseq.html" style="font-size: 20px;">bulk RNA-seq</a><br>
+<a href="samplePages/ChIP_seq.html" style="font-size: 20px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
+<a href="samplePages/TCR_seq.html" style="font-size: 20px;">TCR-seq</a><br>
 <br>
-<a href="samplePages/Celltype.annotation.html" style="font-size: 24px;">Cell type annotation</a><br>
+<a href="samplePages/Celltype.annotation.html" style="font-size: 20px;">Cell type annotation</a><br>
 <br>
 [Data_Processing in Linux env](etc/Data_Processing.html)  
 [Simple shiny app](samplePages/RShiny_app2.html)  
 [Basic Github usage](etc/Basic_github.html)  
 [cellranger docker setup](etc/cellranger_docker.html)  
+[Conference Summary Report](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)
 <br>
 
 

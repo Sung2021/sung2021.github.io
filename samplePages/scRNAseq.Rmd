@@ -84,7 +84,7 @@ library(paletteer)
 
 Data import from the cellranger output (above).  
 Create Seurat Object  
-```{r, }
+```{r}
 library(Seurat)
 obj.raw = Read10X('raw_data/Path/filtered_feature_bc_matrix/')
 obj.srt = CreateSeuratObject(counts = obj.raw, project = 'project_name')
