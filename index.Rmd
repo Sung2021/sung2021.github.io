@@ -32,8 +32,14 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 <br>
 <a href="samplePages/Celltype.annotation.html" style="font-size: 20px;">Cell type annotation</a><br>
 <br>
-[Immune Cell Type information](https://sung2021.github.io/works.io/etc/Useful_info.html)
+
+**Work-related Information collection**   
+[Immune Cell Type information](https://sung2021.github.io/works.io/etc/Useful_info.html)<br> 
+[Drug Information (that I study at DFCI)](https://sung2021.github.io/works.io/etc/Drug_info.html)<br>
 <br>
+
+
+**Miscellaneous**   
 [Data_Processing in Linux env](etc/Data_Processing.html)  
 [Simple shiny app](samplePages/RShiny_app2.html)  
 [Basic Github usage](etc/Basic_github.html)  
@@ -41,9 +47,10 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 [Conference Summary Report](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)
 <br>
 
-
-<span style="font-size: 20px;">Plot gallery (will be updated) </span><br>
-<span style="font-size: 20px;">WES (will be updated)</span><br>
+<br><br>
+**To be updated**   
+<span style="font-size: 16px;">Plot gallery (will be updated) </span><br>
+<span style="font-size: 16px;">WES (will be updated)</span><br>
 <br><br>
 
 
