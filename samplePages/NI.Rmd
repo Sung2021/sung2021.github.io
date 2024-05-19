@@ -40,51 +40,130 @@ library(reshape)
 <br><br>
 
 <hr>
-## Introduction  
+## Overview   
 
-1. **Antigen-Experienced CD8+ T Cells Differentiation**:
-   - **TEM (Effector Memory T cells)**
-   - **TCM (Central Memory T cells)**
+**Antigen-Experienced CD8+ T Cells Differentiation:**    
 
-2. **Role of Tle3 in Cell Fate Regulation**:
-   - Tle3 is a transcriptional cofactor that critically regulates the fates and lineage stability of TEM and TCM cells through dynamic redistribution in the genome of antigen-responding CD8+ T cells.
+- **Effector Memory T cells (TEM)**: Quick response, peripheral location.    
+- **Central Memory T cells (TCM)**: Long-term memory, lymphoid residency.    
+    
+**Role of Tle3 in Cell Fate Regulation:**    
 
-3. **Effects of Tle3 Ablation**:
-   - Genetic ablation of Tle3 promotes the formation of **CD8+ TCM cells** at the expense of CD8+ TEM cells.
-   - Tle3-deficient CD8+ TEM cells show accelerated **conversion into CD8+ TCM cells** while maintaining a robust recall capacity.
+- **Function**: Tle3 regulates the fate and stability of CD8+ T cells by altering gene distribution.    
+- **Effects of Ablation**: Deletion of Tle3 increases TCM formation, accelerating the transition from TEM to TCM while preserving recall ability.    
+    
+**Functional Dynamics of Tle3:**    
 
-4. **Functional Interactions of Tle3**:
-   - Previously Tle3 was known as a corepressor.
-   - Acts as a **coactivator for Tbet**, enhancing chromatin opening at sites characteristic of CD8+ TEM cells and activating transcription of signature genes for CD8+ TEM cells.
-   - **Interacts with Runx3 and Tcf1** to restrain features characteristic of CD8+ TCM cells.
+- **As a Corepressor and Coactivator**: Works with Tbet to enhance TEM traits and with Runx3 and Tcf1 to suppress TCM traits.    
+- **Overall Impact**: Tle3 ensures lineage fidelity in TEM cells and could be manipulated to increase TCM production.    
+    
+    
+### Key Findings  
+    
+**Impact of Tle3 Deficiency:**    
 
-5. **Overall Role of Tle3**:
-   - Integrates functions of multiple transcription factors to maintain the lineage fidelity of CD8+ TEM cells.
-   - Manipulation of Tle3 activity could be leveraged to favor the production of CD8+ TCM cells.
+- **Shifts Cell Fate**: Deleting Tle3 boosts TCM cell proportions at the expense of TEM cells.    
+
+**Molecular Interactions and Effects:**    
+
+- **Enhances TEM Traits**: Coactivates T-bet to increase chromatin accessibility and gene expression linked to TEM.    
+- **Suppresses TCM Traits**: Interacts with Runx3 and Tcf1, limiting TCM characteristics.    
+    
+    
+**Gene Expression Insights:**    
+
+- **Transcriptional Changes**: Tle3 deficiency leads to a transcriptional bias towards TCM, with specific gene signatures highlighting the influence of Tle3 on these profiles.    
+
 
 
 <hr>
-## Fig2  
+## Figures  
+
+### Fig2  
 **Loss of Tle3 enhances CD8+ TCM cell formation**   
 
 ```{r, eval=T, echo=FALSE}
 knitr::include_graphics("../png/NI/fig2.png")
 ```
 
+#### Exploration of Transcriptional Landscapes:
+
+**Objective and Method**: The goal was to unravel the intricate transcriptional landscapes that differentiate effector memory (TEM) and central memory (TCM) CD8+ T cells. By leveraging single-cell RNA sequencing, we successfully mapped the unique genetic expressions of each subtype, providing a clear delineation based on gene expression clusters.  
+
+#### Detailed Analysis of T Cell Subtypes
+
+**Transcriptional Signatures:**   
+
+- **TCM Cells**: Marked by genes such as Sell (CD62L), Ccr7, Il7r, and Tcf7, these cells are quintessential for maintaining long-term immune memory and facilitating lymphoid organ homing.   
+- **TEM Cells**: Comprise two distinct groups:   
+  - **TEM1**: Defined by Klrg1 and Cx3cr1, genes associated with direct and potent effector functions.   
+  - **Sub-variations**: Notably, some TEM cells express Klre1, indicating a diversity within the effector functions.   
+- **Common Attributes of TEM1 and TEM2**: Both subgroups exhibit expression of Zeb2 and Bhlhe40, pivotal in driving T cells toward effector differentiation.   
+   
+#### Consequences of Tle3 Deletion on Cellular Memory Dynamics       
+
+**Shifts in Cellular Profiles to TCM:**   
+The analysis compared wild-type and Tle3-deficient (Tle3−/−) CD8+ T cells, revealing that Tle3 deletion profoundly influenced the UMAP distribution. This resulted in a notable shift of Tle3−/− cells toward TCM-associated characteristics, suggesting a pivotal role of Tle3 in balancing effector and memory phenotypes.    
+
+
+#### Note  
+
+By characterizing the TEM and TCM features directly from same experimental setups, we gained deeper insights into Tle3's regulatory functions on gene expression. This approach not only ensured a consistent analytical framework but also enriched our understanding of how gene regulatory mechanisms can be manipulated to influence T cell fate decisions.   
 
 <br><br>
 
-## Fig3  
+### Fig3  
+
 **Tle3 promotes TEM and suppresses TCM signature genes**      
 
 ```{r, eval=T, echo=FALSE}
 knitr::include_graphics("../png/NI/fig3.png")
 ```
+<br>
 
+#### TCM signature genes and 90 TEM signature genes from RNA-seq data  
 
+- We identifies 181 TCM signature genes and 90 TEM signature genes, which are differentially expressed with statistical significance.  
+- Genes such as Id3, Eomes, Irf8, and Vcam1 are highlighted as part of the TCM signature, while Cx3cr1 and Klrg1 are noted in the TEM signature.  
+  
+#### The loss of Tle3 alters the TCM/TEM signatures.  
+
+- A depletion of TEM signature genes in Tle3−/− CD8+ TEM cells compared to WT.  
+- The loss of Tle3 leads to a significant downregulation of genes typically associated with the TEM phenotype.  
+- The absence of Tle3 promotes a shift towards a TCM-like transcriptional profile in these cells.   
+
+#### Clustering analysis of DEGs between WT and Tle3−/− CD8+ TCM and TEM cells.  
+
+- The DEGs into five expression clusters (ExpC1 to ExpC5)   
+
+- **ExpC1 (Tle3-Repressed Genes in TCM Cells)**:   
+  - **Genes**: Bcl2, Tcf7, Id3, Cxcr5, Sell, Myc, Ccr7, Eomes, Socs3, Il7r, Tnfsf8, Slamf6, Btla, Irf8   
+  - **Characteristics**: These genes are upregulated in Tle3-deficient CD8+ TCM cells, indicating a suppressive role of Tle3 on these genes in wild-type cells.   
+
+- **ExpC2 (Tle3-Repressed Genes in TEM Cells)**:   
+  - **Genes**: Ccl6, Cx3cr1, Gzma, Gzmb, Itgam, Klrg1, Bhlhe40, Klre1, Prdm1, Ptpn4, S1pr5, Tyk2, Zeb2   
+  - **Characteristics**: These genes show increased expression in Tle3-deficient CD8+ TEM cells, suggesting they are normally repressed by Tle3 in effector memory settings.   
+
+- **ExpC3 (Tle3-Activated Genes in TCM Cells)**:   
+  - **Genes**: Rack1, Myc, Tcf7, Sell, Ccr7, Il7r   
+  - **Characteristics**: Lower expression in Tle3-deficient cells indicates that Tle3 typically promotes these genes in wild-type CD8+ TCM cells.   
+
+- **ExpC4 (Tle3-Activated Genes in TEM Cells)**:   
+  - **Genes**: Cx3cr1, Klrg1, Gzma, S1pr5, Bhlhe40   
+  - **Characteristics**: These genes are less expressed in Tle3−/− CD8+ TEM cells, showing that Tle3 normally enhances their expression.   
+
+- **ExpC5 (Mixed Expression in TCM and TEM Cells)**:   
+  - **Genes**: Not specified for distinct cell types but include a mix affected in both TCM and TEM cells by Tle3 status.   
+  - **Characteristics**: Represents a diverse set of genes that are differentially regulated by Tle3 across both memory and effector phenotypes.   
+  
+  
+#### Protein level changes 
+
+The downregulation of TEM genes and the corresponding decrease in TEM protein expression in Tle3−/− cells, combined with the upregulation of TCM genes and increased expression of TCM-related proteins, highlight Tle3's pivotal role in maintaining the effector memory phenotype while suppressing the central memory phenotype. By affecting both gene and protein levels, Tle3 helps maintain the balance and functional specificity of different CD8+ T cell subsets. 
+  
 <br><br>
 
-## Fig4  
+### Fig4  
 
 **De novo Tle3 binding promotes TEM cell chromatin opening**   
 ```{r, eval=T, echo=FALSE}
@@ -92,9 +171,50 @@ knitr::include_graphics("../png/NI/fig4.png")
 ```
 
 
+#### Clustering of Chromatin Accessibility Sites  
+<br>
+
+- **Differentially accessible chromatin regions**  into 8 clusters (ChrAccC1 to ChrAccC8).  
+
+
+| Cluster | Changes in Accessibility | Implications | Impact on Signature Sites |
+|---------|---------------|-----------------------|-------------|
+| ChrAccC1 | Increased in Tle3−/−     | Tle3 normally suppresses accessibility, impacting genes related to T cell activation or suppression. | Upregulation of TCM genes such as Sell, Ccr7 |
+| ChrAccC2 | Increased in Tle3−/−     | Tle3 acts as a repressor in these regions, potentially influencing genes important for T cell effector functions. | No significant impact on signature genes |
+| ChrAccC3 | Mixed, slightly increased in Tle3−/− | Tle3 has a nuanced role in modulating accessibility, affecting genes involved in activation and memory retention. | No significant impact on signature genes |
+| ChrAccC4 | Decreased in Tle3−/−     | Tle3 enhances accessibility, promoting genes associated with T cell effector status and rapid response capabilities. | Downregulation of TEM genes such as Cx3cr1, Klrg1 |
+| ChrAccC5 | Decreased in Tle3−/−     | Tle3 maintains open chromatin states at these sites, crucial for genes linked to immediate immune responses. | Downregulation of TEM genes such as Prdm1, Bhlhe40 |
+| ChrAccC6 | Mixed, less pronounced changes | Tle3 has a more complex regulatory role, affecting genes in T cell development and differentiation. | No significant impact on signature genes |
+| ChrAccC7 | Decreased in Tle3−/−     | Tle3's absence leads to tighter chromatin, repressing genes critical for T cell survival and long-term memory. | Upregulation of TCM genes such as Sell, Ccr7 |
+| ChrAccC8 | Decreased in Tle3−/−     | Tle3 facilitates chromatin opening, essential for sustaining mature T cell functions and longevity. | Upregulation of TCM genes such as Tcf7, Il7r |
+
+
+
+#### Clustering of Differential binding Sites  
+<br>
+
+- **Differential bindings of Tle3 ** into 3 clusters roughly (TleC1 to TleC3).  
+   
+| Cluster | Description |
+|-------|------------------------|
+| **TleC1 - 'Teff-acquired sites'** | In CD8+ TN cells, Tle3 binding starts weak but strengthens significantly in CD8+ Teff cells, retains in CD8+ TEM cells, but is attenuated in CD8+ TCM cells. |
+| **TleC2 - 'TM-preferred sites'** | Tle3 binding is minimal in CD8+ TN cells but increases in CD8+ TEM and CD8+ TCM cells, surpassing levels observed in CD8+ Teff cells. |
+| **TleC3 - 'Teff-attenuated sites'** | Strong Tle3 binding in CD8+ TN cells diminishes in CD8+ Teff cells but is partially restored in CD8+ TCM cells, suggesting a regulatory shift favorable to memory characteristics. |
+
+
+#### Tle3-Opened and Tle3-Closed Chromatin Sites to Tle3 binding  
+
+- **Tle3-Opened Sites**: Chromatin sites in ChrAccC6 and ChrAccC7 are noted as being highly enriched in 'Teff-acquired' Tle3 binding sites (TleC1a–TleC1c). This suggests that in these Tle3 binding sites are likely conducive to transcriptional activity in **Teff** cells.   
+
+- **Tle3-Closed Sites**: Conversely, chromatin sites in ChrAccC1–ChrAccC5 frequently overlap with 'Teff-attenuated' Tle3 binding sites (TleC3a–TleC3d), indicating that Tle3 binding in these regions correlates with a closed chromatin state, which might inhibit transcription in these areas.   
+
+
+
+
+
 <br><br>
 
-## Fig5  
+### Fig5  
 
 **Tle3 engages Tbet to promote TEM features**   
 
@@ -142,7 +262,10 @@ knitr::include_graphics("../png/NI/EF4.png")
 <span style="font-size: 24px;">Method</span><br>
 
 
-## Single Cell RNA-seq Data Processing and Cell Clustering Steps
+
+## Method  
+
+### Single Cell RNA-seq Data Processing and Cell Clustering Steps
 
 1. **Data Processing**:
    - **Raw reads processing**: Using Drop-seq Laboratory Protocol v3 and Drop-seq Tools (v2.4.1).
@@ -180,7 +303,7 @@ knitr::include_graphics("../png/NI/EF4.png")
     - TCM and TEM scores calculated using Seurat's `AddModuleScore` function and mapped on UMAP or as scatterplots with ggplot2.
 
 
-## RNA-seq and Data Analysis Process
+### RNA-seq and Data Analysis Process
 
 1. **Sample Collection and Preparation**:
    - **WT and Tle3−/− P14 TCM and TEM Cells**: Sorted from recipient mice at 30–35 days post-infection (d.p.i.) in three biological replicates.
@@ -210,7 +333,7 @@ knitr::include_graphics("../png/NI/EF4.png")
 
 
 
-## CUT&RUN Experiment and Data Analysis
+### CUT&RUN Experiment and Data Analysis
 
 1. **Sample Collection and CUT&RUN Protocol**:
    - **Samples**: Naive WT CD8+ T cells, WT Teff (8 days post-infection), WT TEM and TCM cells (≥30 days post-infection), and various deficient conditions for Tbet and Runx3.
@@ -251,7 +374,7 @@ knitr::include_graphics("../png/NI/EF4.png")
 
 
 
-## ATAC-seq Experiment and Data Analysis
+### ATAC-seq Experiment and Data Analysis
 
 1. **Sample Collection and Library Preparation**:
    - **Cells**: WT and Tle3−/− TEM and TCM cells sorted in 2–3 biological replicates; WT or Tle3ΔCreET TEM cells re-sorted for viability.
@@ -275,7 +398,7 @@ knitr::include_graphics("../png/NI/EF4.png")
    - **Clustering**: 5,553 differential ChrAcc sites clustered into eight distinct clusters using k-means clustering.
 
 
-## Association of Tle3 Binding Sites and Differential ChrAcc Sites with DEGs (C&R + ATAC-seq + RNA-seq Integration)
+### Association of Tle3 Binding Sites and Differential ChrAcc Sites with DEGs (C&R + ATAC-seq + RNA-seq Integration)
 
 1. **Assignment Criteria**:
    - **Proximity to TSS**: Sites within ±100-kb of the gene transcription start site (TSS) considered associated with that gene.
@@ -284,6 +407,7 @@ knitr::include_graphics("../png/NI/EF4.png")
 
 2. **Gene Association**:
    - A single Tle3 binding or ChrAcc site can be associated with multiple unique Refseq genes, reflecting the complex regulatory landscapes of these genomic regions.
+
 
 
 ## Data Availability
