@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Professional summary  
 
-Current position at  **Dana Farber Cancer Institute**  
+Currently Bioinformatics Scientis II at  **Dana Farber Cancer Institute**  
 <br>
 Senior Bioinformatics Scientist with over 6 years of hands-on experience in various NGS data analysis and a strong publication record, including a co-first authorship in Nature Immunology (2024) for CD8+ Memory T cell fate. Proficient in the integration of comprehensive multi-omic datasets, encompassing transcriptomic, genomic, epigenomic, and clinical data, to drive research and development in immuno-oncology. At Dana Farber Cancer Institute, played a pivotal role in analyzing complex drug combination testing datasets and provided critical bioinformatics consultation. Passionate about applying a blend of technical proficiency and biological insights to enhance team success, particularly within innovative personalized cancer therapy programs.    
 
@@ -25,7 +25,10 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 ## Work Sample pages<a id="samples"></a>     
 
 <a href="samplePages/NI.html" style="font-size: 20px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
+<img src="png/NI/main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 <a href="https://sung2021.github.io/works.io/samples/scRNA_index.html" style="font-size: 20px;">single cell RNA-seq workflow</a><br>
+<img src="https://sung2021.github.io/works.io/samples/img/scRNA_UMAP.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
+
 <a href="samplePages/RNAseq.html" style="font-size: 20px;">bulk RNA-seq</a><br>
 <a href="samplePages/ChIP_seq.html" style="font-size: 20px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
 <a href="samplePages/TCR_seq.html" style="font-size: 20px;">TCR-seq</a><br>
@@ -44,13 +47,14 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 [Simple shiny app](samplePages/RShiny_app2.html)  
 [Basic Github usage](etc/Basic_github.html)  
 [cellranger docker setup](etc/cellranger_docker.html)  
-[Conference Summary Report](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)
+[Conference Summary Report](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
+[MAF analysis](https://sung2021.github.io/works.io/samples/TCGA_analysis.html)
 <br>
 
 <br><br>
-**To be updated**   
-<span style="font-size: 16px;">Plot gallery (will be updated) </span><br>
-<span style="font-size: 16px;">WES (will be updated)</span><br>
+<!-- **To be updated**    -->
+<!-- <span style="font-size: 16px;">Plot gallery (will be updated) </span><br> -->
+
 <br><br>
 
 
