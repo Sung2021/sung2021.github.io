@@ -12,9 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Professional summary  
 
-Currently Bioinformatics Scientis II at  **Dana Farber Cancer Institute**  
+Currently Bioinformatics Scientist II at  **Dana Farber Cancer Institute**  
 <br>
-Senior Bioinformatics Scientist with over 6 years of hands-on experience in various NGS data analysis and a strong publication record, including a co-first authorship in Nature Immunology (2024) for CD8+ Memory T cell fate. Proficient in the integration of comprehensive multi-omic datasets, encompassing transcriptomic, genomic, epigenomic, and clinical data, to drive research and development in immuno-oncology. At Dana Farber Cancer Institute, played a pivotal role in analyzing complex drug combination testing datasets and provided critical bioinformatics consultation. Passionate about applying a blend of technical proficiency and biological insights to enhance team success, particularly within innovative personalized cancer therapy programs.    
+I am an enthusiastic Senior Bioinformatics Scientist with extensive experience in analyzing next-generation sequencing (NGS) data, particularly in the context of academic research and patient-derived samples. My expertise lies in the seamless integration of multi-omic data sets, including transcriptomics, genomics, epigenomics, and clinical data, to propel forward target discovery research in various biological domains. At the Dana-Farber Cancer Institute, my work primarily involved dissecting complex data from drug combination trials and providing pivotal bioinformatics insights. I am deeply passionate about my research, consistently enthusiastic about adopting innovative methodologies, and I excel in biological research and focus on uncovering new targets for therapeutic intervention.    
 
 <br>
 
@@ -29,10 +29,11 @@ Senior Bioinformatics Scientist with over 6 years of hands-on experience in vari
 <a href="https://sung2021.github.io/works.io/samples/scRNA_index.html" style="font-size: 20px;">single cell RNA-seq workflow</a><br>
 <img src="https://sung2021.github.io/works.io/samples/img/scRNA_UMAP.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 
-<a href="samplePages/RNAseq.html" style="font-size: 20px;">bulk RNA-seq</a><br>
+<a href="samplePages/RNAseq.html" style="font-size: 20px;">bulk RNA-seq workflow</a><br>
 <a href="samplePages/ChIP_seq.html" style="font-size: 20px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
 <a href="samplePages/TCR_seq.html" style="font-size: 20px;">TCR-seq</a><br>
 <br>
+<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_application.html" style="font-size: 20px;">TCGA-BRCA Transcriptome Analysis</a><br>
 <a href="samplePages/Celltype.annotation.html" style="font-size: 20px;">Cell type annotation</a><br>
 <br>
 
