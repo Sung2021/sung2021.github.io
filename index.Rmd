@@ -19,8 +19,8 @@ I am an enthusiastic Senior Bioinformatics Scientist with extensive experience i
 <br>
 
 ## Resume (pdf) <a id="resume-pdf"></a>   
-<a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 20px;">Sung Rye Park's resume</a><br>
-
+<a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 18px;">Sung Rye Park's resume</a><br>
+<br>
 
 ## Work Sample pages<a id="samples"></a>     
 
@@ -39,6 +39,9 @@ I am an enthusiastic Senior Bioinformatics Scientist with extensive experience i
 <br>
 <a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_application.html" style="font-size: 20px;">TCGA-BRCA Transcriptome Analysis</a><br>
 <img src="png/TCGA_BRCA_main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
+
+<a href="https://sung2021.github.io/works.io/samples/TCGA/TCGA_BRCA_CNV.html" style="font-size: 20px;">TCGA-BRCA CNV Analysis</a><br>
+<br>
 <a href="samplePages/Celltype.annotation.html" style="font-size: 20px;">Cell type annotation</a><br>
 <br>
 
@@ -55,7 +58,7 @@ I am an enthusiastic Senior Bioinformatics Scientist with extensive experience i
 [Simple shiny app](samplePages/RShiny_app2.html)  
 [Basic Github usage](etc/Basic_github.html)  
 [cellranger docker setup](etc/cellranger_docker.html)  
-[Conference Summary Report](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
+[Conference Summary Report: 10X Genomics User Group Meeting](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
 [MAF analysis](https://sung2021.github.io/works.io/samples/TCGA_analysis.html)
 <br>
 
