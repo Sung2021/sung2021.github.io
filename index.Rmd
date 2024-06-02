@@ -10,19 +10,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 <br>
 
-## Professional summary  
+### Professional summary  
 
 Currently Bioinformatics Scientist II at  **Dana Farber Cancer Institute**  
 <br>
-I am an enthusiastic Senior Bioinformatics Scientist with extensive experience in analyzing next-generation sequencing (NGS) data, particularly in the context of academic research and patient-derived samples. My expertise lies in the seamless integration of multi-omic data sets, including transcriptomics, genomics, epigenomics, and clinical data, to propel forward target discovery research in various biological domains. At the Dana-Farber Cancer Institute, my work primarily involved dissecting complex data from drug combination trials and providing pivotal bioinformatics insights. I am deeply passionate about my research, consistently enthusiastic about adopting innovative methodologies, and I excel in biological research and focus on uncovering new targets for therapeutic intervention.    
+
+* I am an enthusiastic Senior Bioinformatics Scientist with extensive experience in analyzing various NGS data, in the academic research setting and patient-derived samples.  
+* My expertise lies in the seamless integration of multi-omic data sets, including transcriptomics, genomics, epigenomics, and clinical data, to propel forward target discovery research in various biological domains. 
+* My work primarily involves dissecting complex data from drug combination trials and providing pivotal bioinformatics insights. I am deeply passionate about my research, consistently enthusiastic about adopting innovative methodologies, and I excel in biological research and focus on uncovering new targets for therapeutic intervention.    
 
 <br>
-
-## Resume (pdf) <a id="resume-pdf"></a>   
-<a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 18px;">Sung Rye Park's resume</a><br>
+ 
+<a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
 <br>
 
-## Work Sample pages<a id="samples"></a>     
+### Work Sample pages 
 
 <a href="samplePages/NI.html" style="font-size: 20px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
 <img src="png/NI/main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
@@ -37,7 +39,7 @@ I am an enthusiastic Senior Bioinformatics Scientist with extensive experience i
   * [scRNA-seq+scTCR-seq](https://sung2021.github.io/etc/DGKi_test_human.html)<br>
 
 <br>
-<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_application.html" style="font-size: 20px;">TCGA-BRCA Transcriptome Analysis</a><br>
+<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html" style="font-size: 20px;">TCGA-BRCA Transcriptome Analysis</a><br>
 <img src="png/TCGA_BRCA_main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 
 <!-- <a href="https://sung2021.github.io/works.io/samples/TCGA/TCGA_BRCA_CNV.html" style="font-size: 20px;">TCGA-BRCA CNV Analysis</a><br> -->
