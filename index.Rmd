@@ -57,6 +57,7 @@ Currently Bioinformatics Scientist II at  **Dana Farber Cancer Institute**
 
 **Miscellaneous**   
 [Data_Processing in Linux env](etc/Data_Processing.html)  
+[WDL example](etc/WDL_example.html)  
 [Simple shiny app](samplePages/RShiny_app2.html)  
 [Basic Github usage](etc/Basic_github.html)  
 [cellranger docker setup](etc/cellranger_docker.html)  
