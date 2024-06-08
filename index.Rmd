@@ -14,14 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Currently Bioinformatics Scientist II at  **Dana Farber Cancer Institute**  
 <br>
-
-* I am an enthusiastic Senior Bioinformatics Scientist with extensive experience in analyzing various NGS data, in the academic research setting and patient-derived samples.  
-* My expertise lies in the seamless integration of multi-omic data sets, including transcriptomics, genomics, epigenomics, and clinical data, to propel forward target discovery research in various biological domains. 
-* My work primarily involves dissecting complex data from drug combination trials and providing pivotal bioinformatics insights. I am deeply passionate about my research, consistently enthusiastic about adopting innovative methodologies, and I excel in biological research and focus on uncovering new targets for therapeutic intervention.    
-
+Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and collaborating on diverse bioinformatics projects. Specialized in addressing questions related to combinational immunotherapy in cancer patients, discovering target cells and mechanisms, understanding T cell development, and modularizing analysis pipelines. Committed to fostering comprehensive collaboration to achieve project goals with non-bioinformatics scientists, enhancing both project outcomes and interdisciplinary team success. I have served as first or co-first author on several publications that explore biological insights using single-cell technologies, transcriptomics, and epigenomics, along with their integration. I am a relentless learner, continually updating my skills in new technologies such as data analysis from Xenium/Visium HD and antigen profiling platforms, as well as expanding my knowledge in diverse areas of biology including cancer mechanisms, diseases, and tissue studies.
 <br>
  
-<a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
+<a href="info/resume/SungRyePark_resume.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
 <br>
 
 ### Work Sample pages 
