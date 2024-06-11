@@ -20,6 +20,8 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 <a href="info/resume/SungRyePark_resume.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
 <br>
 
+[For AZ position](etc/AZ_Sr.Scientist_Qualification.html)<br>
+
 ### Work Sample pages 
 
 <a href="samplePages/NI.html" style="font-size: 20px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
