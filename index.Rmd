@@ -62,6 +62,10 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 [MAF analysis](https://sung2021.github.io/works.io/samples/TCGA_analysis.html)
 <br>
 
+<br>
+**Project Tracking Example**  
+<img src="png/Example_project_tracking.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
+
 <br><br>
 <!-- **To be updated**    -->
 <!-- <span style="font-size: 16px;">Plot gallery (will be updated) </span><br> -->
