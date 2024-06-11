@@ -54,6 +54,7 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 **Miscellaneous**   
 [Data_Processing in Linux env](etc/Data_Processing.html)  
 [WDL example](etc/WDL_example.html)  
+[BCR-seq info (Antibody_discovery_Platform)](etc/Antibody_discovery_Platform.html)  
 [Simple shiny app](samplePages/RShiny_app2.html)  
 [Basic Github usage](etc/Basic_github.html)  
 [cellranger docker setup](etc/cellranger_docker.html)  
