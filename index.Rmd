@@ -61,6 +61,7 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 [Basic Github usage](etc/Basic_github.html)  
 [cellranger docker setup](etc/cellranger_docker.html)  
 [Conference Summary Report: 10X Genomics User Group Meeting](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
+[Conference Summary Report: 2024 Festival in Genomics in Boston](https://sung2021.github.io/works.io/etc/FestivalBoston24_index.html)<br>
 [MAF analysis](https://sung2021.github.io/works.io/samples/TCGA_analysis.html)
 <br>
 
