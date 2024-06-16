@@ -1,0 +1,278 @@
+---
+title: "scTCR-seq analysis by scRepertoire"
+subtitle: ""
+author: "Sung Rye Park"
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+  code_folding: hide 
+  number_sections: FALSE
+  toc_depth: 6
+  toc_float: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=F, fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+
+```{r, echo=F}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+library(Seurat)
+library(ggthemes)
+```
+
+# Data  
+
+Sample name: P*****  
+Condition (1 control, 3 test conditions): CONTROL, CND1, CND2, COMBO  
+Number of cells : ~9000 cells     
+
+```{r}
+dir="~/Desktop/DF/DFCI_Paweletz/2023_Lauren_BMS_DGKi_23.03.07/"
+obj.srt = readRDS(paste0(dir,'rds/P30276.8096cells.23.07.15.rds'))
+```
+
+ 
+
+```{r, results='hide', eval=TRUE, echo=FALSE}
+## perform default analysis
+perform_default_analysis <- function(obj.srt, n_features = 2000, n_pcs = 20, 
+                                     dims_for_neighbors = 1:10, 
+                                     resolutions = c(0.2, 0.5), 
+                                     umap_dims = 1:10) {
+  # Step 1: Find variable features
+  obj.srt <- FindVariableFeatures(obj.srt, 
+                                  selection.method = 'vst', 
+                                  nfeatures = n_features)
+  
+  # Step 2: Scale and normalize data
+  all_genes <- rownames(obj.srt)
+  obj.srt <- NormalizeData(obj.srt)
+  obj.srt <- ScaleData(obj.srt, features = all_genes)
+  
+  # Step 3: Run PCA
+  obj.srt <- RunPCA(obj.srt, 
+                    features = VariableFeatures(object = obj.srt), npcs = n_pcs)
+  
+  # Step 4: Find neighbors
+  obj.srt <- FindNeighbors(obj.srt, dims = dims_for_neighbors)
+  
+  # Step 5: Find clusters
+  obj.srt <- FindClusters(obj.srt, resolution = resolutions)
+  
+  # Step 6: Run UMAP
+  obj.srt <- RunUMAP(obj.srt, dims = umap_dims)
+  
+  # Return the Seurat object with analysis results
+  return(obj.srt)
+}
+
+# apply
+obj.srt <- perform_default_analysis(obj.srt)
+```
+
+
+
+```{r, echo=FALSE}
+obj.srt@meta.data  = obj.srt@meta.data %>% 
+  mutate(condition = ifelse(sample == "C276", "CTRL", 
+                            ifelse(sample == "D276","CND1",
+                                   ifelse(sample =="N276", "CND2",
+                                          ifelse(sample == "DN276", "COMB","NO")))))
+```
+
+# scRepertoire  
+
+Clonotype analysis using scRepertoire package   
+
+Analysis below represents the basic analysis using the package.  
+```{r}
+library(scRepertoire)
+# obj.srt@meta.data[1:3,]
+
+l1 = obj.srt@meta.data %>% filter(condition=="CTRL") %>% select(14:43)
+l2 = obj.srt@meta.data %>% filter(condition=="CND1") %>% select(14:43)
+l3 = obj.srt@meta.data %>% filter(condition=="CND2") %>% select(14:43)
+l4 = obj.srt@meta.data %>% filter(condition=="COMB") %>% select(14:43)
+
+
+contig_list = list(l1=l1,l2=l2,l3=l3,l4=l4)
+
+combined <- combineTCR(contig_list, samples =  unique(obj.srt@meta.data$condition))
+# combined <- combineTCR(contig_list, samples =  unique(obj.srt@meta.data$condition), cells = "T-AB")
+```
+
+
+<!-- ## Quantify Clonotypes -->
+<!-- ```{r, fig.width=5, fig.height=4} -->
+<!-- quantContig(combined, cloneCall="gene+nt", scale = T) -->
+<!-- ``` -->
+
+<!-- ## Unique clonotypes by TRA chain       -->
+<!-- ```{r, fig.width=5, fig.height=4} -->
+<!-- quantContig(combined, cloneCall="gene+nt", chain = "TRA") -->
+<!-- ``` -->
+
+<!-- ## Unique clonotypes by TRB chain       -->
+<!-- ```{r, fig.width=5, fig.height=4} -->
+<!-- quantContig(combined, cloneCall="gene+nt", chain = "TRB") -->
+<!-- ``` -->
+
+## Numbers of unique clones   
+
+```{r, fig.width=6, fig.height=4}
+clonalQuant(combined, 
+            cloneCall="strict", 
+            chain = "both", 
+            scale = TRUE)
+```
+
+
+## clonalAbundance {.tabset}   
+
+### No scale
+```{r, fig.width=6, fig.height=4}
+clonalAbundance(combined, 
+                cloneCall = "gene", 
+                scale = FALSE)
+```
+### Scaled
+```{r, fig.width=6, fig.height=4}
+clonalAbundance(combined, 
+                cloneCall = "gene", 
+                scale = TRUE)
+```
+
+
+```{r, fig.width=5, fig.height=4}
+abundanceContig(combined, cloneCall = "gene", scale = F)
+```
+
+
+## Length of Clonotypes  
+
+```{r, fig.width=6, fig.height=4}
+lengthContig(combined, cloneCall="aa", chain = "both") 
+```
+
+```{r, fig.width=6, fig.height=4}
+lengthContig(combined, cloneCall="nt", chain = "TRA") + ggtitle("TRA")
+```
+
+
+```{r, fig.width=6, fig.height=4}
+lengthContig(combined, cloneCall="nt", chain = "TRB") + ggtitle("TRB")
+```
+
+
+## Compare Clonotypes  
+
+```{r, fig.width=7, fig.height=4}
+compareClonotypes(combined, 
+                  numbers = 5, 
+                  samples = c("CTRL","CND1","CND2","COMB"), 
+                  cloneCall="aa", 
+                  graph = "alluvial")
+```
+
+
+## Visualize Gene Usage   
+
+```{r, fig.width=8, fig.height=6}
+vizGenes(combined, gene = "V", 
+         chain = "TRB", 
+         plot = "bar", 
+         order = "variance", 
+         scale = TRUE)
+```
+
+```{r}
+#Peripheral Blood
+vizGenes(combined, 
+         gene = "V", 
+         chain = "TRB", 
+         y.axis = "J", 
+         plot = "heatmap", 
+         scale = TRUE, 
+         order = "gene")
+```
+
+## More Advanced Clonal Analysis   
+
+```{r, fig.width=5, fig.height=4}
+clonalHomeostasis(combined, cloneCall = "gene", 
+                  cloneTypes = c(Rare = 1e-04, 
+                                 Small = 0.001, 
+                                 Medium = 0.01, 
+                                 Large = 0.1, 
+                                 Hyperexpanded = 1)) + ggtitle("cloneCall = gene")
+```
+
+```{r, fig.width=5, fig.height=4}
+clonalHomeostasis(combined, cloneCall = "aa") + ggtitle("cloneCall = aa")
+```
+
+## Diversity Analysis 
+
+```{r, fig.width=5, fig.height=4}
+clonalDiversity(combined, 
+                cloneCall = "gene", 
+                group.by = "sample",
+                n.boots = 100)
+```
+
+
+```{r}
+# seurat <- combineExpression(combined, obj.srt, 
+#                  cloneCall="gene",
+#                  proportion = TRUE)
+```
+
+
+```{r, eval=FALSE}
+# library(ggraph)
+# 
+# #No Identity filter
+# clonalNetwork(seurat, 
+#               reduction = "umap", 
+#               identity = "sample",
+#               filter.clones = NULL,
+#               filter.identity = NULL,
+#               cloneCall = "aa")
+```
+
+
+
+
+
+```{r}
+# library(circlize)
+# library(scales)
+# 
+# circles <- getCirclize(seurat, 
+#                        group.by = "sample")
+# 
+# #Just assigning the normal colors to each cluster
+# grid.cols <- scales::hue_pal()(length(unique(seurat@active.ident)))
+# names(grid.cols) <- levels(seurat@active.ident)
+# 
+# #Graphing the chord diagram
+# circlize::chordDiagram(circles,
+#                        self.link = 1, 
+#                       grid.col = grid.cols)
+```
+
+
+<hr>
+
+<br><br>

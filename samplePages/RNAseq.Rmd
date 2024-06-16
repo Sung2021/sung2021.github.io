@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo=T, fig.align = "center", eval = T,
 
 
 <a href="https://sung2021.github.io/">Back to Main Page </a>  
-<a href="https://sung2021.github.io/works.io/samples/RNAseq/RNAseq_index.html">Newer version (being updated daily)</a>
+<a href="https://sung2021.github.io/works.io/samples/RNAseq/RNAseq_index.html">Newer version (being updated)</a>
 
 
 # Preparation  
