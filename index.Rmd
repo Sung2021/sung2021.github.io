@@ -34,9 +34,11 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 <a href="https://sung2021.github.io/works.io/samples/scRNA_index.html" style="font-size: 16px;">General Single cell RNA-seq workflow</a><br>
 <img src="https://sung2021.github.io/works.io/samples/img/scRNA_UMAP.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 
+##### Further Anaysis
 <a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br>
-<a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Integration (preparing)</a><br>
-<a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">QC (preparing)</a><br>
+<a href="samplePages/" style="font-size: 16px;">Integration (preparing)</a><br>
+<a href="samplePages/" style="font-size: 16px;">Additional QC (preparing)</a><br>
+<a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br>
 <hr>
 
 #### RNA-seq workflow 
@@ -51,25 +53,42 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 
 * [Preprocessing](samplePages/TCR_seq.html)
 * [scRNA-seq+scTCR-seq](https://sung2021.github.io/etc/DGKi_test_human.html)<br>
-* [scRepertoire](samplePages/DGKi_scTCRSeq_scRepertoire2.html)
+* [scRepertoire (preparing: package update recently)](samplePages/DGKi_scTCRSeq_scRepertoire2.html)
 
 <hr>
 
 #### TCGA DB data analysis workflow 
-<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html" style="font-size: 20px;">TCGA-BRCA Transcriptome Analysis</a><br>
+<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html" style="font-size: 14px;">TCGA-BRCA Transcriptome Analysis</a><br>
 <img src="png/TCGA_BRCA_main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 
 <!-- <a href="https://sung2021.github.io/works.io/samples/TCGA/TCGA_BRCA_CNV.html" style="font-size: 20px;">TCGA-BRCA CNV Analysis</a><br> -->
 <!-- <br> -->
-
+<hr>
 
 ### Work-related Information collections
 
-[Immune Cell Type information](https://sung2021.github.io/works.io/etc/Useful_info.html)<br> 
-[Drug Information (that I study at DFCI)](https://sung2021.github.io/works.io/etc/Drug_info.html)<br>
-[TCGA-BRCA Metadata Column Description](info/TCGA/TCGA_BRCA_metadata_info.html)<br>
-<br>
+##### 1. [Immune Cell Type information (References)](https://sung2021.github.io/works.io/etc/Useful_info.html)
+* B cell
+* T cell (CD4/CD8)
+* Myeloid cell (Macrophage,DC,etc)
 
+##### 2. [Drug Information (for DFCI projects)](https://sung2021.github.io/works.io/etc/Drug_info.html)
+* DGKi
+* DS-1062a
+* TAK-676
+* ADU-S100
+* Pembrolizumab
+* Nivolumab  
+* CD47 
+
+##### 3. [TCGA-BRCA Metadata Column Description](info/TCGA/TCGA_BRCA_metadata_info.html)
+* sample_type
+* state
+* tissue_type
+* treatments
+* more (Paper Attributes)
+<br>
+<hr>
 
 ### Miscellaneous
 
@@ -85,8 +104,10 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 
 ### Conference/Seminar Note   
 
-[Conference Summary Report: 10X Genomics User Group Meeting 2024](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
-[Conference Note (personal): 2024 Festival in Genomics in Boston](https://sung2021.github.io/works.io/etc/FestivalBoston24_index.html)<br>
+**2024**
+
+&nbsp;&nbsp;&nbsp;[Conference Summary Report: 10X Genomics User Group Meeting 2024](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
+&nbsp;&nbsp;&nbsp;[Conference Note (personal): 2024 Festival in Genomics in Boston](https://sung2021.github.io/works.io/etc/FestivalBoston24_index.html)<br>
 
 <br><br><br><br>
 <hr>
