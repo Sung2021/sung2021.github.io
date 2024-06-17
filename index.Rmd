@@ -102,6 +102,13 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 <br>
 <hr>
 
+### Learning new methods
+
+[CRISPR Screening method comparison (Korean/English)](etc/CRISPR.html)
+
+<br>
+<hr>
+
 ### Conference/Seminar Note   
 
 **2024**
