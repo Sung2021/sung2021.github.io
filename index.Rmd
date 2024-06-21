@@ -42,7 +42,18 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 <hr>
 
 #### RNA-seq workflow 
-<a href="samplePages/RNAseq.html" style="font-size: 16px;">bulk RNA-seq workflow</a><br>
+<a href="samplePages/RNAseq.html" style="font-size: 16px;">bulk RNA-seq workflow link</a>
+
+* PCA<br>
+* DEG Anaysis<br>
+* GSEA (HALLMARK)<br><br>
+
+  **Feature selection**
+
+  * [Machine Learning application to identify variable features in bulk RNA-seq data (Elastic Net)](https://sung2021.github.io/works.io/Paweletz/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_ElasticNet_featureSelection.v2.html)
+  * [Machine Learning application to identify important features and pattern in bulk RNA-seq data (kmeans clustering using DEGs)](https://sung2021.github.io/works.io/Paweletz/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_DEG_kmeans_code.html)
+
+
 <hr>
 
 #### Genomic data workflow 
