@@ -44,15 +44,29 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 #### RNA-seq workflow 
 <a href="samplePages/RNAseq.html" style="font-size: 16px;">bulk RNA-seq workflow link</a>
 
-* PCA<br>
-* DEG Anaysis<br>
-* GSEA (HALLMARK)<br><br>
+* PCA
+* DEG Anaysis
+* GSEA (HALLMARK)
 
+<br>
   **Feature selection**
 
   * [Machine Learning application to identify variable features in bulk RNA-seq data (Elastic Net)](https://sung2021.github.io/works.io/Paweletz/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_ElasticNet_featureSelection.v2.html)
   * [Machine Learning application to identify important features and pattern in bulk RNA-seq data (kmeans clustering using DEGs)](https://sung2021.github.io/works.io/Paweletz/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_DEG_kmeans_code.html)
 
+
+<hr>
+
+#### RNA-seq Analysis using TCGA DB data 
+<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html" style="font-size: 14px;">TCGA-BRCA Transcriptome Analysis</a>
+
+* PCA
+* DEG Anaysis
+* GSEA (HALLMARK)
+* ssGSEA<br>
+
+<img src="png/TCGA_BRCA_main.png" style="width: 60%; border: 0.5px solid black;"><br>
+<br><br>
 
 <hr>
 
@@ -68,13 +82,7 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 
 <hr>
 
-#### TCGA DB data analysis workflow 
-<a href="https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html" style="font-size: 14px;">TCGA-BRCA Transcriptome Analysis</a><br>
-<img src="png/TCGA_BRCA_main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 
-<!-- <a href="https://sung2021.github.io/works.io/samples/TCGA/TCGA_BRCA_CNV.html" style="font-size: 20px;">TCGA-BRCA CNV Analysis</a><br> -->
-<!-- <br> -->
-<hr>
 
 ### Work-related Information collections
 
