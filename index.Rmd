@@ -25,6 +25,16 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 
 ### Works  
 
+#### [General Workflow Overview](etc/General_workflow2.html)
+
+1. scRNA-seq pipeline
+2. RNA-seq pipeline
+3. ChIP-seq/Cut&Run/ATAC-seq pipeline
+4. Machine Learning application
+5. Public DB
+
+<br><br>
+
 #### Paper work reviews 
 <a href="samplePages/NI.html" style="font-size: 20px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
 <img src="png/NI/main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
