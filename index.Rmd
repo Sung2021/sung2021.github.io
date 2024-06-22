@@ -166,7 +166,7 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 <br>
 
 ## Skills  
-* Proficient in a wide array of NGS data pipelines and bioinformatics analyses including scRNA-seq, TCR-seq, CITE-Seq, ATAC-seq, bulk RNA-seq, as well as integrative approaches with TCGA and CCLE for genomic and epigenomic studies 
+* Proficient in a wide array of NGS data pipelines and bioinformatics analyses including scRNA-seq, scTCR-seq, CITE-Seq, ATAC-seq, bulk RNA-seq, as well as integrative approaches with TCGA and CCLE for genomic and epigenomic studies 
 * Proficient in Linux, with programming skills in Python and R, and skilled use of bioinformatics tools including Cellranger, Salmon, and a suite of sequence alignment and analysis utilities 
 * Well-versed in peak calling, genomic visualization, and analysis using open- source platforms such as Seurat, scanpy, and the USCC Genome Browser
 * Expertise in pathway and network analysis to elucidate complex biological pathways, and statistical analysis for robust genomic data interpretation
@@ -188,6 +188,7 @@ Guiding and mentoring interns in bioinformatics practices and project work
 
   - TCGA-BRCA data analysis (MSLN+TROP2) 
   - DS-1062a Testing data analysis (scRNA-seq + RNA-seq) 
+  - PDX model based Oncogenic driver pattern study (RNA-seq) 
   - DGK inhibitor efficacy testing in combination with Nivolumab for SCLC     
   - DS-1062 and Pembrolizumab testing for SCLC   
   - EZH2 inhibitor candidates searching using ChIP-seq   
@@ -205,7 +206,7 @@ Guiding and mentoring interns in bioinformatics practices and project work
   * CITE-seq, custom pipeline development and applications <br><br>
   
 * Postdoctoral Fellow at University of Michigan
-  * Various NGS platform in-lab setting (DROP-seq, Seq-well, BD-Rapsody, Slide-Seq, and Seq-scope (Contribution to the platform development, Cell, 2021) 
+  * Various NGS platform in-lab setting (DROP-seq, Seq-well, BD-Rapsody, and Seq-scope (Contribution to the platform development, Cell, 2021) 
   * Single cell transcriptome study of colon cancer cell response to 5FU-induced DNA damage (Cell Reports, 2020)
   * Holistic characterization of single Hepatocyte transcriptome responses to high fat diet (American Journal of Physiology, 2020) 
   * Supporting role: flow-cytometry, immunoblotting, qPCR, mouse surgery, etc <br>
