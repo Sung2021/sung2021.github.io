@@ -46,9 +46,9 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 
 ##### Further Anaysis
 <a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br>
-<a href="samplePages/" style="font-size: 16px;">Integration (preparing)</a><br>
-<a href="samplePages/" style="font-size: 16px;">Additional QC (preparing)</a><br>
-<a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br>
+<!-- <a href="samplePages/" style="font-size: 16px;">Integration (preparing)</a><br> -->
+<!-- <a href="samplePages/" style="font-size: 16px;">Additional QC (preparing)</a><br> -->
+<!-- <a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br> -->
 <hr>
 
 #### RNA-seq workflow 
