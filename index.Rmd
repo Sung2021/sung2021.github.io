@@ -12,23 +12,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Professional summary  
 
-Current position at  **Dana Farber Cancer Institute**  
 <br>
 Senior Bioinformatics Scientist with over 6 years of hands-on experience in various NGS data analysis and a strong publication record, including a co-first authorship in Nature Immunology (2024) for CD8+ Memory T cell fate. Proficient in the integration of comprehensive multi-omic datasets, encompassing transcriptomic, genomic, epigenomic, and clinical data, to drive research and development in immuno-oncology. At Dana Farber Cancer Institute, played a pivotal role in analyzing complex drug combination testing datasets and provided critical bioinformatics consultation. Passionate about applying a blend of technical proficiency and biological insights to enhance team success, particularly within innovative personalized cancer therapy programs.    
 
 <br>
 
-## Resume (pdf) <a id="resume-pdf"></a>   
-<a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 20px;">Sung Rye Park's resume</a><br>
+<!-- ## Resume (pdf) <a id="resume-pdf"></a>    -->
+<!-- <a href="info/resume/SungRyePark_resume2405.pdf" style="font-size: 20px;">Sung Rye Park's resume</a><br> -->
 
 
 ## Work Sample pages<a id="samples"></a>     
 
-<a href="samplePages/NI.html" style="font-size: 24px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
-<a href="samplePages/scRNAseq.html" style="font-size: 24px;">single cell RNA-seq</a><br>
-<a href="samplePages/RNAseq.html" style="font-size: 24px;">bulk RNA-seq</a><br>
-<a href="samplePages/ChIP_seq.html" style="font-size: 24px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
-<a href="samplePages/TCR_seq.html" style="font-size: 24px;">TCR-seq</a><br>
+<a href="samplePages/NI.html" style="font-size: 16px;">Tle3 as a co-activator (Nature Immunology work)</a><br>
+<a href="samplePages/scRNAseq.html" style="font-size: 16px;">single cell RNA-seq</a><br>
+<a href="samplePages/RNAseq.html" style="font-size: 16px;">bulk RNA-seq</a><br>
+<a href="samplePages/ChIP_seq.html" style="font-size: 16px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
+<a href="samplePages/TCR_seq.html" style="font-size: 16px;">TCR-seq</a><br>
 <br>
 [Data_Processing in Linux env](etc/Data_Processing.html)  
 [Simple shiny app](samplePages/Simple_RShiny_app_gene_gene_scatterplot.html)  
