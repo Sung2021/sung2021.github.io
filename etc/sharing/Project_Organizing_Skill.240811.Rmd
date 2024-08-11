@@ -1,0 +1,70 @@
+---
+title: "Project Organizing Skill"
+author: "Sung"
+date: "`r format(Sys.Date())`"
+output: 
+  html_document:
+    theme: flatly
+    toc: yes
+    toc_float:
+      collapsed: true
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, eval =T, fig.align = "left", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+### Project Management Practices
+
+1. **Project Folder Structure:**  
+   Maintain a consistent folder structure across all projects to ensure organization and ease of access. Each project begins with the raw data (e.g., fastq files, count matrix, processed data from public sources, or RDS files) with detailed file information, including original sources.
+
+2. **Template Usage:**  
+   Utilize a template for project folders that includes the following subfolders:
+   - **reports:** Contains analysis reports in various formats (PPT, Word, Excel, HTML, PDF).
+   - **data:** Stores processed data used for reports, such as marker genes, GSEA outputs, scoring results, and heatmap data.
+   - **info:** Houses project-related information provided by others, including project guides, important email discussions, reference papers, and GMT files.
+   - **raw_data:** Holds raw data files or their location information if the files are large.
+   - **rds:** Contains RDS files generated during the project for reuse or regeneration of analysis reports.
+
+3. **Code/Script Management:**  
+   Scripts are maintained on GitHub for ease of updates and version control. The focus is on keeping scripts up-to-date rather than archiving outdated versions.
+
+4. **Index Files:**  
+   Each project report folder contains an index file (e.g., HTML format) that serves as a summary and guide to the project's contents. This index file is critical for quickly locating and understanding the project's components.
+
+5. **Time Allocation:**  
+   Equal emphasis is placed on creating and organizing reports. The folder structure is designed to be straightforward and intuitive, ensuring that the future self can easily navigate and retrieve information even if the details of the project are forgotten.
+
+6. **Periodic Review:**  
+   Project folders are revisited on a monthly or bi-monthly basis to refresh memory and ensure ongoing familiarity with the project's status. This practice is particularly useful for handling requests from collaborators who may revisit a project after some time.
+
+7. **Weekly Records:**  
+   Maintain weekly records that provide a snapshot of progress compared to the previous week. These records help track the progress of multiple projects and are named by the date of generation.
+
+8. **Email Discussions:**  
+   Important discussions from emails are either saved in a separate document or integrated into the relevant project report, ensuring that all crucial information is documented and accessible.
+   
+   
+
+<!-- 1. Maintain folders by project -->
+<!-- 2. Use similar project structure to all projects -->
+<!-- 3. Start with the raw_data (fastq files, count matrix, processed data (downloaded from public sources) or rds files) with the file information in detail. (The original sources of files (GEO, FTP, locations in servers, etc : the sources that raw data can be retrieved) -->
+<!-- 4. My template 
+* reports : analysis reports (PPT, Word, Excel, html, pdf, etc)
+* data : Any processed data to be used for the report (marker genes, GSEA output, scoring result, heatmap data, etc) 
+* info : Any information that were given by other people. (Project guide document, emails including important discussion, reference papers, gmt files, etc). These are the original sources for the analyses. 
+* raw_data : fastq files, count matrix, etc (if the file size is large, the location information of file should be in this folder)
+* rds : Any rds files that were generated during the project period for reuse/regeneration of the analysis reports.  -->
+<!-- 5. Code/Script : I prefer to keep scripts in GitHub for easy updates and version control. While some may choose to archive old code, I focus on maintaining up-to-date scripts rather than keeping outdated versions. -->
+<!-- 6. The use of Index file: Each project report folder contains the project index file (I use html files). (Share example(s)) (project_information_Daiichi_DS1062a_scRNAseq, Daiichi_2024_index.html)  -->
+<!-- 7. Spend almost equal time on creating reports and organizing them : I organize folders and files so that my future self (like a year later) can easily find anything. I assume that the future me might forget what I’ve done, so the structure is very straightforward and follows commonly accepted rules.  -->
+<!-- 8. Revisit all project folders with monthly/bi-monthly bases : This helps refresh my memory. While I don’t remember all projects at all times, I do recall what I’ve done and where to find everything when needed. Index files are especially helpful for this routine. Since collaborators often return weeks or months later to request something based on my previous reports, I prefer to keep track of resource locations until the project is officially closed or published. -->
+<!-- 9. Keep weekly records: These are snapshots of what has been done each week compared to the previous week. These records help track progress across multiple projects and serve as additional reference sources. Each file is named with the date it was generated.  -->
+<!-- 10. Save important discussions from emails: Store them in a separate document or integrate them into the relevant report (I prefer to include them in the relevant report). -->
