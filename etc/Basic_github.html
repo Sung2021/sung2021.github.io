@@ -6,9 +6,9 @@
     <meta name="generator" content="pandoc" />
 
     
-        <meta name="date" content="2024-04-26" />
+        <meta name="date" content="2024-06-14" />
     
-    <title>Data Processing in Linux</title>
+    <title>Basic Github Usage</title>
 
         <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1585,7 +1585,7 @@ margin-left: 0 !important;
    <div class="book with-summary">
       <div class="book-summary">
         <ul>
-          <li class="title">Data Processing in Linux</li>
+          <li class="title">Basic Github Usage</li>
           <li class="divider"></li>
         </ul>
         <nav role="navigation" id="toc">
@@ -1602,11 +1602,19 @@ margin-left: 0 !important;
           GitHub</a></li>
           <li><a href="#step-6-pull-latest-changes-from-github" id="toc-step-6-pull-latest-changes-from-github">Step 6: Pull
           Latest Changes from GitHub</a></li>
+          <li><a href="#password-authentication-using-token" id="toc-password-authentication-using-token">Password
+          authentication using Token</a>
+          <ul>
+          <li><a href="#option-1-using-a-personal-access-token-pat" id="toc-option-1-using-a-personal-access-token-pat">Option 1:
+          Using a Personal Access Token (PAT)</a></li>
+          <li><a href="#option-2-using-ssh-keys" id="toc-option-2-using-ssh-keys">Option 2: Using SSH
+          Keys</a></li>
+          </ul></li>
           </ul>
         </nav>
         <ul class="authors">
           <li class="divider"></li>
-                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-04-26</span></li>
+                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-06-14</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -1626,7 +1634,7 @@ margin-left: 0 !important;
    </div>
    
         
-      <h1 class="title">Data Processing in Linux</h1>
+      <h1 class="title">Basic Github Usage</h1>
       
         
 
@@ -1690,6 +1698,64 @@ repository:</p>
 local repository:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">git</span> pull origin main</span></code></pre></div></li>
 </ul>
+<hr />
+</div>
+<div id="password-authentication-using-token" class="section level3 tabset">
+<h3 class="tabset">Password authentication using Token</h3>
+<div id="option-1-using-a-personal-access-token-pat" class="section level4">
+<h4>Option 1: Using a Personal Access Token (PAT)</h4>
+<ol style="list-style-type: decimal">
+<li><strong>Generate a Personal Access Token:</strong>
+<ul>
+<li>Go to your GitHub account.</li>
+<li>Navigate to Settings &gt; Developer settings &gt; Personal access
+tokens.</li>
+<li>Click on “Generate new token”.</li>
+<li>Select the scopes or permissions you’d like to grant this token. For
+pushing to a repository, select <code>repo</code>.</li>
+<li>Generate the token and make sure to copy it; you won’t be able to
+see it again once you navigate away from the page. <br></li>
+</ul></li>
+<li><strong>Use the PAT instead of your password:</strong>
+<ul>
+<li>When prompted for a password in the terminal, enter your personal
+access token instead of your GitHub password.</li>
+</ul></li>
+</ol>
+</div>
+<div id="option-2-using-ssh-keys" class="section level4">
+<h4>Option 2: Using SSH Keys</h4>
+<ol style="list-style-type: decimal">
+<li><strong>Generate SSH Key Pair:</strong>
+<ul>
+<li>Open your terminal and run
+<code>ssh-keygen -t ed25519 -C &quot;your_email@example.com&quot;</code>.</li>
+<li>Follow the prompts to create your keys, ideally without a passphrase
+for automation.</li>
+<li>This will create a public and private key pair. The public key ends
+in <code>.pub</code> and is safe to share. <br></li>
+</ul></li>
+<li><strong>Add your SSH public key to GitHub:</strong>
+<ul>
+<li>Navigate to your GitHub account.</li>
+<li>Go to Settings &gt; SSH and GPG keys.</li>
+<li>Click on “New SSH key”, give it a title, and paste your public key.
+<br></li>
+</ul></li>
+<li><strong>Switch your remote URL from HTTPS to SSH:</strong>
+<ul>
+<li>Check your current remote URL: <code>git remote -v</code>.</li>
+<li>Change it to SSH:
+<code>git remote set-url origin git@github.com:username/repository.git</code>.
+<br></li>
+</ul></li>
+<li><strong>Push again using SSH:</strong>
+<ul>
+<li>Simply run your push command again:
+<code>git push origin main</code>.</li>
+</ul></li>
+</ol>
+</div>
 </div>
 
    

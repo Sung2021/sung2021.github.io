@@ -7,7 +7,7 @@ output:
     theme: flatly
     toc: yes
     toc_float:
-      collapsed: true
+      collapsed: false
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, eval =T, fig.align = "left", 
@@ -20,12 +20,12 @@ knitr::opts_chunk$set(echo=T, eval =T, fig.align = "left",
 ```
 
 
-### Project Management Practices
+## Project Management Practices
 
-1. **Project Folder Structure:**  
+### 1. **Project Folder Structure:**  
    Maintain a consistent folder structure across all projects to ensure organization and ease of access. Each project begins with the raw data (e.g., fastq files, count matrix, processed data from public sources, or RDS files) with detailed file information, including original sources.
 
-2. **Template Usage:**  
+### 2. **Template Usage:**  
    Utilize a template for project folders that includes the following subfolders:
    - **reports:** Contains analysis reports in various formats (PPT, Word, Excel, HTML, PDF).
    - **data:** Stores processed data used for reports, such as marker genes, GSEA outputs, scoring results, and heatmap data.
@@ -33,23 +33,24 @@ knitr::opts_chunk$set(echo=T, eval =T, fig.align = "left",
    - **raw_data:** Holds raw data files or their location information if the files are large.
    - **rds:** Contains RDS files generated during the project for reuse or regeneration of analysis reports.
 
-3. **Code/Script Management:**  
+### 3. **Code/Script Management:**  
    Scripts are maintained on GitHub for ease of updates and version control. The focus is on keeping scripts up-to-date rather than archiving outdated versions.
 
-4. **Index Files:**  
+### 4. **Index Files:**  
    Each project report folder contains an index file (e.g., HTML format) that serves as a summary and guide to the project's contents. This index file is critical for quickly locating and understanding the project's components.
 
-5. **Time Allocation:**  
+### 5. **Time Allocation:**  
    Equal emphasis is placed on creating and organizing reports. The folder structure is designed to be straightforward and intuitive, ensuring that the future self can easily navigate and retrieve information even if the details of the project are forgotten.
 
-6. **Periodic Review:**  
+### 6. **Periodic Review:**  
    Project folders are revisited on a monthly or bi-monthly basis to refresh memory and ensure ongoing familiarity with the project's status. This practice is particularly useful for handling requests from collaborators who may revisit a project after some time.
 
-7. **Weekly Records:**  
+### 7. **Weekly Records:**  
    Maintain weekly records that provide a snapshot of progress compared to the previous week. These records help track the progress of multiple projects and are named by the date of generation.
 
-8. **Email Discussions:**  
+### 8. **Email Discussions:**  
    Important discussions from emails are either saved in a separate document or integrated into the relevant project report, ensuring that all crucial information is documented and accessible.
+
    
    
 

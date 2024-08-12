@@ -21,8 +21,9 @@ knitr::opts_chunk$set(echo=F, fig.align = "center",
                       tidy = FALSE)
 ```
 
-# DGKi 
+# DGKi + Nivolumab combinational therapy   
 
+**Introduction**   
 - DGKs are physiological regulators of T-cell development,differentiation, and function.   
 - Inhibition of DGK may restore the T-cell activation program   
 - Enhanced effects may be seen with combination therapy (Nivolumab + DGKi)   
@@ -42,7 +43,7 @@ library(ggthemes)
 
 Sample name: P*****  
 Condition (1 control, 3 test conditions): CONTROL, CND1, CND2, COMBO  
-Number of cells : 8096 cells     
+Number of cells : ~9000 cells     
 
 ```{r}
 dir="~/Desktop/DF/DFCI_Paweletz/2023_Lauren_BMS_DGKi_23.03.07/"
@@ -151,57 +152,61 @@ cowplot::plot_grid(p1,p2,p3,p4, ncol = 2)
 
 # Clustering {.tabset}   
 
-## UMAP colored by cluster (two resolutions)   
+## Clusters   
+
+1. resolution : 0.2  
+2. resolution : 0.5  
 ```{r, fig.width=12, fig.height=5}
 DimPlot(obj.srt, group.by = c("RNA_snn_res.0.2", "RNA_snn_res.0.5"), size=0.1)
 ```
 
 
-## Distribution of cells by cluster and condition (res 0.1)   
+## cluster and condition (res 0.1)   
 ```{r, fig.width=5, fig.height=4}
-obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.2, fill=condition)) + geom_bar(position = "fill") + scale_fill_manual(values = wes) + theme_bw()
+obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.2, fill=condition)) + geom_bar(position = "fill", color="grey33") + scale_fill_manual(values = wes) + theme_bw() + theme(legend.title = element_blank())
 ```
 
 
-## TABLE : Distribution of cells by cluster and condition (res 0.1)    
+## TABLE1 : Number of cells (res 0.2)    
 ```{r}
 obj.srt@meta.data %>% select(RNA_snn_res.0.2, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% DT::datatable(rownames = F)
 ```
-## HEATMAP : Distribution of cells by cluster and condition (res 0.1)    
+
+## HEATMAP1 : Percentage of cells (res 0.2)    
 ```{r, fig.width=5, fig.height=4}
 df = obj.srt@meta.data %>% select(RNA_snn_res.0.2, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% select(2:5) 
 for(i in 1:length(colnames(df))){
   df[,i]= df[,i]/sum(df[,i])*100
 }
 
-df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", cluster_rows = F, cluster_cols = F, color= colorRampPalette(colors = c("white","brown"))(1000), main = "Number of cells (%)", border_color = "grey99")
+df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", fontsize_number = 13,  cluster_rows = F, cluster_cols = F, color= colorRampPalette(colors = c("white","brown"))(1000), main = "% in sample", border_color = "grey33")
 ```
 
 
 
-## Distribution of cells by cluster and condition (res 0.5)   
+## cluster and condition (res 0.5)   
 ```{r, fig.width=7, fig.height=4}
-obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.5, fill=condition)) + geom_bar(position = "fill") + scale_fill_manual(values = wes) + theme_bw()
+obj.srt@meta.data %>% ggplot(aes(RNA_snn_res.0.5, fill=condition)) + geom_bar(position = "fill", color="grey33") + scale_fill_manual(values = wes) + theme_bw()
 ```
 
-## TABLE : Distribution of cells by cluster and condition (res 0.5)    
+## TABLE2 : Number of cells (res 0.5)    
 ```{r}
 obj.srt@meta.data %>% select(RNA_snn_res.0.5, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% DT::datatable(rownames = F)
 ```
 
 
-## HEATMAP : Distribution of cells by cluster and condition (res 0.5)    
-```{r, fig.width=5, fig.height=4}
+## HEATMAP2 : Percentage of cells (res 0.5)    
+```{r, fig.width=5, fig.height=5}
 df = obj.srt@meta.data %>% select(RNA_snn_res.0.5, condition) %>% table() %>% data.frame() %>% tidyr::spread(condition, Freq) %>% select(2:5) 
 for(i in 1:length(colnames(df))){
   df[,i]= df[,i]/sum(df[,i])*100
 }
 
-df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", cluster_rows = F, cluster_cols = F, color= colorRampPalette(colors = c("white","brown"))(1000), main = "Number of cells (%)", border_color = "grey99")
+df %>% pheatmap::pheatmap(display_numbers = T, number_format = "%.0f", fontsize_number = 13,  cluster_rows = F, cluster_cols = F, color= colorRampPalette(colors = c("white","brown"))(1000), main = "% in sample", border_color = "grey33")
 ```
 
 <br><br>
-# Clonotype Analysis     
+   
 
 # Clonotype Diversity {.tabset}  
 
@@ -238,27 +243,27 @@ bubbleplot= function(data){
 
 ```
 
-## CTRL clonotype diversity  
+## CTRL    
 ```{r}
 C276= obj.srt@meta.data %>% filter(condition == "CTRL") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
 bubbleplot(data = C276)
 ```
 
-## CND1 clonotype diversity  
+## CND1   
 ```{r}
 D276= obj.srt@meta.data %>% filter(condition == "CND1") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
 bubbleplot(data = D276)
 ```
 
 
-## CND2 clonotype diversity  
+## CND2    
 ```{r}
 N276= obj.srt@meta.data %>% filter(condition == "CND2") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
 bubbleplot(data = N276)
 ```
 
 
-## COMB clonotype diversity  
+## COMB    
 ```{r}
 DN276= obj.srt@meta.data %>% filter(condition == "COMB") %>% select(raw_clonotype_id) %>% table() %>% data.frame()
 bubbleplot(data = DN276)
@@ -268,7 +273,9 @@ bubbleplot(data = DN276)
 
 # scRepertoire  
 
-Clonotype analysis using scRepertoire   
+Clonotype analysis using scRepertoire package   
+
+Analysis below represents the basic analysis using the package.  
 ```{r}
 library(scRepertoire)
 # obj.srt@meta.data[1:3,]
@@ -286,46 +293,46 @@ combined <- combineTCR(contig_list, samples =  unique(obj.srt@meta.data$conditio
 
 
 ## Quantify Clonotypes
-```{r}
+```{r, fig.width=5, fig.height=4}
 quantContig(combined, cloneCall="gene+nt", scale = T)
 ```
 
 ## Unique clonotypes by TRA chain      
-```{r}
+```{r, fig.width=5, fig.height=4}
 quantContig(combined, cloneCall="gene+nt", chain = "TRA")
 ```
 
 ## Unique clonotypes by TRB chain      
-```{r}
+```{r, fig.width=5, fig.height=4}
 quantContig(combined, cloneCall="gene+nt", chain = "TRB")
 ```
 
-# Clonotype Abundance   
+## Clonotype Abundance   
 
-```{r}
+```{r, fig.width=5, fig.height=4}
 abundanceContig(combined, cloneCall = "gene", scale = F)
 ```
 
 
-# Length of Clonotypes  
+## Length of Clonotypes  
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 lengthContig(combined, cloneCall="aa", chain = "both") 
 ```
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 lengthContig(combined, cloneCall="nt", chain = "TRA") + ggtitle("TRA")
 ```
 
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 lengthContig(combined, cloneCall="nt", chain = "TRB") + ggtitle("TRB")
 ```
 
 
-# Compare Clonotypes  
+## Compare Clonotypes  
 
-```{r}
+```{r, fig.width=7, fig.height=4}
 compareClonotypes(combined, 
                   numbers = 5, 
                   samples = c("CTRL","CND1","CND2","COMB"), 
@@ -334,9 +341,9 @@ compareClonotypes(combined,
 ```
 
 
-# Visualize Gene Usage   
+## Visualize Gene Usage   
 
-```{r}
+```{r, fig.width=8, fig.height=6}
 vizGenes(combined, gene = "V", 
          chain = "TRB", 
          plot = "bar", 
@@ -355,9 +362,9 @@ vizGenes(combined,
          order = "gene")
 ```
 
-# More Advanced Clonal Analysis   
+## More Advanced Clonal Analysis   
 
-```{r}
+```{r, fig.width=5, fig.height=4}
 clonalHomeostasis(combined, cloneCall = "gene", 
                   cloneTypes = c(Rare = 1e-04, 
                                  Small = 0.001, 
@@ -366,13 +373,13 @@ clonalHomeostasis(combined, cloneCall = "gene",
                                  Hyperexpanded = 1)) + ggtitle("cloneCall = gene")
 ```
 
-```{r}
+```{r, fig.width=5, fig.height=4}
 clonalHomeostasis(combined, cloneCall = "aa") + ggtitle("cloneCall = aa")
 ```
 
-# Diversity Analysis 
+## Diversity Analysis 
 
-```{r}
+```{r, fig.width=5, fig.height=4}
 clonalDiversity(combined, 
                 cloneCall = "gene", 
                 group.by = "sample",
@@ -420,13 +427,28 @@ clonalDiversity(combined,
 #                       grid.col = grid.cols)
 ```
 
+
+<hr>
+<br><br>
+
+# Specific cell type + clonotype   
+
+**Cytotoxic T Cell Markers and associated clonotypes**   
+
+**Purpose** : Try to find the clonotypes with strong cytotoxic T cell marker gene expressions, expecting functional clonotypes to fight the disease.   
+
+Cytotoxic T cell markers :   
+
+Mostly enzymes that kill target cells.  
+
+- IFNG (Increase when infection) 
+- GZMA (Granzyme A)  
+- GZMB (Granzyme B)    
+- NKG7 (NK cell granule protein 7)   
+
 <br>
 
-# Further Analysis (Specific cell type+clonotype)   
-
-Cytotoxic Markers and associated clonotypes  
-
-```{r, eval=TRUE, fig.width=6, fig.height=6}
+```{r, eval=TRUE, fig.width=7, fig.height=6}
 # obj.srt@meta.data[1:3,]
 
 df = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
@@ -437,8 +459,8 @@ df = df[1:10,]
 
 # cytotoxic T cell clonotypes 
 
-obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
-  filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% nrow()
+# obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
+#   filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% nrow()
 
 
 df.anno = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
@@ -446,20 +468,24 @@ df.anno = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>%
 df.anno= df.anno[,c("raw_clonotype_id","condition")] %>% arrange(desc(raw_clonotype_id))
 obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
   filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% select(IFNG,GZMA,GZMB, NKG7) %>% 
-  pheatmap::pheatmap(show_rownames = F, color = colorRampPalette(colors=c('ivory',"salmon"))(100),
+  pheatmap::pheatmap(show_rownames = F, color = colorRampPalette(colors=c('grey99',"salmon"))(100),
                      annotation_row = df.anno, fontsize_col = 15)
 
 ```
 
+<br>
+
+**Reordered by clonotype version**   
 ```{r, fig.width=6, fig.height=6}
 
 df.input = obj.srt@meta.data %>% filter(cytotoxic == "cytotoxic") %>% 
   filter(raw_clonotype_id %in% df$raw_clonotype_id) %>% select(IFNG,GZMA,GZMB, NKG7)
 df.input[rownames(df.anno),] %>% 
-  pheatmap::pheatmap(show_rownames = F, color = colorRampPalette(colors=c("white","salmon"))(100),
+  pheatmap::pheatmap(show_rownames = F, color = colorRampPalette(colors=c("grey99","salmon"))(100),
                      annotation_row = df.anno, cluster_rows = F)
-
-
 ```
 
+Note: No clear pattern across cytotoxic gene expression by clonotypes.   
 
+
+<br><br>

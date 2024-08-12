@@ -36,11 +36,12 @@ library(reshape)
 **List**   
 
 - Conda environment (for macs2 callpeak)
+- MultiQC 
 - StarFusion (with STAR) 
 - Cut&Run fastq processing (bowtie2)  
 
 
-# Conda environment for macs2 callpeak  
+## Conda environment for macs2 callpeak  
 
 In HPC, setting up a conda environment for specific software or pipelines improves reproducibility. For example, I use Python 3.6 in a conda environment for MACS2 callpeak, allowing easy updates later.     
 
@@ -82,7 +83,39 @@ The --outdir option specifies the output directory.
     
 <br>
 
-# StarFusion  
+
+## MultiQC  
+
+
+MultiQC is a tool used in bioinformatics to aggregate and visualize the results from various analysis tools. It generates a summary report that collates data from tools like FastQC, Samtools, and Picard, allowing users to easily review and compare the quality and outcomes of their experimental data. Written in Python, MultiQC is executed via the command line, offering ease of use and customization to meet diverse analytical needs.  
+
+
+
+```{bash}
+# Perform multiqc in conda environment 
+# python 3.9 
+conda create -n multiqc python=3.9
+conda activate multiqc
+conda install fastqc multiqc
+
+# Create fastqc result directory folder 
+mkdir fastqc_out
+
+# Perform fastqc first
+# This takes long time to run 
+fastqc *.fastq.gz -o fastqc_out
+
+# Perform multiqc
+multiqc fastqc_out
+```
+
+
+Output : multiqc_report.html   
+multiqc_data folder includes the multiple files to create report.html file.  
+
+
+
+## StarFusion  
 
 **Background Information**   
 One of my collaborators induced T cell lymphoma in mice using the ITK-SYK fused gene model. Because ITK-SYK originates from humans, it wasn't detected with the usual mouse genome reference in STAR. To confirm ITK-SYK gene expression in the dataset, we applied the StarFusion method using the human genome as the reference.      
@@ -95,7 +128,7 @@ CTAT genome index :
 https://data.broadinstitute.org/Trinity/CTAT_RESOURCE_LIB/__genome_libs_StarFv1.10/
 
 
-## RNA-seq data alignment   
+### RNA-seq data alignment   
 ```{bash}
 STAR --genomeDir /path/to/star_genome_index \
      --readFilesIn R1.fastq R2.fastq \
@@ -106,14 +139,14 @@ STAR --genomeDir /path/to/star_genome_index \
 ```
 
 
-## Run StarFusion  
+### Run StarFusion  
 ```{bash}
 StarFusion --genome_lib_dir /path/to/ctat_genome_lib_build_dir \
            --bam star_outputAligned.sortedByCoord.out.bam \
            --output_dir star_fusion_out # Output directory 
 ```
 
-## Outputs  
+### Outputs  
 
 star-fusion.fusion_predictions.tsv   
 **star-fusion.fusion_predictions.abridged.tsv**   
@@ -141,7 +174,7 @@ data %>% DT::datatable(caption = "star-fusion.fusion_predictions.abridged.tsv")
 
 
 
-# Fastq to Bam (Cut&Run)   
+## Fastq to Bam (Cut&Run)   
 Featuring bowtie2   
 
 ```{bash}

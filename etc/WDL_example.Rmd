@@ -1,0 +1,301 @@
+---
+title: "WDL"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, eval = F,
+                      fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+
+```{r, echo=FALSE, eval=T}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+```
+
+
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
+
+<br>
+
+
+### WDL (Workflow Description Language) workflow  
+
+
+#### Inputs  
+
+* fastq files : R1, R2
+* fastq file folder path
+* number of sequence to crop
+* path to input/output
+* path to trimmomatic 
+* path to bowtie2_index
+* path to picard_jar
+
+#### task list  
+
+* trim_fastqs
+* align_samples
+* convert_sort_index_bam
+* remove_duplicates
+
+#### Output
+
+* Bam file
+
+
+#### code
+```{wdl}
+version 1.0
+
+workflow genomics_workflow {
+    input {
+        String input_folder
+        String sample_id
+        Int crop
+        String base_path
+        String trimmomatic_jar
+        String bowtie2_index
+        String picard_jar
+    }
+
+    String path = base_path + "/" + input_folder
+
+    call trim_fastqs {
+        input:
+            trimmomatic_jar = trimmomatic_jar,
+            input_R1 = path + "/" + sample_id + ".R1.fastq.gz",
+            input_R2 = path + "/" + sample_id + ".R2.fastq.gz",
+            output_path = path,
+            crop = crop,
+            sample_id = sample_id
+    }
+
+    call align_samples {
+        input:
+            bowtie2_index = bowtie2_index,
+            input_R1 = trim_fastqs.output_R1_paired,
+            input_R2 = trim_fastqs.output_R2_paired,
+            output_sam_path = path + "/" + sample_id + "_sam",
+            sample_id = sample_id,
+            crop = crop
+    }
+
+    call convert_sort_index_bam {
+        input:
+            sam_input = align_samples.output_sam,
+            output_path = align_samples.output_sam_path,
+            sample_id = sample_id,
+            crop = crop
+    }
+
+    call remove_duplicates {
+        input:
+            picard_jar = picard_jar,
+            bam_input = convert_sort_index_bam.sorted_bam,
+            output_path = align_samples.output_sam_path,
+            sample_id = sample_id,
+            crop = crop
+    }
+}
+
+task trim_fastqs {
+    input {
+        String trimmomatic_jar
+        String input_R1
+        String input_R2
+        String output_path
+        Int crop
+        String sample_id
+    }
+
+    String output_prefix = output_path + "/" + sample_id + "." + crop
+
+    command {
+        java -jar ~{trimmomatic_jar} PE -threads 10 \
+        ~{input_R1} ~{input_R2} \
+        ~{output_prefix}.R1.paired.fastq.gz ~{output_prefix}.R1.unpaired.fastq.gz \
+        ~{output_prefix}.R2.paired.fastq.gz ~{output_prefix}.R2.unpaired.fastq.gz \
+        CROP:~{crop}
+    }
+
+    output {
+        File output_R1_paired = "~{output_prefix}.R1.paired.fastq.gz"
+        File output_R2_paired = "~{output_prefix}.R2.paired.fastq.gz"
+    }
+    runtime {
+        cpu: 10
+        memory: "16 GB"
+    }
+}
+
+task align_samples {
+    input {
+        String bowtie2_index
+        File input_R1
+        File input_R2
+        String output_sam_path
+        String sample_id
+        Int crop
+    }
+
+    command {
+        mkdir -p ~{output_sam_path}
+        bowtie2 --mm -p 10 --no-unal --non-deterministic --no-discordant \
+        -x ~{bowtie2_index} \
+        -1 ~{input_R1} \
+        -2 ~{input_R2} \
+        -S ~{output_sam_path}/~{sample_id}.~{crop}.sam 2> ~{output_sam_path}/~{sample_id}.~{crop}.bowtie2.log
+    }
+
+    output {
+        File output_sam = "~{output_sam_path}/~{sample_id}.~{crop}.sam"
+    }
+    runtime {
+        cpu: 10
+        memory: "32 GB"
+    }
+}
+
+task convert_sort_index_bam {
+    input {
+        File sam_input
+        String output_path
+        String sample_id
+        Int crop
+    }
+
+    command {
+        samtools view -@ 10 -S -b ~{sam_input} > ~{output_path}/~{sample_id}.~{crop}.bam
+        samtools view -@ 10 -q 30 -b ~{output_path}/~{sample_id}.~{crop}.bam > ~{output_path}/~{sample_id}.~{crop}.q30.bam
+        samtools sort -@ 10 ~{output_path}/~{sample_id}.~{crop}.q30.bam -o ~{output_path}/~{sample_id}.~{crop}.q30.sorted.bam
+        samtools index ~{output_path}/~{sample_id}.~{crop}.q30.sorted.bam
+        rm ~{sam_input}
+    }
+
+    output {
+        File sorted_bam = "~{output_path}/~{sample_id}.~{crop}.q30.sorted.bam"
+    }
+    runtime {
+        cpu: 10
+        memory: "32 GB"
+    }
+}
+
+task remove_duplicates {
+    input {
+        String picard_jar
+        File bam_input
+        String output_path
+        String sample_id
+        Int crop
+    }
+
+    command {
+        java -jar ~{picard_jar} MarkDuplicates \
+        I=~{bam_input} \
+        O=~{output_path}/~{sample_id}.~{crop}.q30.sorted.rmd.bam \
+        M=~{output_path}/~{sample_id}.~{crop}.q30.sorted.rmd.metrics.txt \
+        ASSUME_SORTED=TRUE REMOVE_DUPLICATES=true CREATE_INDEX=true QUIET=true
+    }
+
+    output {
+        File sorted_rmd_bam = "~{output_path}/~{sample_id}.~{crop}.q30.sorted.rmd.bam"
+    }
+    runtime {
+        cpu: 10
+        memory: "16 GB"
+    }
+}
+
+```
+
+
+### Prepare project in DNA Nexus platform 
+
+
+#### 1. Project create/selection  
+
+project-Fastqtobam  
+
+#### 2. .wdl file upload  
+
+
+**dx-toolkit**  
+project ID : project-Fastqtobam
+```{bash}
+dx upload path/to/your_workflow.wdl --destination "project-Fastqtobam:/folder/"
+```
+
+
+#### 3. JSON files upload 
+
+Create a JSON file for input information  
+save as `.json`  
+
+```{json}
+{
+  "genomics_workflow.input_folder": "Tem_Tle3",
+  "genomics_workflow.sample_id": "Tem_Tle3_2",
+  "genomics_workflow.crop": 36,
+  "genomics_workflow.base_path": "/path/to/data",
+  "genomics_workflow.trimmomatic_jar": "/path/to/trimmomatic.jar",
+  "genomics_workflow.bowtie2_index": "/path/to/bowtie2_index",
+  "genomics_workflow.picard_jar": "/path/to/picard.jar"
+}
+
+```
+
+
+```{bash}
+dx upload path/to/input.json --destination "project-Fastqtobam:/folder/"
+```
+
+
+#### 4. All Input files upload 
+
+fastq, index, etc.. 
+
+
+### Run project in DNA Nexus platform 
+
+#### 1. Run as workflow check  
+
+When WDL file is recognized, "workflow" option is available.  
+Other options (memory, storage, etc) are also available.  
+
+#### 2. Input selection  
+
+* JSON 
+* manual selection 
+
+#### 3. Run as workflow (push button)  
+
+<br><br>
+
+### Check project after in DNA Nexus platform  
+
+#### 1. check logs
+
+#### 2. check output foloder 
+
+
+<br><br><br>
+
+
+[DNA nexus ](https://www.youtube.com/watch?v=A6P6NBLKgx4&t=448s)

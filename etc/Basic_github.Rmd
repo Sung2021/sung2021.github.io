@@ -1,5 +1,5 @@
 ---
-title: "Data Processing in Linux"
+title: "Basic Github Usage"
 subtitle: ""
 date: "`r format(Sys.Date())`"
 output:  
@@ -87,3 +87,37 @@ library(reshape)
   git pull origin main
   ```
 
+---
+### Password authentication using Token {.tabset}
+
+#### Option 1: Using a Personal Access Token (PAT)
+
+1. **Generate a Personal Access Token:**
+   - Go to your GitHub account.
+   - Navigate to Settings > Developer settings > Personal access tokens.
+   - Click on "Generate new token".
+   - Select the scopes or permissions you'd like to grant this token. For pushing to a repository, select `repo`.
+   - Generate the token and make sure to copy it; you won’t be able to see it again once you navigate away from the page.
+<br>
+
+2. **Use the PAT instead of your password:**
+   - When prompted for a password in the terminal, enter your personal access token instead of your GitHub password.
+
+#### Option 2: Using SSH Keys
+
+1. **Generate SSH Key Pair:**
+   - Open your terminal and run `ssh-keygen -t ed25519 -C "your_email@example.com"`.
+   - Follow the prompts to create your keys, ideally without a passphrase for automation.
+   - This will create a public and private key pair. The public key ends in `.pub` and is safe to share.
+<br>
+2. **Add your SSH public key to GitHub:**
+   - Navigate to your GitHub account.
+   - Go to Settings > SSH and GPG keys.
+   - Click on "New SSH key", give it a title, and paste your public key.
+<br>
+3. **Switch your remote URL from HTTPS to SSH:**
+   - Check your current remote URL: `git remote -v`.
+   - Change it to SSH: `git remote set-url origin git@github.com:username/repository.git`.
+<br>
+4. **Push again using SSH:**
+   - Simply run your push command again: `git push origin main`.

@@ -1,0 +1,150 @@
+---
+title: "General Workflow Overview"
+author: "Sung Rye Park"
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: F
+    toc_depth: 5
+    toc_float: true
+---
+
+```{r setup, include=TRUE, echo=F}
+knitr::opts_chunk$set(echo=T, fig.align = "center", message=F, warning=F)
+```
+
+This page outlines the general workflows I utilize for the analysis of sequencing data across various platforms. I generally follow these guidelines for most of my work and incorporate additional analyses based on the specific goals and discussions related to each project.          
+
+<br>
+
+### List
+
+1. scRNA-seq pipeline
+2. RNA-seq pipeline
+3. ChIP-seq/Cut&Run/ATAC-seq pipeline
+4. Machine Learning application
+5. Public DB
+
+
+<hr>
+
+### scRNA-seq pipeline  
+
+* Fastq files QC: Fastqc, MultiQC   
+* 10X Genomics datasets (CellRanger) : count matrix   
+* Other formats: Drop-seq Tools, Salmon, STARsolo   
+* Demultiplexing (UMI-tools)   
+* Doublets-removal: scrublet, DoubletFinder   
+* Filtering by custom parameter    
+* Normalization and scaling : Seurat(SCTransform), log normalization   
+* Cell cycle phase : Seurat   
+* Integration and clustering : Seurat(CCA, Harmony), liger, Harmony   
+* Finding markers: Seurat, custom ML algorithm (XGBoost, Random Forest), DESeq2 and edgeR   
+* Visualization : Seurat functions, ggplot, plotly, shiny, heatmap, custom scripts   
+* Inter-cluster differential expression : MAST, DESeq2   
+* Imputation of gene expressions : MAGIC, scImpute   
+* Trajectories : Monocle3, destiny, slingshot   
+* pathway analysis: GSEA, scGSEA, clusterprofiler    
+* Network analysis: WGCNA, SCENIC   
+* Cell-Cell interaction : Cellchat    
+* RNA velocity : Velocyto    
+* scTCR/BCR-seq : VDJtools, immunarch, scRepertoire   
+* Tumor cell CNV : InferCNV
+
+<hr>
+
+### RNA-seq pipeline 
+
+* Fastq files QC: Fastqc reports   
+* STAR,Salmon: countmatrix   
+* Normalization and scaling (if necessary)   
+* TPM, FPKM calculation    
+* PCA plots   
+* Correlation analysis of selected geneset  
+* DEG analysis   
+* GSEA   
+* Pathway analysis: GSEA, clusterprofiler    
+* K-means clustering of DEGs   
+* Visualization    
+
+<hr>
+
+### ChIP-seq/Cut&Run/ATAC-seq pipeline 
+
+* Fastq files QC: Fastqc reports    
+* Mapping: bowtie2    
+* Peak calling : macs2, SICER2    
+* bigwig file visualization :  Deeptools, IGV, UCSC genome browser       
+* Custom analysis with bed files : BEDtools, GenomicRanges, rtracklayer, ChIPseeker      
+* Differentially Expressed Peaks : DESeq, edgeR       
+* TSS enrichment : Deeptools (computeMatrix)    
+* Motif discovery and analysis : HOMER, GREAT    
+* Tools for evaluating differential enrichment   
+<img src="https://hbctraining.github.io/Intro-to-ChIPseq/img/diffpeaks-software.png">  
+<span style="font-size:70%">https://hbctraining.github.io/Intro-to-ChIPseq/lessons/08_diffbind_differential_peaks.html</span>
+
+<hr>
+
+### Machine Learning application    
+
+#### Identification of variable features 
+
+* k-means clustering 
+* Elastic Net
+
+#### Sampling data
+
+* Bootstrap
+* DBSCAN(Density-Based Spatial Clustering of Applications with Noise) sampling
+* Random Forest based sampling
+
+<hr>
+
+### Public DB
+
+* TCGA
+* CCLE
+* GEO
+
+<hr>
+
+
+### Frequently used Report formats   
+
+* Markdown(html)   
+* Rmarkdown(html)   
+* PPT slides(presentation)   
+* Excel dashboard    
+* Word format (for SOPs, method/guideline documents)   
+* Google Docs  
+* Github Pages(for open data/results)
+
+
+<hr>
+
+
+
+
+
+<br>
+<br>
+
+### Useful links 
+
+Single-cell RNA-seq:   
+[Integration: Seurat](https://hbctraining.github.io/scRNA-seq_online/lessons/06_integration.html)<br>
+[Integration: Harmony](https://hbctraining.github.io/scRNA-seq_online/lessons/06a_integration_harmony.html)<br>
+[Integration: Liger](https://cran.r-project.org/web/packages/rliger/vignettes/liger-vignette.html)
+[InferCNV](https://github.com/broadinstitute/inferCNV/wiki)
+
+
+RNA-seq:<br>
+[RNA-Seq Analysis in R using Rsubread](https://www.alzheimersworkbench.ucsd.edu/EndToEndAnalysis_RNASeq.html)    
+
+
+ChIP-seq:   
+[Differential Peak calling using DiffBind](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/08_diffbind_differential_peaks.html)  
+
+
+
