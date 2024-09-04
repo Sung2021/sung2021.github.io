@@ -11,7 +11,7 @@
 
 <meta name="author" content="Sung" />
 
-<meta name="date" content="2024-08-12" />
+<meta name="date" content="2024-08-16" />
 
 <title>Project Organizing Skill</title>
 
@@ -1505,7 +1505,7 @@ font-size: 0.95em;
 
 <h1 class="title toc-ignore">Project Organizing Skill</h1>
 <h4 class="author">Sung</h4>
-<h4 class="date">2024-08-12</h4>
+<h4 class="date">2024-08-16</h4>
 
 </div>
 
@@ -1514,64 +1514,85 @@ font-size: 0.95em;
 <h2>Project Management Practices</h2>
 <div id="project-folder-structure" class="section level3">
 <h3>1. <strong>Project Folder Structure:</strong></h3>
-<p>Maintain a consistent folder structure across all projects to ensure
-organization and ease of access. Each project begins with the raw data
-(e.g., fastq files, count matrix, processed data from public sources, or
-RDS files) with detailed file information, including original
-sources.</p>
+<ul>
+<li>Maintain a consistent folder structure across all projects to ensure
+organization and ease of access.<br />
+</li>
+<li>Each project begins with the raw data (e.g., fastq files, count
+matrix, processed data from public sources, or RDS files) with detailed
+file information, including original sources.</li>
+</ul>
 </div>
 <div id="template-usage" class="section level3">
 <h3>2. <strong>Template Usage:</strong></h3>
-<p>Utilize a template for project folders that includes the following
-subfolders: - <strong>reports:</strong> Contains analysis reports in
-various formats (PPT, Word, Excel, HTML, PDF). - <strong>data:</strong>
-Stores processed data used for reports, such as marker genes, GSEA
-outputs, scoring results, and heatmap data. - <strong>info:</strong>
-Houses project-related information provided by others, including project
-guides, important email discussions, reference papers, and GMT files. -
-<strong>raw_data:</strong> Holds raw data files or their location
-information if the files are large. - <strong>rds:</strong> Contains RDS
-files generated during the project for reuse or regeneration of analysis
-reports.</p>
+<p>My template includes the following subfolders:</p>
+<hr>
+• <strong>reports:</strong> Contains analysis reports in various formats
+(PPT, Word, Excel, HTML, PDF)<br> • <strong>data:</strong> Stores
+processed data used for reports, such as marker genes, GSEA outputs,
+scoring results, and heatmap data.<br> • <strong>info:</strong> Houses
+project-related information provided by others, including project
+guides, important email discussions, reference papers, and GMT
+files.<br> • <strong>raw_data:</strong> Holds raw data files or their
+location information if the files are large.<br> • <strong>rds:</strong>
+Contains RDS files generated during the project for reuse or
+regeneration of analysis reports.<br>
+<hr>
 </div>
 <div id="codescript-management" class="section level3">
 <h3>3. <strong>Code/Script Management:</strong></h3>
-<p>Scripts are maintained on GitHub for ease of updates and version
-control. The focus is on keeping scripts up-to-date rather than
-archiving outdated versions.</p>
+<ol style="list-style-type: decimal">
+<li><p>Template scripts (github)</p>
+<p>• Scripts are maintained on GitHub for ease of updates and version
+control<br> • Independent from Project-specific scripts<br></p></li>
+<li><p>Project specific scripts (in project folder)</p>
+<p>• Keep scripts that are directly used for the specific projects <br>
+• Add date information to the file name (for tracking) <br></p></li>
+</ol>
 </div>
 <div id="index-files" class="section level3">
 <h3>4. <strong>Index Files:</strong></h3>
-<p>Each project report folder contains an index file (e.g., HTML format)
-that serves as a summary and guide to the project’s contents. This index
-file is critical for quickly locating and understanding the project’s
-components.</p>
+<p>• Each project report folder contains an index file (e.g., HTML, txt,
+word)<br> • Serves as a summary and guide to the project’s contents
+(like locations of the files).<br> • For quick locating and
+understanding the project’s components.<br></p>
 </div>
 <div id="time-allocation" class="section level3">
 <h3>5. <strong>Time Allocation:</strong></h3>
-<p>Equal emphasis is placed on creating and organizing reports. The
-folder structure is designed to be straightforward and intuitive,
-ensuring that the future self can easily navigate and retrieve
-information even if the details of the project are forgotten.</p>
+<p>• Equal emphasis is placed on creating and organizing reports. <br> •
+Make the folder structure as easy as possible for your later visit
+<br></p>
 </div>
 <div id="periodic-review" class="section level3">
 <h3>6. <strong>Periodic Review:</strong></h3>
-<p>Project folders are revisited on a monthly or bi-monthly basis to
-refresh memory and ensure ongoing familiarity with the project’s status.
-This practice is particularly useful for handling requests from
-collaborators who may revisit a project after some time.</p>
-</div>
-<div id="weekly-records" class="section level3">
-<h3>7. <strong>Weekly Records:</strong></h3>
-<p>Maintain weekly records that provide a snapshot of progress compared
-to the previous week. These records help track the progress of multiple
-projects and are named by the date of generation.</p>
+<p>• Revisit all folders on a monthly or bi-monthly basis <br> • Mark
+folders as “Completed” if no revisit required <br></p>
 </div>
 <div id="email-discussions" class="section level3">
-<h3>8. <strong>Email Discussions:</strong></h3>
-<p>Important discussions from emails are either saved in a separate
-document or integrated into the relevant project report, ensuring that
-all crucial information is documented and accessible.</p>
+<h3>7. <strong>Email Discussions:</strong></h3>
+<p>• Important discussions from emails are either saved in a separate
+document by date <br> • Discussions through email thread are hard to
+follow in my opinion. <br></p>
+<hr>
+</div>
+</div>
+<div id="report-folder-management" class="section level2">
+<h2>Report folder management</h2>
+<div id="index-file-highly-recommended" class="section level3">
+<h3>Index file (highly recommended)</h3>
+<p><a href="file:///Users/sungryepark/Library/Mobile%20Documents/com~apple~CloudDocs/DF/work/code_icloud/2023_Paweletz/2024_Daiichi/Daiichi_2024_index-copy.html">example</a></p>
+</div>
+<div id="what-to-be-included-in-report-folder" class="section level3">
+<h3>What to be included in Report folder</h3>
+<ul>
+<li>Introduction</li>
+<li>Pre-processing of raw data</li>
+<li>Initial analysis (e.g. filtering criteria, statistics overview,
+number of cells by conditions, etc)</li>
+<li>Main analysis (UMAP, clustering, marker genes)</li>
+<li>Commonly done analysis (Annotation, DEGs, GSEA, scoring, etc)</li>
+<li>Further analysis (Cellchat, Integration, etc)</li>
+</ul>
 <!-- 1. Maintain folders by project -->
 <!-- 2. Use similar project structure to all projects -->
 <!-- 3. Start with the raw_data (fastq files, count matrix, processed data (downloaded from public sources) or rds files) with the file information in detail. (The original sources of files (GEO, FTP, locations in servers, etc : the sources that raw data can be retrieved) -->

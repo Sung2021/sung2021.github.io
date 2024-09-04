@@ -12,7 +12,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=T, eval =T, fig.align = "left", 
                       message=F, warning=F,
-                      results = "markup",
+                      results = "asis",
                       error = TRUE,
                       highlight = TRUE,
                       prompt = FALSE,
@@ -23,35 +23,70 @@ knitr::opts_chunk$set(echo=T, eval =T, fig.align = "left",
 ## Project Management Practices
 
 ### 1. **Project Folder Structure:**  
-   Maintain a consistent folder structure across all projects to ensure organization and ease of access. Each project begins with the raw data (e.g., fastq files, count matrix, processed data from public sources, or RDS files) with detailed file information, including original sources.
+   - Maintain a consistent folder structure across all projects to ensure organization and ease of access.  
+   - Each project begins with the raw data (e.g., fastq files, count matrix, processed data from public sources, or RDS files) with detailed file information, including original sources.  
 
 ### 2. **Template Usage:**  
-   Utilize a template for project folders that includes the following subfolders:
-   - **reports:** Contains analysis reports in various formats (PPT, Word, Excel, HTML, PDF).
-   - **data:** Stores processed data used for reports, such as marker genes, GSEA outputs, scoring results, and heatmap data.
-   - **info:** Houses project-related information provided by others, including project guides, important email discussions, reference papers, and GMT files.
-   - **raw_data:** Holds raw data files or their location information if the files are large.
-   - **rds:** Contains RDS files generated during the project for reuse or regeneration of analysis reports.
+   My template includes the following subfolders:
+
+<hr>   
+   • **reports:** Contains analysis reports in various formats (PPT, Word, Excel, HTML, PDF)<br>
+   • **data:** Stores processed data used for reports, such as marker genes, GSEA outputs, scoring results, and heatmap data.<br>
+   • **info:** Houses project-related information provided by others, including project guides, important email discussions, reference papers, and GMT files.<br>
+   • **raw_data:** Holds raw data files or their location information if the files are large.<br>
+   • **rds:** Contains RDS files generated during the project for reuse or regeneration of analysis reports.<br>
+<hr>   
+   
 
 ### 3. **Code/Script Management:**  
-   Scripts are maintained on GitHub for ease of updates and version control. The focus is on keeping scripts up-to-date rather than archiving outdated versions.
+
+1. Template scripts (github)
+
+   • Scripts are maintained on GitHub for ease of updates and version control<br>
+   • Independent from Project-specific scripts<br>
+  
+2. Project specific scripts (in project folder)
+
+   • Keep scripts that are directly used for the specific projects <br>
+   • Add date information to the file name (for tracking) <br>
 
 ### 4. **Index Files:**  
-   Each project report folder contains an index file (e.g., HTML format) that serves as a summary and guide to the project's contents. This index file is critical for quickly locating and understanding the project's components.
+
+   • Each project report folder contains an index file (e.g., HTML, txt, word)<br>    • Serves as a summary and guide to the project's contents (like locations of the files).<br>
+   • For quick locating and understanding the project's components.<br>
 
 ### 5. **Time Allocation:**  
-   Equal emphasis is placed on creating and organizing reports. The folder structure is designed to be straightforward and intuitive, ensuring that the future self can easily navigate and retrieve information even if the details of the project are forgotten.
+
+   • Equal emphasis is placed on creating and organizing reports. <br>
+   • Make the folder structure as easy as possible for your later visit <br>
 
 ### 6. **Periodic Review:**  
-   Project folders are revisited on a monthly or bi-monthly basis to refresh memory and ensure ongoing familiarity with the project's status. This practice is particularly useful for handling requests from collaborators who may revisit a project after some time.
 
-### 7. **Weekly Records:**  
-   Maintain weekly records that provide a snapshot of progress compared to the previous week. These records help track the progress of multiple projects and are named by the date of generation.
-
-### 8. **Email Discussions:**  
-   Important discussions from emails are either saved in a separate document or integrated into the relevant project report, ensuring that all crucial information is documented and accessible.
-
+   • Revisit all folders on a monthly or bi-monthly basis <br>
+   • Mark folders as "Completed" if no revisit required <br>
    
+### 7. **Email Discussions:**  
+
+   • Important discussions from emails are either saved in a separate document by date <br>
+   • Discussions through email thread are hard to follow in my opinion. <br>
+
+<hr>
+
+
+## Report folder management
+
+### Index file (highly recommended)
+
+[example](file:///Users/sungryepark/Library/Mobile%20Documents/com~apple~CloudDocs/DF/work/code_icloud/2023_Paweletz/2024_Daiichi/Daiichi_2024_index-copy.html)
+
+### What to be included in Report folder
+
+* Introduction
+* Pre-processing of raw data
+* Initial analysis (e.g. filtering criteria, statistics overview, number of cells by conditions, etc)
+* Main analysis (UMAP, clustering, marker genes)
+* Commonly done analysis (Annotation, DEGs, GSEA, scoring, etc)
+* Further analysis (Cellchat, Integration, etc)
    
 
 <!-- 1. Maintain folders by project -->
