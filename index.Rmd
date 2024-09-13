@@ -13,14 +13,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Professional summary  
 
 <br>
-Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and collaborating on diverse bioinformatics projects. Specialized in addressing questions related to combinational immunotherapy in cancer patients, discovering target cells and mechanisms, understanding T cell development, and modularizing analysis pipelines. Committed to fostering comprehensive collaboration to achieve project goals with non-bioinformatics scientists, enhancing both project outcomes and interdisciplinary team success. I have served as first or co-first author on several publications that explore biological insights using single-cell technologies, transcriptomics, and epigenomics, along with their integration. I am a relentless learner, continually updating my skills in new technologies such as data analysis from Xenium/Visium HD and antigen profiling platforms, as well as expanding my knowledge in diverse areas of biology including cancer mechanisms, diseases, and tissue studies.
+Experienced Senior Bioinformatics Scientist with a strong background in computational biology, specializing in the innovative application of immunotherapy in oncology. Expert in analyzing and visualizing complex NGS data from oncology clinical trials, leveraging advanced ML algorithms to extract patient-specific features for further analysis. Proficient in integrating diverse sequencing assays, such as TCR sequencing, scRNA-seq, and bulk RNA seq, along with public resources, to identify critical biomarkers and therapeutic targets. My collaborative efforts across multidisciplinary teams have significantly advanced project outcomes and contributed to impactful publications using integrative approaches from transcriptomics and epigenomics to reveal novel insights into cancer biology.
 <br>
  
-<!-- <a href="info/resume/SungRyePark_resume.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br> -->
-<!-- <br> -->
+<a href="info/resume/SungRyePark_resume_2409.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
+<br>
 <hr>
 
-<!-- [For AZ position](etc/AZ_Sr.Scientist_Qualification.html)<br> -->
 
 ### Works  
 
@@ -43,8 +42,8 @@ Experienced Senior Bioinformatics Scientist/Biologist, adept at leading and coll
 <a href="https://sung2021.github.io/works.io/samples/scRNA_index.html" style="font-size: 16px;">General Single cell RNA-seq workflow</a><br>
 <img src="https://sung2021.github.io/works.io/samples/img/scRNA_UMAP.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
 
-##### Further Anaysis
-<a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br>
+<!-- ##### Further Anaysis -->
+<!-- <a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br> -->
 <!-- <a href="samplePages/" style="font-size: 16px;">Integration (preparing)</a><br> -->
 <!-- <a href="samplePages/" style="font-size: 16px;">Additional QC (preparing)</a><br> -->
 <!-- <a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br> -->
