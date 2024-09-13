@@ -59,8 +59,8 @@ Experienced Senior Bioinformatics Scientist with a strong background in computat
 <br>
   **Feature selection**
 
-  * [Machine Learning application to identify variable features in bulk RNA-seq data (Elastic Net)](https://sung2021.github.io/works.io/Paweletz/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_ElasticNet_featureSelection.v2.html)
-  * [Machine Learning application to identify important features and pattern in bulk RNA-seq data (kmeans clustering using DEGs)](https://sung2021.github.io/works.io/Paweletz/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_DEG_kmeans_code.html)
+  * [Machine Learning application to identify variable features in bulk RNA-seq data (Elastic Net)](https://sung2021.github.io/samplePages/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_ElasticNet_featureSelection.v2.html)
+  * [Machine Learning application to identify important features and pattern in bulk RNA-seq data (kmeans clustering using DEGs)](https://sung2021.github.io/samplePages/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_DEG_kmeans_code.html)
 
 
 <hr>
