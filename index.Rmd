@@ -40,7 +40,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in computat
 <hr>
 #### Single Cell RNA-seq workflow  
 <a href="https://sung2021.github.io/works.io/samples/scRNA_index.html" style="font-size: 16px;">General Single cell RNA-seq workflow</a><br>
-<img src="https://sung2021.github.io/works.io/samples/img/scRNA_UMAP.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
+<img src="png/scRNA_UMAP.png" style="width: 80%; border: 0.5px solid black;"><br><br><br>
 
 <!-- ##### Further Anaysis -->
 <!-- <a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br> -->
