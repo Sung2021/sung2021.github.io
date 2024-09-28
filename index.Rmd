@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Experienced Senior Bioinformatics Scientist with a strong background in computational biology, specializing in the innovative application of immunotherapy in oncology. Expert in analyzing and visualizing complex NGS data from oncology clinical trials, leveraging advanced ML algorithms to extract patient-specific features for further analysis. Proficient in integrating diverse sequencing assays, such as TCR sequencing, scRNA-seq, and bulk RNA seq, along with public resources, to identify critical biomarkers and therapeutic targets. My collaborative efforts across multidisciplinary teams have significantly advanced project outcomes and contributed to impactful publications using integrative approaches from transcriptomics and epigenomics to reveal novel insights into cancer biology.
 <br>
  
-<a href="info/resume/SungRyePark_resume_2409.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
+<a href="info/resume/SungryePark_resume.pdf" style="font-size: 18px;">Sung Rye Park's resume (pdf)</a><br>
 <br>
 <hr>
 
