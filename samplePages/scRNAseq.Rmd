@@ -4,7 +4,7 @@ subtitle: ""
 date: "`r format(Sys.Date())`"
 output:  
   rmdformats::robobook: 
-    code_folding: show 
+    code_folding: none 
     number_sections: FALSE
     toc_depth: 6
     toc_float: false
@@ -633,12 +633,12 @@ x_magic.to_csv(output_path)
 
 
 
-# Further analysis
+<!-- # Further analysis -->
 
 
 
-<br><br>
-More example analyses will be updated.  
+<!-- <br><br> -->
+<!-- More example analyses will be updated.   -->
 
-<br><br>
+<!-- <br><br> -->
 

@@ -4,7 +4,7 @@ subtitle: ""
 date: "`r format(Sys.Date())`"
 output:  
   rmdformats::robobook: 
-    code_folding: show 
+    code_folding: none 
     number_sections: FALSE
     toc_depth: 6
     toc_float: false
@@ -601,11 +601,13 @@ DEG1 = DEG_out(count.raw = count.mtx,
                    condition1 = "CTRL", condition2 = "CND1")
 
 df = DEG_info(res = DEG1) 
-df %>% DT::datatable(extensions = "Responsive")
+df %>% head() %>% 
+  DT::datatable(extensions = "Responsive")
 
 DEG_volcanoplot(res = DEG1, condition1 = "CTRL", condition2= "CND1")
 
-DEG1 %>% DEG_table() %>% DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
+DEG1 %>% DEG_table() %>% head() %>% 
+  DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
 ```
 
 
@@ -626,7 +628,8 @@ df %>% DT::datatable(extensions = "Responsive")
 
 DEG_volcanoplot(res = DEG2, condition1 = "CTRL", condition2= "CND2")
 
-DEG2 %>% DEG_table() %>% DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
+DEG2 %>% DEG_table() %>% head() %>% 
+  DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
 ```
 
 
@@ -643,11 +646,13 @@ DEG3 = DEG_out(count.raw = count.mtx,
                    condition1 = "CND1", condition2 = "CND2")
 
 df = DEG_info(res = DEG3) 
-df %>% DT::datatable(extensions = "Responsive")
+df %>% head() %>% 
+  DT::datatable(extensions = "Responsive")
 
 DEG_volcanoplot(res = DEG3, condition1 = "CTRL", condition2= "CND2")
 
-DEG3 %>% DEG_table() %>% DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
+DEG3 %>% DEG_table() %>% head() %>% 
+  DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
 ```
 
 
@@ -697,7 +702,7 @@ Significant genes X samples matrix was used for kmeans clustering to identify an
 Clustering method: Kmeans  
 Adjustable parameter : k (number of clusters)   
 
-```{r, echo=FALSE, eval=TRUE}
+```{r, echo=TRUE, eval=TRUE}
 
 tpm = read.csv("../sampledata/RNAseq_sample_tpm.csv", row.names = 1)
 tpm = tpm[significant_genes_all,]
@@ -762,7 +767,8 @@ kmeans_heatmap = function(input.df, input.data){
 ```{r, echo=FALSE, eval=TRUE}
 kmeans_heatmap(input.df = df3, input.data = input.data)
 
-cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 
@@ -771,7 +777,8 @@ cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(
 
 kmeans_heatmap(input.df = df4, input.data = input.data)
 
-cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 ## K = 5 
@@ -779,7 +786,8 @@ cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(
 
 kmeans_heatmap(input.df = df5, input.data = input.data)
 
-cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 ## K = 6 
@@ -787,7 +795,8 @@ cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(
 
 kmeans_heatmap(input.df = df6, input.data = input.data)
 
-cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
+cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>%  
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 
