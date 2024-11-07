@@ -1,0 +1,138 @@
+---
+title: "Nextflow nf-core pipelines"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:
+  html_document:
+    code_folding: "none"
+    number_sections: false
+    toc: true
+    toc_depth: 6
+    toc_float: false
+    df_print: paged   # 데이터 프레임을 페이지 나누기로 표시
+    theme: flatly     # 문서 테마를 flatly로 설정
+    highlight: tango  # 코드 하이라이트 스타일을 tango로 설정
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = F)
+```
+
+<!-- nf-core 프로젝트는 여러 생물정보학 파이프라인을 제공하며, 각각의 파이프라인은 특정 연구 목적에 최적화되어 있습니다. 여기에 다른 몇 가지 nf-core 파이프라인의 기본 실행 명령 예시를 소개합니다: -->
+**Basic nf-core run examples** 
+
+## 1. nf-core/rnaseq
+
+<!-- RNA 시퀀싱 데이터 분석을 위한 파이프라인으로, 품질 검사, 정렬, 유전자 및 전사 단위 발현 분석, 변이 탐지 등을 자동화합니다. -->
+
+```{bash}
+nextflow run nf-core/rnaseq -profile docker --input samplesheet.csv
+```
+
+**STEPs in RNAseq workflow**
+
+FastQC<br>
+UMI-tools extract<br>
+TrimGalore <br>
+fastp <br>
+BBSplit <br>
+SortMeRNA <br>
+STAR or Salmon <br>
+RSEM <br>
+HISAT2 <br>
+
+
+[**nf-core/rnaseq**](https://nf-co.re/rnaseq/3.17.0/docs/usage/)<br><br>
+
+## 2. nf-core/methylseq
+
+<!-- DNA 메틸레이션 데이터를 처리하고 분석하는 파이프라인으로, Bismark 또는 bwa-meth를 사용하여 처리합니다. -->
+
+```{bash}
+nextflow run nf-core/methylseq -profile docker --input '*_R{1,2}.fastq.gz'
+```
+
+**STEPs in Bismark workflow**
+
+Merge re-sequenced FastQ files : cat <br>
+Raw data QC : FastQC <br>
+Adapter sequence trimming : Trim Galore! <br>
+Align Reads : Bismark <br>
+Deduplicate Alignments : Bismark <br>
+Extract methylation calls : Bismark <br>
+Sample report : Bismark <br>
+Summary Report : Bismark <br>
+Alignment QC : Qualimap <br>
+Sample complexity	: Preseq <br>
+Project Report : MultiQC <br>
+
+**Input File**
+samplesheet.csv : <br>
+sample,fastq_1,fastq_2 <br>
+samplename, fastq1, fastq2 <br>
+
+
+```{bash}
+nextflow run nf-core/methylseq --input samplesheet.csv 
+                               --outdir results 
+                               --genome GRCh37 
+                               -profile docker 
+                               -c my_custom_config.nf
+```
+
+-profile run environment  
+-c additional parameters 
+
+-profile options  
+docker  
+conda  
+
+[**nf-core/methylseq link**](https://nf-co.re/methylseq/2.6.0/docs/usage/)<br>
+<br><br>
+
+## 3. nf-core/sarek
+
+To detect SNP, Indel, SV, CNV.  
+
+Alternative to nf-core/exoseq (no longer maintained)   
+<!-- 암 유전체 분석을 위한 파이프라인으로, 정상 및 종양 샘플에서의 SNP, 인델, SV, 그리고 CNV를 찾아냅니다. -->
+
+```{bash}
+nextflow run nf-core/sarek -profile docker --input samples.tsv
+```
+
+## 4. nf-core/chipseq
+
+<!-- ChIP-Seq 데이터를 분석하는 파이프라인으로, 피크 콜링, 품질 관리 및 데이터 시각화를 포함합니다. -->
+
+```{bash}
+nextflow run nf-core/chipseq -profile docker --input design.csv
+```
+
+## 5. nf-core/atacseq
+
+<!-- ATAC-seq 데이터를 분석하며, 피크 콜링, 품질 관리, 주석 및 유전자 조절 요소의 시각화를 처리합니다. -->
+
+```{bash}
+nextflow run nf-core/atacseq -profile docker --input design.csv
+```
+
+
+## 6. nf-core/mag
+
+For metagenomics.
+<!-- 미생물 군집 메타게노믹스 데이터에서 메타게노믹 및 메타트랜스크립토믹 어셈블리를 수행합니다. -->
+
+```{bash}
+nextflow run nf-core/mag -profile docker --input 'samplesheet.csv'
+```
+
+## 7. nf-core/lncpipe
+
+Long ncRNA analysis pipeline
+<!-- 장 ncRNA 분석 파이프라인으로, RNA-seq 데이터에서 lncRNA를 식별하고 분석합니다. -->
+
+```{bash}
+nextflow run nf-core/lncpipe -profile docker --reads '*_R{1,2}.fastq.gz' --genome GRCh38
+```
+
+<br><br>

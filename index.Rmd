@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 <br>
 
-### Professional summary  
+#### Professional summary  
 
 <br>
 Experienced Senior Bioinformatics Scientist with a strong background in immunology and cancer biology research, specializing in leading bioinformatics projects from conception to completion. Extensive expertise in advanced NGS data integration, computational method design and cross-functional collaboration. Proven track record in delivering actionable insights to drive biological discovery, with first-author publications in Nature Immunology and Cell Reports. Skilled at coordinating multi-partner projects and managing pharmaceutical collaborations at Dana-Farber Cancer Institute. Recognized for exceptional analytical abilities and commitment to scientific understanding through innovative methodologies.
@@ -87,7 +87,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 #### TCR-seq workflow 
 
-* [Preprocessing](samplePages/TCR_seq.html)
+* [preprocessing](samplePages/TCR_seq.html)
 * [scRNA-seq+scTCR-seq](https://sung2021.github.io/etc/DGKi_test_human.html)<br>
 * [scRepertoire (preparing: package update recently)](samplePages/DGKi_scTCRSeq_scRepertoire2.html)
 
@@ -127,12 +127,13 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 ### Miscellaneous
 
-[Data_Processing in Linux env](etc/Data_Processing.html)  
-[WDL example](etc/WDL_example.html)  
-[BCR-seq info (Antibody_discovery_Platform)](etc/Antibody_discovery_Platform.html)  
+* [nf-core pipelines backup](samplePages/processing/nextflow_pipelines.html)
+* [Data_Processing in Linux env](etc/Data_Processing.html)  
+* [WDL example](etc/WDL_example.html)  
+* [BCR-seq info (Antibody_discovery_Platform)](etc/Antibody_discovery_Platform.html)  
 <!-- [Simple shiny app](samplePages/RShiny_app2.html)   -->
-[Basic Github usage](etc/Basic_github.html)  
-[cellranger docker setup](etc/cellranger_docker.html)  
+* [Basic Github usage](etc/Basic_github.html)  
+* [cellranger docker setup](etc/cellranger_docker.html)  
 <!-- [MAF analysis](https://sung2021.github.io/works.io/samples/TCGA_analysis.html) -->
 <br>
 <hr>

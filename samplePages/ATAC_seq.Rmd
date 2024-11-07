@@ -1,0 +1,207 @@
+---
+title: "ATAC-seq workflow"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: none 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, eval = F,
+                      fig.align = "center", 
+                      message=F, warning=F,
+                      results = "markup",
+                      error = TRUE,
+                      highlight = TRUE,
+                      prompt = FALSE,
+                      tidy = FALSE)
+```
+
+```{r, echo=FALSE, eval=T}
+library(dplyr)
+library(ggplot2)
+library(reshape)
+```
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
+<br>
+
+# Calling peaks by MACS2 {.tabset}  
+
+Input file format : Bam file  
+
+## By folder  
+```{bash}
+nano macs2_callpeaks.sh
+
+#!/bin/bash
+
+# Common part 
+common_input="../*_H3K27.bam"
+output_dir="macs2_out"
+
+# sample peak calling 
+for sample in H3K27me3
+do
+    macs2 callpeak \
+        -t ${sample}.merged.bam \
+        -c ${common_input} \
+        -f BAMPE \
+        -g mm \
+        -n ${sample} \
+        -B \
+        -q 0.05 \
+        --outdir ${output_dir}
+done
+
+chmod +x macs2_callpeaks.sh
+./macs2_callpeaks.sh
+```
+
+## By individual sample  
+
+```{bash}
+nano run_peak_calling.sh
+
+#!/bin/bash
+
+# BAM file
+input_bam=$1
+
+# Control input  
+common_input="../input.bam" # My input 
+
+# Output directory 
+output_dir="macs2_out"
+
+# sample name 
+sample_name=$(basename $input_bam .merged.bam)
+
+# MACS2 run
+macs2 callpeak \
+    -t $input_bam \
+    -c $common_input \
+    -f BAMPE \
+    -g mm \
+    -n $sample_name \
+    -B \
+    -q 0.05 \
+    --outdir $output_dir
+
+```
+
+
+```{bash }
+chmod +x run_peak_calling.sh
+
+./run_peak_calling.sh DMSO_H3K27me3.merged.bam
+./run_peak_calling.sh Treat1_H3K27me3.merged.bam
+./run_peak_calling.sh Treat2_H3K27me3.merged.bam
+```
+
+
+# Peak filtering   
+
+## Narrowpeak column information  
+
+```{r,echo=F, eval=T}
+library(data.table)
+narrowPeak_columns <- data.table(
+  Column = c("chrom", "chromStart", "chromEnd", "name", "score", "strand", 
+             "signalValue", "pValue", "qValue", "peak"),
+  Description = c("Name of the chromosome.",
+                  "Start position of the peak (0-based).",
+                  "End position of the peak (1-based).",
+                  "Name of the peak.",
+                  "Score of the peak, the significance of the peak.",
+                  "The DNA strand.",
+                  "Signal value in the peak region, the intensity or density of the peak.",
+                  "P-value.",
+                  "Adjusted p-value.",
+                  "The peak summit relative to chromStart, the highest point within the peak.")
+)
+
+narrowPeak_columns %>% DT::datatable(rownames = T)
+```
+
+## Filtering and Sorting  
+
+Filtering by signalValue if necessary.   
+
+Sorting bed:  
+First order by chromosome names using -k1,1 and then by start positions numerically with -k2,2n.  
+This sorts entries by chromosome and then by position within each chromosome.  
+<hr><br>
+
+# Bed Coverage calculation from reference peak  
+
+The adv/disadv of processing bam files using a standardized peak set (union peaks) as a reference   
+
+  - Standardizes peak across different samples
+  - Reduced Bias
+  - Efficiency in the downstream analysis
+  - Risk of overgeneralization (e.g. overlooking sample/condition-specific peaks like peak length)
+
+## Calculation  
+```{bash}
+#!/bin/bash
+
+# Assign BAM file
+bamFile=$1
+
+# Assign reference Peak File
+unionPeakFile=$2
+
+# Run bedtools coverage
+bedtools coverage -a "$unionPeakFile" -b "$bamFile" > "${bamFile%.bam}.cov.bed"
+
+echo "Coverage calculation for $bamFile completed."
+
+
+./bamcoverage_single.sh path/to/your.bam path/to/unionpeak.bed
+
+```
+
+
+# Processing in R
+
+## Read files in R   
+```{r}
+library(data.table)
+
+# Getting files with .cov.bed 
+cov_files <- list.files(pattern = "\\.cov\\.bed$")
+
+# Import and save 
+cov_data_list <- lapply(cov_files, function(file) {
+  fread(file)
+})
+
+# assign names 
+names(cov_data_list) <- cov_files
+
+```
+
+## Coverage bed file example  
+```{r, echo=F, eval=TRUE}
+# Loading necessary library
+library(data.table)
+
+# Create a sample data frame that might resemble a coverage file output
+coverage_data <- data.table(
+  chrom = c("chr1", "chr1", "chr2", "chr2", "chr3"),
+  start = c(100, 500, 200, 800, 150),
+  end = c(200, 600, 300, 900, 250),
+  num_reads = c(25, 30, 5, 20, 15),  # Example read counts
+  coverageFraction = c(1, 0.95, 0.20, 1, 0.85)  # Example mean coverage depth
+)
+
+# Print the data frame to see its content
+print(coverage_data)
+```
+
+
+<hr>

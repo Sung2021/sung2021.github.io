@@ -1,0 +1,144 @@
+---
+title: "scRNA-seq"
+subtitle: ""
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = F)
+```
+<br>
+
+
+
+# Raw data processing  
+
+**cellranger** : 10x Genomics's Chromium system to process single cell RNA-seq raw data. Easy to use but need large computing resources and Linux environment.   
+<br>
+Input : Fastq files, cellranger genome index  
+<br>
+
+## cellranger count/aggr  
+```{bash}
+# cellranger count for transcriptome data processing 
+cellranger count --id=SampleA_GEX \
+--transcriptome=/path/to/reference/transcriptomes/Mouse_GEX_2020/refdata-gex-mm10-2020-A \
+--fastqs=/path/to/raw_data/SampleA \
+--sample=SampleA \
+--expect-cells=10000
+
+# cellranger aggr to aggregate multiple cellranger count output to one file 
+cellranger aggr --id=Aggregate_GEX \
+--csv=/path/to/aggregate_info/Aggregate_GEX.csv
+
+```
+
+
+## Aggregate_GEX.csv example  
+```{bash}
+library_id,molecule_h5
+SampleA,/path/to/SampleA/outs/molecule_info.h5
+SampleB,/path/to/SampleB/outs/molecule_info.h5
+SampleC,/path/to/SampleC/outs/molecule_info.h5
+
+```
+
+
+## Output  
+
+**Aggregated Feature-Barcode Matrices**   
+
+matrix.mtx   
+genes.tsv   
+barcodes.tsv   
+
+
+# Read Cellranger output  
+
+```{r, eval=FALSE}
+library(Seurat)
+obj.raw = Read10X('raw_data/Path/filtered_feature_bc_matrix/')
+obj.srt = CreateSeuratObject(counts = obj.raw, project = 'project_name')
+```
+
+
+# Doublet removal (by scrublet)  
+
+scrublet runs in python env.  
+Input file is the count matrix from seurat object.  
+
+
+```{bash}
+# If needed, install python pacakges first
+
+# Create and activate a new conda environment
+conda create -n bioinfo_env python=3.8 -y
+conda activate bioinfo_env
+
+# Install pip if not already installed
+conda install pip -y
+
+# Install necessary packages with pip
+pip install numpy pandas scanpy scrublet
+
+# run python
+python
+```
+
+
+```{python}
+import numpy as np
+import pandas as pd
+import scanpy as sc
+import scrublet as scr
+
+def run_scrublet(input_file, output_file, expected_doublet_rate=0.1):
+    df = pd.read_csv(input_file, header=0, index_col=0)
+    adata = sc.AnnData(df)
+    
+    # Set the expected_doublet_rate parameter
+    sc.external.pp.scrublet(adata, expected_doublet_rate=expected_doublet_rate)
+    
+    # Save the observation (results) to CSV
+    adata.obs.to_csv(output_file)
+
+input_file = 'input.count.csv'
+output_file = 'output.scr.csv'
+
+# Adjust the expected_doublet_rate parameter
+expected_doublet_rate = 0.1
+run_scrublet(input_file, output_file, expected_doublet_rate)
+```
+<br>
+
+Add the scrublet output information to the seurat object 
+```{r}
+## import scrublet result
+df= read.csv('path/output.scr.csv', row.names = 1)
+
+# If the previous process changes the name of cell ID, 
+# Use the following code to correct it. 
+rownames(df) = gsub(pattern = '_', replacement = '-' ,rownames(df))
+
+## add doublet info to the srt obj
+
+obj.srt[['doublet_score']] = df[rownames(obj.srt@meta.data),]$doublet_score
+obj.srt[['predicted_doublet']] =df[rownames(obj.srt@meta.data),]$predicted_doublet
+
+obj.srt %>% saveRDS("path/saved.obj.rds")
+
+# You might want to check the number of doublets in the data
+obj.srt@meta.data %>% select(predicted_doublet) %>% table()
+```
+<br>
+
+# Filtering by UMI & mitocondrial content ratio  
+
+  * [**QC Example**](https://sung2021.github.io/works.io/samples/processing/scRNA_preprocessing.html)
+  
