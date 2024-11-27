@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 <br>
 
-#### Professional summary  
+### Professional summary  
 
 <br>
 Experienced Senior Bioinformatics Scientist with a strong background in immunology and cancer biology research, specializing in leading bioinformatics projects from conception to completion. Extensive expertise in advanced NGS data integration, computational method design and cross-functional collaboration. Proven track record in delivering actionable insights to drive biological discovery, with first-author publications in Nature Immunology and Cell Reports. Skilled at coordinating multi-partner projects and managing pharmaceutical collaborations at Dana-Farber Cancer Institute. Recognized for exceptional analytical abilities and commitment to scientific understanding through innovative methodologies.
@@ -20,7 +20,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <br>
 <hr>
 
-#### [Data Analysis workflow Overview](etc/General_workflow2.html)
+### [Data Analysis workflow Overview](etc/General_workflow2.html)
 
 1. scRNA-seq pipeline
 2. RNA-seq pipeline
@@ -30,10 +30,10 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 <br><hr>
 
-#### [Single Cell RNA-seq workflow](https://sung2021.github.io/works.io/samples/scRNA_index.html)  
+### [Single Cell RNA-seq workflow](https://sung2021.github.io/works.io/samples/scRNA_index.html)  
 
 <br>
-<img src="png/scRNA_UMAP.png" style="width: 50%; border: 0.5px solid black;"><br><br>
+<img src="png/scRNA_UMAP.png" style="width: 50%; border: 0.5px solid black;"><br>
 
 * Initial Processing 
   * CellRanger
@@ -55,7 +55,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <!-- <a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br> -->
 <hr>
 
-#### [RNA-seq workflow](samplePages/RNAseq.html) 
+### [RNA-seq workflow](samplePages/RNAseq.html) 
 
 **Bulk RNA-seq workflow**<br>
 
@@ -71,21 +71,21 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
   * [Machine Learning application to identify variable features in bulk RNA-seq data (Elastic Net)](https://sung2021.github.io/samplePages/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_ElasticNet_featureSelection.v2.html)
   * [Machine Learning application to identify important features and pattern in bulk RNA-seq data (kmeans clustering using DEGs)](https://sung2021.github.io/samplePages/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_DEG_kmeans_code.html)
 
-
 <br>
+**Example**
 
-#### [Example: RNA-seq Analysis using TCGA DB data](https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html) 
+[RNA-seq Analysis using TCGA DB data](https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html) 
 
-<img src="png/TCGA_BRCA_main.png" style="width: 60%; border: 0.5px solid black;"><br>
+<img src="png/TCGA_BRCA_main.png" style="width: 40%; border: 0.5px solid black;"><br>
 <br><br>
 
 <hr>
 
-#### Genomic data processing 
-<a href="samplePages/ChIP_seq.html" style="font-size: 16px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
+### Genomic data processing 
+<a href="samplePages/ChIP_seq.html" style="font-size: 16px;">Data Processing : Applicable to ChIP-seq, ATAC-seq, Cut&Run (applicable to ATAC-seq, Cut&Run)</a><br>
 <hr>
 
-#### TCR-seq workflow 
+### TCR-seq workflow 
 
 * [preprocessing](samplePages/TCR_seq.html)
 * [scRNA-seq+scTCR-seq](https://sung2021.github.io/etc/DGKi_test_human.html)<br>
@@ -94,10 +94,10 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <hr>
 
 
-#### Publication Review 
+### Publication Review 
 
 [Tle3 as a co-activator (Nature Immunology,2024)](samplePages/NI.html)<br>
-<img src="png/NI/main.png" style="width: 60%; border: 0.5px solid black;"><br><br><br>
+<img src="png/NI/main.png" style="width: 40%; border: 0.5px solid black;"><br><br><br>
 
 
 <!-- ### Work-related Information collections -->
@@ -149,8 +149,8 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 **2024**
 
-&nbsp;&nbsp;&nbsp;[Conference Summary Report: 10X Genomics User Group Meeting 2024](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
-&nbsp;&nbsp;&nbsp;[Conference Note : 2024 Festival in Genomics in Boston](https://sung2021.github.io/works.io/etc/FestivalBoston24_index.html)<br>
+* [Conference Summary Report: 10X Genomics User Group Meeting 2024](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
+<!-- &nbsp;&nbsp;&nbsp;[Conference Note : 2024 Festival in Genomics in Boston](https://sung2021.github.io/works.io/etc/FestivalBoston24_index.html)<br> -->
 
 <br><br>
 <hr>
