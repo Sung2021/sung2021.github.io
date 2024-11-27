@@ -27,139 +27,93 @@ library(dplyr)
 library(ggplot2)
 library(reshape)
 ```
-<a href="https://sung2021.github.io/">Back to Main Page </a><br>
 
 
-# Peak Calling by MACS2 {.tabset} 
+<a href="https://sung2021.github.io/">Back to Main Page </a>  
 
-## Peak Calling of individual bam file {.tabset}
+<br>
+<span style="font-size: 30px; font-weight: bold;color: blue;">Processing peak files</span>
 
-Input files:
+# Calling peaks by MACS2  
 
-* sample.bam 
-* control.bam
+Input file format : Bam file  
 
-### Script
+## By folder  
+```{bash}
+nano macs2_callpeaks.sh
+
+#!/bin/bash
+
+# Common part 
+common_input="../*_H3K27.bam"
+output_dir="macs2_out"
+
+# sample peak calling 
+for sample in H3K27me3
+do
+    macs2 callpeak \
+        -t ${sample}.merged.bam \
+        -c ${common_input} \
+        -f BAMPE \
+        -g mm \
+        -n ${sample} \
+        -B \
+        -q 0.05 \
+        --outdir ${output_dir}
+done
+
+
+chmod +x macs2_callpeaks.sh
+./macs2_callpeaks.sh
+```
+
+
+## By individual sample  
 
 ```{bash}
 nano run_peak_calling.sh
 
 #!/bin/bash
 
-# Check if required input BAM files are provided
-if [ -z "$1" ] || [ -z "$2" ]; then
-  echo "Usage: $0 <input_bam> <control_bam>"
-  exit 1
-fi
-
-# BAM file (sample)
+# BAM file
 input_bam=$1
 
-# Control input BAM file (background)
-common_input=$2
+# Control input  
+common_input="../input.bam" # My input 
 
-# Output directory
+# Output directory 
 output_dir="macs2_out"
 
-# Ensure the output directory exists
-mkdir -p "$output_dir"
+# sample name 
+sample_name=$(basename $input_bam .merged.bam)
 
-# Extract sample name from the input BAM file
-sample_name=$(basename "$input_bam")
-
-# Run MACS2 peak calling
+# MACS2 run
 macs2 callpeak \
-    -t "$input_bam" \
-    -c "$common_input" \
+    -t $input_bam \
+    -c $common_input \
     -f BAMPE \
     -g mm \
-    -n "$sample_name" \
+    -n $sample_name \
     -B \
     -q 0.05 \
-    --outdir "$output_dir"
-
-# Check exit status
-if [ $? -ne 0 ]; then
-  echo "Error: MACS2 peak calling failed."
-  exit 1
-fi
-
-echo "MACS2 peak calling completed successfully. Results are in
+    --outdir $output_dir
 
 ```
 
-### Run  (Example)
-```{bash}
+
+```{bash }
 chmod +x run_peak_calling.sh
 
-bash run_peak_calling.sh /path/to/sample.bam /path/to/control.bam
-./run_peak_calling.sh DMSO_H3K27me3.merged.bam /path/to/control.bam
-./run_peak_calling.sh Treat1_H3K27me3.merged.bam /path/to/control.bam
-./run_peak_calling.sh Treat2_H3K27me3.merged.bam /path/to/control.bam
+./run_peak_calling.sh DMSO_H3K27me3.merged.bam
+./run_peak_calling.sh Treat1_H3K27me3.merged.bam
+./run_peak_calling.sh Treat2_H3K27me3.merged.bam
 ```
-
-
-
-## Peak Calling putting a folder as input {.tabset}
-
-### Script
-```{bash}
-nano macs2_callpeaks.sh
-
-#!/bin/bash
-
-# Check if the input folder is provided
-if [ -z "$1" ]; then
-  echo "Usage: $0 <input_folder>"
-  exit 1
-fi
-
-# Input folder containing BAM files
-input_folder=$1
-
-# Control input BAM files (glob pattern inside the folder)
-common_input="${input_folder}/*_H3K27.bam"
-
-# Output directory
-output_dir="macs2_out"
-
-# Ensure the output directory exists
-mkdir -p "$output_dir"
-
-# Sample peak calling
-for sample_bam in "${input_folder}"/*.merged.bam; do
-    sample=$(basename "$sample_bam" .merged.bam)
-    macs2 callpeak \
-        -t "$sample_bam" \
-        -c "$common_input" \
-        -f BAMPE \
-        -g mm \
-        -n "$sample" \
-        -B \
-        -q 0.05 \
-        --outdir "$output_dir"
-done
-
-echo "MACS2 peak calling completed. Results are in '$output_dir'."
-```
-
-### Run
-```{bash}
-chmod +x macs2_callpeaks.sh
-./macs2_callpeaks.sh /path/to/input_folder
-```
-
 <br>
 
-## Broad Peak option {.tabset}  
+## Broad Peak option   
 
 Broad Peak for Extended Regions:  
-Focuses on large, spread-out areas suited for markers such as H3K27me3 or H3K36me3. 
-
-### Script 
-
---broad-cutoff 0.1  (FDR 10%)   
-
+Focuses on large, spread-out areas suited for markers such as H3K27me3 or H3K36me3.   
 ```{bash}
 #!/bin/bash
 
@@ -189,24 +143,17 @@ macs2 callpeak \
     --outdir $output_dir
 
 
-
-```
-
-
-
-### Run
-```{bash}
+# Run
 ./run_broadpeak_calling.sh input.bam
+
 ```
 
+--broad-cutoff 0.1  (FDR 10%)   
 
-<br><hr><br>
 
 # Peak filtering   
 
 ## Narrowpeak column information  
-
-* Check signalValue column 
 
 ```{r,echo=F, eval=T}
 library(data.table)
@@ -230,28 +177,24 @@ narrowPeak_columns %>% DT::datatable(rownames = T)
 
 ## Filtering and Sorting  
 
-* Filtering by signalValue if necessary.   
-* Sorting bed:  
-  * First order by chromosome names using -k1,1 and then by start positions numerically with -k2,2n.  
-  * This sorts entries by chromosome and then by position within each chromosome.  
-<br><br>
+Filtering by signalValue if necessary.   
 
-<hr>
+Sorting bed:  
+First order by chromosome names using -k1,1 and then by start positions numerically with -k2,2n.  
+This sorts entries by chromosome and then by position within each chromosome.  
 
-# Normalization of peaks
-
-Bed Coverage calculation from reference peak (unionpeak) information   
+# Bed Coverage calculation from reference peak  
 
 The adv/disadv of processing bam files using a standardized peak set (union peaks) as a reference   
 
-  - Standardizes peak across different samples
-  - Reduced Bias
-  - Efficiency in the downstream analysis
-  - Risk of overgeneralization (e.g. overlooking sample/condition-specific peaks like peak length)
+  - Standardizes peak across different samples   
+  - Reduced Bias  
+  - Efficiency in the downstream analysis  
+  
+  - Risk of overgeneralization (e.g. overlooking sample/condition-specific peaks like peak length)  
 
 
-## bedtools coverage  
-
+## Calculation  
 ```{bash}
 #!/bin/bash
 
@@ -272,8 +215,6 @@ echo "Coverage calculation for $bamFile completed."
 ```
 
 
-# Normalized peak reading in R
-
 ## Read files in R   
 ```{r}
 library(data.table)
@@ -288,11 +229,11 @@ cov_data_list <- lapply(cov_files, function(file) {
 
 # assign names 
 names(cov_data_list) <- cov_files
+
 ```
 
 
 ## Coverage bed file example  
-
 ```{r, echo=F, eval=TRUE}
 # Loading necessary library
 library(data.table)
@@ -310,6 +251,16 @@ coverage_data <- data.table(
 print(coverage_data)
 ```
 <br><br>
-Modify coverage bed files based on the purpose in the downstream analysis.  
+Modify coverage bed files based on the experimental purpose in the downstream analysis.  
+
+
 
 <br><br>
+<span style="font-size: 30px; font-weight: bold;color: blue;">Peak analysis</span>
+
+<br>
+
+This part will be updated.  
+
+
+<br>

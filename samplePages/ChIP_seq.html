@@ -6,9 +6,9 @@
     <meta name="generator" content="pandoc" />
 
     
-        <meta name="date" content="2024-04-20" />
+        <meta name="date" content="2024-11-27" />
     
-    <title>ChIP-seq</title>
+    <title>Genomic data analysis</title>
 
         <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -177,79 +177,6 @@ window.buildTabsets = function(tocID) {
   });
 };
 
-</script>
-        <script>
-window.initializeCodeFolding = function(show) {
-
-  // handlers for show-all and hide all
-  $("#rmd-show-all-code").click(function() {
-    $('div.r-code-collapse').each(function() {
-      $(this).collapse('show');
-    });
-  });
-  $("#rmd-hide-all-code").click(function() {
-    $('div.r-code-collapse').each(function() {
-      $(this).collapse('hide');
-    });
-  });
-
-  // index for unique code element ids
-  var currentIndex = 1;
-
-  // select all R code blocks
-  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
-  rCodeBlocks.each(function() {
-
-    // create a collapsable div to wrap the code in
-    var div = $('<div class="collapse r-code-collapse"></div>');
-    var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    var id = 'rcode-643E0F36' + currentIndex++;
-    div.attr('id', id);
-    $(this).before(div);
-    $(this).detach().appendTo(div);
-
-    // add a show code button right above
-    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Code') + '</span>');
-    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm code-folding-btn pull-right float-right"></button>');
-    showCodeButton.append(showCodeText);
-    showCodeButton
-        .attr('data-toggle', 'collapse')
-        .attr('data-target', '#' + id)
-        .attr('aria-expanded', showThis)
-        .attr('aria-controls', id);
-
-    var buttonRow = $('<div class="row"></div>');
-    var buttonCol = $('<div class="col-md-12"></div>');
-
-    buttonCol.append(showCodeButton);
-    buttonRow.append(buttonCol);
-
-    div.before(buttonRow);
-
-    // show the div if necessary
-    if (showThis) div.collapse('show');
-
-    // update state of button on show/hide
-    //   * Change text
-    //   * add a class for intermediate states styling
-    div.on('hide.bs.collapse', function () {
-      showCodeText.text('Code');
-      showCodeButton.addClass('btn-collapsing');
-    });
-    div.on('hidden.bs.collapse', function () {
-      showCodeButton.removeClass('btn-collapsing');
-    });
-    div.on('show.bs.collapse', function () {
-      showCodeText.text('Hide');
-      showCodeButton.addClass('btn-expanding');
-    });
-    div.on('shown.bs.collapse', function () {
-      showCodeButton.removeClass('btn-expanding');
-    });
-
-  });
-
-}
 </script>
         <style type="text/css">
 img,
@@ -3399,6 +3326,9 @@ HTMLWidgets.widget({
         updateColsSelected();
         updateCellsSelected();
       })
+      updateRowsSelected();
+      updateColsSelected();
+      updateCellsSelected();
     }
 
     var selMode = data.selection.mode, selTarget = data.selection.target;
@@ -3930,7 +3860,7 @@ color: #333;
         <style type="text/css">code{white-space: pre;}</style>
     <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -4011,11 +3941,6 @@ code span.wa { color: #bf0303; }
     </script>
 
     <!-- code folding -->
-        <script>
-      $(document).ready(function () {
-	  	  	  window.initializeCodeFolding("show" === "show");
-	        });
-    </script>
     
     <!-- code download -->
     
@@ -4082,16 +4007,31 @@ margin-left: 0 !important;
    <div class="book with-summary">
       <div class="book-summary">
         <ul>
-          <li class="title">ChIP-seq</li>
+          <li class="title">Genomic data analysis</li>
           <li class="divider"></li>
         </ul>
         <nav role="navigation" id="toc">
           <ul>
-          <li><a href="#calling-peaks-by-macs2" id="toc-calling-peaks-by-macs2">Calling peaks by MACS2</a>
+          <li><a href="#peak-calling-by-macs2" id="toc-peak-calling-by-macs2">Peak Calling by MACS2</a>
           <ul>
-          <li><a href="#by-folder" id="toc-by-folder">By folder</a></li>
-          <li><a href="#by-individual-sample" id="toc-by-individual-sample">By individual sample</a></li>
-          <li><a href="#broad-peak-option" id="toc-broad-peak-option">Broad Peak option</a></li>
+          <li><a href="#peak-calling-of-individual-bam-file" id="toc-peak-calling-of-individual-bam-file">Peak Calling of
+          individual bam file</a>
+          <ul>
+          <li><a href="#script" id="toc-script">Script</a></li>
+          <li><a href="#run-example" id="toc-run-example">Run
+          (Example)</a></li>
+          </ul></li>
+          <li><a href="#peak-calling-putting-a-folder-as-input" id="toc-peak-calling-putting-a-folder-as-input">Peak Calling
+          putting a folder as input</a>
+          <ul>
+          <li><a href="#script-1" id="toc-script-1">Script</a></li>
+          <li><a href="#run" id="toc-run">Run</a></li>
+          </ul></li>
+          <li><a href="#broad-peak-option" id="toc-broad-peak-option">Broad Peak option</a>
+          <ul>
+          <li><a href="#script-2" id="toc-script-2">Script</a></li>
+          <li><a href="#run-1" id="toc-run-1">Run</a></li>
+          </ul></li>
           </ul></li>
           <li><a href="#peak-filtering" id="toc-peak-filtering">Peak
           filtering</a>
@@ -4100,10 +4040,13 @@ margin-left: 0 !important;
           information</a></li>
           <li><a href="#filtering-and-sorting" id="toc-filtering-and-sorting">Filtering and Sorting</a></li>
           </ul></li>
-          <li><a href="#bed-coverage-calculation-from-reference-peak" id="toc-bed-coverage-calculation-from-reference-peak">Bed
-          Coverage calculation from reference peak</a>
+          <li><a href="#normalization-of-peaks" id="toc-normalization-of-peaks">Normalization of peaks</a>
           <ul>
-          <li><a href="#calculation" id="toc-calculation">Calculation</a></li>
+          <li><a href="#bedtools-coverage" id="toc-bedtools-coverage">bedtools coverage</a></li>
+          </ul></li>
+          <li><a href="#normalized-peak-reading-in-r" id="toc-normalized-peak-reading-in-r">Normalized peak reading
+          in R</a>
+          <ul>
           <li><a href="#read-files-in-r" id="toc-read-files-in-r">Read
           files in R</a></li>
           <li><a href="#coverage-bed-file-example" id="toc-coverage-bed-file-example">Coverage bed file
@@ -4113,7 +4056,7 @@ margin-left: 0 !important;
         </nav>
         <ul class="authors">
           <li class="divider"></li>
-                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-04-20</span></li>
+                               <li><span><i class="glyphicon glyphicon-calendar"></i> 2024-11-27</span></li>
                   </ul>     
       </div>
       <div class="book-body fixed">
@@ -4124,17 +4067,11 @@ margin-left: 0 !important;
             <div class="page-inner">
               <section id="content" class="normal">
       
-      <div class="btn-group pull-right">
-     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-     <ul class="dropdown-menu" style="min-width: 50px;">
-	    	    <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
-	    <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
-	    	    	         </ul>
-   </div>
    
         
-      <h1 class="title">ChIP-seq</h1>
-         <h1 class="subtitle">Applicable to ATAC-seq, Cut&amp;Run</h1>
+      <h1 class="title">Genomic data analysis</h1>
+         <h1 class="subtitle">Applicable to ChIP-seq, ATAC-seq,
+Cut&amp;Run</h1>
    
         
 
@@ -4142,175 +4079,241 @@ margin-left: 0 !important;
       
    
 <!-- Don't indent these lines or it will mess pre blocks indentation --> 
-<p><a href="https://sung2021.github.io/">Back to Main Page </a></p>
-<p><br> <span style="font-size: 30px; font-weight: bold;color: blue;">Processing peak
-files</span></p>
-<div id="calling-peaks-by-macs2" class="section level1">
-<h1>Calling peaks by MACS2</h1>
-<p>Input file format : Bam file</p>
-<div id="by-folder" class="section level2">
-<h2>By folder</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">nano</span> macs2_callpeaks.sh</span>
+<p><a href="https://sung2021.github.io/">Back to Main Page </a><br></p>
+<div id="peak-calling-by-macs2" class="section level1 tabset">
+<h1 class="tabset">Peak Calling by MACS2</h1>
+<div id="peak-calling-of-individual-bam-file" class="section level2 tabset">
+<h2 class="tabset">Peak Calling of individual bam file</h2>
+<p>Input files:</p>
+<ul>
+<li>sample.bam</li>
+<li>control.bam</li>
+</ul>
+<div id="script" class="section level3">
+<h3>Script</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">nano</span> run_peak_calling.sh</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># Common part </span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="va">common_input</span><span class="op">=</span><span class="st">&quot;../*_H3K27.bam&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="va">output_dir</span><span class="op">=</span><span class="st">&quot;macs2_out&quot;</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># sample peak calling </span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="cf">for</span> sample <span class="kw">in</span> H3K27me3</span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="cf">do</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>    <span class="ex">macs2</span> callpeak <span class="dt">\</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>        <span class="at">-t</span> <span class="va">${sample}</span>.merged.bam <span class="dt">\</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>        <span class="at">-c</span> <span class="va">${common_input}</span> <span class="dt">\</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>        <span class="at">-f</span> BAMPE <span class="dt">\</span></span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>        <span class="at">-g</span> mm <span class="dt">\</span></span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>        <span class="at">-n</span> <span class="va">${sample}</span> <span class="dt">\</span></span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>        <span class="at">-B</span> <span class="dt">\</span></span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>        <span class="at">-q</span> 0.05 <span class="dt">\</span></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>        <span class="at">--outdir</span> <span class="va">${output_dir}</span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># Check if required input BAM files are provided</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span> <span class="bu">]</span> <span class="kw">||</span> <span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$2</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;Usage: </span><span class="va">$0</span><span class="st"> &lt;input_bam&gt; &lt;control_bam&gt;&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="bu">exit</span> 1</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># BAM file (sample)</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="va">input_bam</span><span class="op">=</span><span class="va">$1</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># Control input BAM file (background)</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="va">common_input</span><span class="op">=</span><span class="va">$2</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co"># Output directory</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="va">output_dir</span><span class="op">=</span><span class="st">&quot;macs2_out&quot;</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co"># Ensure the output directory exists</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">&quot;</span><span class="va">$output_dir</span><span class="st">&quot;</span></span>
 <span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="fu">chmod</span> +x macs2_callpeaks.sh</span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="ex">./macs2_callpeaks.sh</span></span></code></pre></div>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co"># Extract sample name from the input BAM file</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="va">sample_name</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">&quot;</span><span class="va">$input_bam</span><span class="st">&quot;</span><span class="va">)</span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co"># Run MACS2 peak calling</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="ex">macs2</span> callpeak <span class="dt">\</span></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>    <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$input_bam</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>    <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$common_input</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>    <span class="at">-f</span> BAMPE <span class="dt">\</span></span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>    <span class="at">-g</span> mm <span class="dt">\</span></span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>    <span class="at">-n</span> <span class="st">&quot;</span><span class="va">$sample_name</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>    <span class="at">-B</span> <span class="dt">\</span></span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>    <span class="at">-q</span> 0.05 <span class="dt">\</span></span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>    <span class="at">--outdir</span> <span class="st">&quot;</span><span class="va">$output_dir</span><span class="st">&quot;</span></span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a><span class="co"># Check exit status</span></span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="va">$?</span> <span class="ot">-ne</span> 0 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;Error: MACS2 peak calling failed.&quot;</span></span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a>  <span class="bu">exit</span> 1</span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;MACS2 peak calling completed successfully. Results are in</span></span></code></pre></div>
 </div>
-<div id="by-individual-sample" class="section level2">
-<h2>By individual sample</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">nano</span> run_peak_calling.sh</span>
+<div id="run-example" class="section level3">
+<h3>Run (Example)</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">chmod</span> +x run_peak_calling.sh</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># BAM file</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="va">input_bam</span><span class="op">=</span><span class="va">$1</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># Control input  </span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="va">common_input</span><span class="op">=</span><span class="st">&quot;../input.bam&quot;</span> <span class="co"># My input </span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co"># Output directory </span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="va">output_dir</span><span class="op">=</span><span class="st">&quot;macs2_out&quot;</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co"># sample name </span></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="va">sample_name</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$input_bam</span> .merged.bam<span class="va">)</span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co"># MACS2 run</span></span>
-<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="ex">macs2</span> callpeak <span class="dt">\</span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>    <span class="at">-t</span> <span class="va">$input_bam</span> <span class="dt">\</span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>    <span class="at">-c</span> <span class="va">$common_input</span> <span class="dt">\</span></span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>    <span class="at">-f</span> BAMPE <span class="dt">\</span></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>    <span class="at">-g</span> mm <span class="dt">\</span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>    <span class="at">-n</span> <span class="va">$sample_name</span> <span class="dt">\</span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>    <span class="at">-B</span> <span class="dt">\</span></span>
-<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>    <span class="at">-q</span> 0.05 <span class="dt">\</span></span>
-<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a>    <span class="at">--outdir</span> <span class="va">$output_dir</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">chmod</span> +x run_peak_calling.sh</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">bash</span> run_peak_calling.sh /path/to/sample.bam /path/to/control.bam</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="ex">./run_peak_calling.sh</span> DMSO_H3K27me3.merged.bam /path/to/control.bam</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="ex">./run_peak_calling.sh</span> Treat1_H3K27me3.merged.bam /path/to/control.bam</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="ex">./run_peak_calling.sh</span> Treat2_H3K27me3.merged.bam /path/to/control.bam</span></code></pre></div>
+</div>
+</div>
+<div id="peak-calling-putting-a-folder-as-input" class="section level2 tabset">
+<h2 class="tabset">Peak Calling putting a folder as input</h2>
+<div id="script-1" class="section level3">
+<h3>Script</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">nano</span> macs2_callpeaks.sh</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="ex">./run_peak_calling.sh</span> DMSO_H3K27me3.merged.bam</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="ex">./run_peak_calling.sh</span> Treat1_H3K27me3.merged.bam</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="ex">./run_peak_calling.sh</span> Treat2_H3K27me3.merged.bam</span></code></pre></div>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># Check if the input folder is provided</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;Usage: </span><span class="va">$0</span><span class="st"> &lt;input_folder&gt;&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="bu">exit</span> 1</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co"># Input folder containing BAM files</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="va">input_folder</span><span class="op">=</span><span class="va">$1</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co"># Control input BAM files (glob pattern inside the folder)</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="va">common_input</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${input_folder}</span><span class="st">/*_H3K27.bam&quot;</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co"># Output directory</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="va">output_dir</span><span class="op">=</span><span class="st">&quot;macs2_out&quot;</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co"># Ensure the output directory exists</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">&quot;</span><span class="va">$output_dir</span><span class="st">&quot;</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co"># Sample peak calling</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="cf">for</span> sample_bam <span class="kw">in</span> <span class="st">&quot;</span><span class="va">${input_folder}</span><span class="st">&quot;</span>/<span class="pp">*</span>.merged.bam<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>    <span class="va">sample</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">&quot;</span><span class="va">$sample_bam</span><span class="st">&quot;</span> .merged.bam<span class="va">)</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>    <span class="ex">macs2</span> callpeak <span class="dt">\</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>        <span class="at">-t</span> <span class="st">&quot;</span><span class="va">$sample_bam</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>        <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$common_input</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>        <span class="at">-f</span> BAMPE <span class="dt">\</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>        <span class="at">-g</span> mm <span class="dt">\</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>        <span class="at">-n</span> <span class="st">&quot;</span><span class="va">$sample</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>        <span class="at">-B</span> <span class="dt">\</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>        <span class="at">-q</span> 0.05 <span class="dt">\</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>        <span class="at">--outdir</span> <span class="st">&quot;</span><span class="va">$output_dir</span><span class="st">&quot;</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;MACS2 peak calling completed. Results are in &#39;</span><span class="va">$output_dir</span><span class="st">&#39;.&quot;</span></span></code></pre></div>
+</div>
+<div id="run" class="section level3">
+<h3>Run</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">chmod</span> +x macs2_callpeaks.sh</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">./macs2_callpeaks.sh</span> /path/to/input_folder</span></code></pre></div>
 <p><br></p>
 </div>
-<div id="broad-peak-option" class="section level2">
-<h2>Broad Peak option</h2>
+</div>
+<div id="broad-peak-option" class="section level2 tabset">
+<h2 class="tabset">Broad Peak option</h2>
 <p>Broad Peak for Extended Regions:<br />
 Focuses on large, spread-out areas suited for markers such as H3K27me3
 or H3K36me3.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># BAM file</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="va">input_bam</span><span class="op">=</span><span class="va">$1</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Control input  </span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="va">common_input</span><span class="op">=</span><span class="st">&quot;../input.bam&quot;</span> <span class="co"># My input </span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># Output directory </span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="va">output_dir</span><span class="op">=</span><span class="st">&quot;macs2_out&quot;</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># sample name </span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="va">sample_name</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$input_bam</span> .merged.bam<span class="va">)</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co"># MACS2 run for broad peaks</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="ex">macs2</span> callpeak <span class="dt">\</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>    <span class="at">-t</span> <span class="va">$input_bam</span> <span class="dt">\</span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    <span class="at">-c</span> <span class="va">$common_input</span> <span class="dt">\</span></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>    <span class="at">-f</span> BAMPE <span class="dt">\</span></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>    <span class="at">-g</span> mm <span class="dt">\</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    <span class="at">-n</span> <span class="va">$sample_name</span> <span class="dt">\</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>    <span class="at">-B</span> <span class="dt">\</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>    <span class="at">--broad</span> <span class="dt">\</span></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>    <span class="at">-q</span> 0.05 <span class="dt">\</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>    <span class="at">--broad-cutoff</span> 0.1 <span class="dt">\</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>    <span class="at">--outdir</span> <span class="va">$output_dir</span></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co"># Run</span></span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="ex">./run_broadpeak_calling.sh</span> input.bam</span></code></pre></div>
+<div id="script-2" class="section level3">
+<h3>Script</h3>
 <p>–broad-cutoff 0.1 (FDR 10%)</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># BAM file</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="va">input_bam</span><span class="op">=</span><span class="va">$1</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Control input  </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="va">common_input</span><span class="op">=</span><span class="st">&quot;../input.bam&quot;</span> <span class="co"># My input </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># Output directory </span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="va">output_dir</span><span class="op">=</span><span class="st">&quot;macs2_out&quot;</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co"># sample name </span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="va">sample_name</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$input_bam</span> .merged.bam<span class="va">)</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co"># MACS2 run for broad peaks</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="ex">macs2</span> callpeak <span class="dt">\</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>    <span class="at">-t</span> <span class="va">$input_bam</span> <span class="dt">\</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>    <span class="at">-c</span> <span class="va">$common_input</span> <span class="dt">\</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>    <span class="at">-f</span> BAMPE <span class="dt">\</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>    <span class="at">-g</span> mm <span class="dt">\</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>    <span class="at">-n</span> <span class="va">$sample_name</span> <span class="dt">\</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    <span class="at">-B</span> <span class="dt">\</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>    <span class="at">--broad</span> <span class="dt">\</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>    <span class="at">-q</span> 0.05 <span class="dt">\</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>    <span class="at">--broad-cutoff</span> 0.1 <span class="dt">\</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>    <span class="at">--outdir</span> <span class="va">$output_dir</span></span></code></pre></div>
+</div>
+<div id="run-1" class="section level3">
+<h3>Run</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">./run_broadpeak_calling.sh</span> input.bam</span></code></pre></div>
+<br>
+<hr>
+<p><br></p>
+</div>
 </div>
 </div>
 <div id="peak-filtering" class="section level1">
 <h1>Peak filtering</h1>
 <div id="narrowpeak-column-information" class="section level2">
 <h2>Narrowpeak column information</h2>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-eaf230a7c9c4722816e8" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-eaf230a7c9c4722816e8">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["chrom","chromStart","chromEnd","name","score","strand","signalValue","pValue","qValue","peak"],["Name of the chromosome.","Start position of the peak (0-based).","End position of the peak (1-based).","Name of the peak.","Score of the peak, the significance of the peak.","The DNA strand.","Signal value in the peak region, the intensity or density of the peak.","P-value.","Adjusted p-value.","The peak summit relative to chromStart, the highest point within the peak."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Column<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Column","targets":1},{"name":"Description","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<ul>
+<li>Check signalValue column</li>
+</ul>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b516226e8839a6405b34" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b516226e8839a6405b34">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["chrom","chromStart","chromEnd","name","score","strand","signalValue","pValue","qValue","peak"],["Name of the chromosome.","Start position of the peak (0-based).","End position of the peak (1-based).","Name of the peak.","Score of the peak, the significance of the peak.","The DNA strand.","Signal value in the peak region, the intensity or density of the peak.","P-value.","Adjusted p-value.","The peak summit relative to chromStart, the highest point within the peak."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Column<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Column","targets":1},{"name":"Description","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="filtering-and-sorting" class="section level2">
 <h2>Filtering and Sorting</h2>
-<p>Filtering by signalValue if necessary.</p>
-<p>Sorting bed:<br />
-First order by chromosome names using -k1,1 and then by start positions
-numerically with -k2,2n.<br />
-This sorts entries by chromosome and then by position within each
-chromosome.</p>
+<ul>
+<li>Filtering by signalValue if necessary.<br />
+</li>
+<li>Sorting bed:
+<ul>
+<li>First order by chromosome names using -k1,1 and then by start
+positions numerically with -k2,2n.<br />
+</li>
+<li>This sorts entries by chromosome and then by position within each
+chromosome.<br />
+<br><br></li>
+</ul></li>
+</ul>
+<hr>
 </div>
 </div>
-<div id="bed-coverage-calculation-from-reference-peak" class="section level1">
-<h1>Bed Coverage calculation from reference peak</h1>
+<div id="normalization-of-peaks" class="section level1">
+<h1>Normalization of peaks</h1>
+<p>Bed Coverage calculation from reference peak (unionpeak)
+information</p>
 <p>The adv/disadv of processing bam files using a standardized peak set
 (union peaks) as a reference</p>
 <ul>
-<li><p>Standardizes peak across different samples<br />
-</p></li>
-<li><p>Reduced Bias<br />
-</p></li>
-<li><p>Efficiency in the downstream analysis</p></li>
-<li><p>Risk of overgeneralization (e.g. overlooking
-sample/condition-specific peaks like peak length)</p></li>
+<li>Standardizes peak across different samples</li>
+<li>Reduced Bias</li>
+<li>Efficiency in the downstream analysis</li>
+<li>Risk of overgeneralization (e.g. overlooking
+sample/condition-specific peaks like peak length)</li>
 </ul>
-<div id="calculation" class="section level2">
-<h2>Calculation</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Assign BAM file</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="va">bamFile</span><span class="op">=</span><span class="va">$1</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Assign reference Peak File</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="va">unionPeakFile</span><span class="op">=</span><span class="va">$2</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># Run bedtools coverage</span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="ex">bedtools</span> coverage <span class="at">-a</span> <span class="st">&quot;</span><span class="va">$unionPeakFile</span><span class="st">&quot;</span> <span class="at">-b</span> <span class="st">&quot;</span><span class="va">$bamFile</span><span class="st">&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">${bamFile</span><span class="op">%</span>.bam<span class="va">}</span><span class="st">.cov.bed&quot;</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Coverage calculation for </span><span class="va">$bamFile</span><span class="st"> completed.&quot;</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="ex">./bamcoverage_single.sh</span> path/to/your.bam path/to/unionpeak.bed</span></code></pre></div>
+<div id="bedtools-coverage" class="section level2">
+<h2>bedtools coverage</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># Assign BAM file</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="va">bamFile</span><span class="op">=</span><span class="va">$1</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co"># Assign reference Peak File</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="va">unionPeakFile</span><span class="op">=</span><span class="va">$2</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co"># Run bedtools coverage</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="ex">bedtools</span> coverage <span class="at">-a</span> <span class="st">&quot;</span><span class="va">$unionPeakFile</span><span class="st">&quot;</span> <span class="at">-b</span> <span class="st">&quot;</span><span class="va">$bamFile</span><span class="st">&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">${bamFile</span><span class="op">%</span>.bam<span class="va">}</span><span class="st">.cov.bed&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Coverage calculation for </span><span class="va">$bamFile</span><span class="st"> completed.&quot;</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="ex">./bamcoverage_single.sh</span> path/to/your.bam path/to/unionpeak.bed</span></code></pre></div>
 </div>
+</div>
+<div id="normalized-peak-reading-in-r" class="section level1">
+<h1>Normalized peak reading in R</h1>
 <div id="read-files-in-r" class="section level2">
 <h2>Read files in R</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co"># Getting files with .cov.bed </span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>cov_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.cov</span><span class="sc">\\</span><span class="st">.bed$&quot;</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co"># Import and save </span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>cov_data_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cov_files, <span class="cf">function</span>(file) {</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">fread</span>(file)</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>})</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co"># assign names </span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="fu">names</span>(cov_data_list) <span class="ot">&lt;-</span> cov_files</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># Getting files with .cov.bed </span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>cov_files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.cov</span><span class="sc">\\</span><span class="st">.bed$&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># Import and save </span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>cov_data_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cov_files, <span class="cf">function</span>(file) {</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="fu">fread</span>(file)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>})</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co"># assign names </span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="fu">names</span>(cov_data_list) <span class="ot">&lt;-</span> cov_files</span></code></pre></div>
 </div>
 <div id="coverage-bed-file-example" class="section level2">
 <h2>Coverage bed file example</h2>
@@ -4321,13 +4324,9 @@ sample/condition-specific peaks like peak length)</p></li>
 ## 3:   chr2   200   300         5             0.20
 ## 4:   chr2   800   900        20             1.00
 ## 5:   chr3   150   250        15             0.85</code></pre>
-<p><br><br> Modify coverage bed files based on the experimental purpose
-in the downstream analysis.</p>
-<p><br><br> <span style="font-size: 30px; font-weight: bold;color: blue;">Peak
-analysis</span></p>
-<p><br></p>
-<p>This part will be updated.</p>
-<p><br></p>
+<p><br><br> Modify coverage bed files based on the purpose in the
+downstream analysis.</p>
+<p><br><br></p>
 </div>
 </div>
 

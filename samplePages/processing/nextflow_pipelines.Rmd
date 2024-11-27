@@ -100,6 +100,9 @@ Alternative to nf-core/exoseq (no longer maintained)
 nextflow run nf-core/sarek -profile docker --input samples.tsv
 ```
 
+Additional reading : snakemake-exome  
+[link](https://jrderuiter.github.io/snakemake-exome/overview.html)<br><br> 
+
 ## 4. nf-core/chipseq
 
 <!-- ChIP-Seq 데이터를 분석하는 파이프라인으로, 피크 콜링, 품질 관리 및 데이터 시각화를 포함합니다. -->
