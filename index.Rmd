@@ -82,7 +82,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <hr>
 
 ### Genomic data processing 
-<a href="samplePages/ChIP_seq.html" style="font-size: 16px;">Data Processing : Applicable to ChIP-seq, ATAC-seq, Cut&Run (applicable to ATAC-seq, Cut&Run)</a><br>
+<a href="samplePages/ChIP_seq.html" style="font-size: 16px;">Data Processing : Applicable to ChIP-seq, ATAC-seq, Cut&Run</a><br>
 <hr>
 
 ### TCR-seq workflow 
@@ -136,6 +136,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 * [cellranger docker setup](etc/cellranger_docker.html)  
 <!-- [MAF analysis](https://sung2021.github.io/works.io/samples/TCGA_analysis.html) -->
 <br>
+
 <hr>
 
 <!-- ### Learning new methods -->
