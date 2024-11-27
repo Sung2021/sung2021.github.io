@@ -8,7 +8,7 @@
     
         <meta name="date" content="2024-11-27" />
     
-    <title>Genomic data analysis</title>
+    <title>Genomic data processing</title>
 
         <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -4007,7 +4007,7 @@ margin-left: 0 !important;
    <div class="book with-summary">
       <div class="book-summary">
         <ul>
-          <li class="title">Genomic data analysis</li>
+          <li class="title">Genomic data processing</li>
           <li class="divider"></li>
         </ul>
         <nav role="navigation" id="toc">
@@ -4044,8 +4044,7 @@ margin-left: 0 !important;
           <ul>
           <li><a href="#bedtools-coverage" id="toc-bedtools-coverage">bedtools coverage</a></li>
           </ul></li>
-          <li><a href="#normalized-peak-reading-in-r" id="toc-normalized-peak-reading-in-r">Normalized peak reading
-          in R</a>
+          <li><a href="#peak-analysis-in-r" id="toc-peak-analysis-in-r">Peak analysis in R</a>
           <ul>
           <li><a href="#read-files-in-r" id="toc-read-files-in-r">Read
           files in R</a></li>
@@ -4069,7 +4068,7 @@ margin-left: 0 !important;
       
    
         
-      <h1 class="title">Genomic data analysis</h1>
+      <h1 class="title">Genomic data processing</h1>
          <h1 class="subtitle">Applicable to ChIP-seq, ATAC-seq,
 Cut&amp;Run</h1>
    
@@ -4080,6 +4079,11 @@ Cut&amp;Run</h1>
    
 <!-- Don't indent these lines or it will mess pre blocks indentation --> 
 <p><a href="https://sung2021.github.io/">Back to Main Page </a><br></p>
+<ul>
+<li>Peak Calling</li>
+<li>Normalization</li>
+<li>Peak analysis in R</li>
+</ul>
 <div id="peak-calling-by-macs2" class="section level1 tabset">
 <h1 class="tabset">Peak Calling by MACS2</h1>
 <div id="peak-calling-of-individual-bam-file" class="section level2 tabset">
@@ -4245,8 +4249,8 @@ or H3K36me3.</p>
 <ul>
 <li>Check signalValue column</li>
 </ul>
-<div class="datatables html-widget html-fill-item" id="htmlwidget-b516226e8839a6405b34" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-b516226e8839a6405b34">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["chrom","chromStart","chromEnd","name","score","strand","signalValue","pValue","qValue","peak"],["Name of the chromosome.","Start position of the peak (0-based).","End position of the peak (1-based).","Name of the peak.","Score of the peak, the significance of the peak.","The DNA strand.","Signal value in the peak region, the intensity or density of the peak.","P-value.","Adjusted p-value.","The peak summit relative to chromStart, the highest point within the peak."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Column<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Column","targets":1},{"name":"Description","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-682d08f8b4697bf1ef79" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-682d08f8b4697bf1ef79">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["chrom","chromStart","chromEnd","name","score","strand","signalValue","pValue","qValue","peak"],["Name of the chromosome.","Start position of the peak (0-based).","End position of the peak (1-based).","Name of the peak.","Score of the peak, the significance of the peak.","The DNA strand.","Signal value in the peak region, the intensity or density of the peak.","P-value.","Adjusted p-value.","The peak summit relative to chromStart, the highest point within the peak."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Column<\/th>\n      <th>Description<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Column","targets":1},{"name":"Description","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="filtering-and-sorting" class="section level2">
 <h2>Filtering and Sorting</h2>
@@ -4298,8 +4302,8 @@ sample/condition-specific peaks like peak length)</li>
 <span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="ex">./bamcoverage_single.sh</span> path/to/your.bam path/to/unionpeak.bed</span></code></pre></div>
 </div>
 </div>
-<div id="normalized-peak-reading-in-r" class="section level1">
-<h1>Normalized peak reading in R</h1>
+<div id="peak-analysis-in-r" class="section level1">
+<h1>Peak analysis in R</h1>
 <div id="read-files-in-r" class="section level2">
 <h2>Read files in R</h2>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>

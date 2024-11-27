@@ -81,7 +81,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 <hr>
 
-#### Genomic data workflow 
+#### Genomic data processing 
 <a href="samplePages/ChIP_seq.html" style="font-size: 16px;">ChIP-seq (applicable to ATAC-seq, Cut&Run)</a><br>
 <hr>
 

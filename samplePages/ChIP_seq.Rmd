@@ -1,5 +1,5 @@
 ---
-title: "Genomic data analysis"
+title: "Genomic data processing"
 subtitle: "Applicable to ChIP-seq, ATAC-seq, Cut&Run"
 date: "`r format(Sys.Date())`"
 output:  
@@ -29,6 +29,9 @@ library(reshape)
 ```
 <a href="https://sung2021.github.io/">Back to Main Page </a><br>
 
+* Peak Calling 
+* Normalization
+* Peak analysis in R
 
 # Peak Calling by MACS2 {.tabset} 
 
@@ -272,7 +275,7 @@ echo "Coverage calculation for $bamFile completed."
 ```
 
 
-# Normalized peak reading in R
+# Peak analysis in R
 
 ## Read files in R   
 ```{r}
