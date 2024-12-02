@@ -30,7 +30,11 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 <br><hr>
 
-### [Single Cell RNA-seq workflow](https://sung2021.github.io/works.io/samples/scRNA_index.html)  
+### [Single Cell RNA-seq workflow](https://sung2021.github.io/samplePages/scRNAseq.html)  
+
+<!-- (https://sung2021.github.io/works.io/samples/scRNA_index.html)   -->
+
+
 
 <br>
 <img src="png/scRNA_UMAP.png" style="width: 50%; border: 0.5px solid black;"><br>
