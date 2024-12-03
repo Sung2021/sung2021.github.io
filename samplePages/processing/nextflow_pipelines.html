@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-11-07" />
+<meta name="date" content="2024-12-03" />
 
 <title>Nextflow nf-core pipelines</title>
 
@@ -1710,7 +1710,7 @@ display: none;
 
 
 <h1 class="title toc-ignore">Nextflow nf-core pipelines</h1>
-<h4 class="date">2024-11-07</h4>
+<h4 class="date">2024-12-03</h4>
 
 </div>
 
@@ -1726,9 +1726,6 @@ nf-core/sarek</a></li>
 nf-core/chipseq</a></li>
 <li><a href="#nf-coreatacseq" id="toc-nf-coreatacseq">5.
 nf-core/atacseq</a></li>
-<li><a href="#nf-coremag" id="toc-nf-coremag">6. nf-core/mag</a></li>
-<li><a href="#nf-corelncpipe" id="toc-nf-corelncpipe">7.
-nf-core/lncpipe</a></li>
 </ul>
 </div>
 
@@ -1787,19 +1784,22 @@ link</strong></a><br> <br><br></p>
 <h2>5. nf-core/atacseq</h2>
 <!-- ATAC-seq 데이터를 분석하며, 피크 콜링, 품질 관리, 주석 및 유전자 조절 요소의 시각화를 처리합니다. -->
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">nextflow</span> run nf-core/atacseq <span class="at">-profile</span> docker <span class="at">--input</span> design.csv</span></code></pre></div>
-</div>
-<div id="nf-coremag" class="section level2">
-<h2>6. nf-core/mag</h2>
-<p>For metagenomics.
-<!-- 미생물 군집 메타게노믹스 데이터에서 메타게노믹 및 메타트랜스크립토믹 어셈블리를 수행합니다. --></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">nextflow</span> run nf-core/mag <span class="at">-profile</span> docker <span class="at">--input</span> <span class="st">&#39;samplesheet.csv&#39;</span></span></code></pre></div>
-</div>
-<div id="nf-corelncpipe" class="section level2">
-<h2>7. nf-core/lncpipe</h2>
-<p>Long ncRNA analysis pipeline
-<!-- 장 ncRNA 분석 파이프라인으로, RNA-seq 데이터에서 lncRNA를 식별하고 분석합니다. --></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">nextflow</span> run nf-core/lncpipe <span class="at">-profile</span> docker <span class="at">--reads</span> <span class="st">&#39;*_R{1,2}.fastq.gz&#39;</span> <span class="at">--genome</span> GRCh38</span></code></pre></div>
-<p><br><br></p>
+<hr>
+<!-- ## 6. nf-core/mag -->
+<!-- For metagenomics. -->
+<!-- <!-- 미생물 군집 메타게노믹스 데이터에서 메타게노믹 및 메타트랜스크립토믹 어셈블리를 수행합니다. -->
+<p>–&gt;</p>
+<!-- ```{bash} -->
+<!-- nextflow run nf-core/mag -profile docker --input 'samplesheet.csv' -->
+<!-- ``` -->
+<!-- ## 7. nf-core/lncpipe -->
+<!-- Long ncRNA analysis pipeline -->
+<!-- <!-- 장 ncRNA 분석 파이프라인으로, RNA-seq 데이터에서 lncRNA를 식별하고 분석합니다. -->
+<p>–&gt;</p>
+<!-- ```{bash} -->
+<!-- nextflow run nf-core/lncpipe -profile docker --reads '*_R{1,2}.fastq.gz' --genome GRCh38 -->
+<!-- ``` -->
+<!-- <br><br> -->
 </div>
 
 

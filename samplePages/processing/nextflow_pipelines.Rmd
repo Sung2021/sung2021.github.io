@@ -120,22 +120,26 @@ nextflow run nf-core/atacseq -profile docker --input design.csv
 ```
 
 
-## 6. nf-core/mag
+<hr>
 
-For metagenomics.
-<!-- 미생물 군집 메타게노믹스 데이터에서 메타게노믹 및 메타트랜스크립토믹 어셈블리를 수행합니다. -->
 
-```{bash}
-nextflow run nf-core/mag -profile docker --input 'samplesheet.csv'
-```
 
-## 7. nf-core/lncpipe
+<!-- ## 6. nf-core/mag -->
 
-Long ncRNA analysis pipeline
-<!-- 장 ncRNA 분석 파이프라인으로, RNA-seq 데이터에서 lncRNA를 식별하고 분석합니다. -->
+<!-- For metagenomics. -->
+<!-- <!-- 미생물 군집 메타게노믹스 데이터에서 메타게노믹 및 메타트랜스크립토믹 어셈블리를 수행합니다. --> -->
 
-```{bash}
-nextflow run nf-core/lncpipe -profile docker --reads '*_R{1,2}.fastq.gz' --genome GRCh38
-```
+<!-- ```{bash} -->
+<!-- nextflow run nf-core/mag -profile docker --input 'samplesheet.csv' -->
+<!-- ``` -->
 
-<br><br>
+<!-- ## 7. nf-core/lncpipe -->
+
+<!-- Long ncRNA analysis pipeline -->
+<!-- <!-- 장 ncRNA 분석 파이프라인으로, RNA-seq 데이터에서 lncRNA를 식별하고 분석합니다. --> -->
+
+<!-- ```{bash} -->
+<!-- nextflow run nf-core/lncpipe -profile docker --reads '*_R{1,2}.fastq.gz' --genome GRCh38 -->
+<!-- ``` -->
+
+<!-- <br><br> -->
