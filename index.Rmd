@@ -46,23 +46,19 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <img src="png/scRNA_UMAP.png" style="width: 50%; border: 0.5px solid black;"><br>
 
 * Initial Processing 
-  * CellRanger
-  * Doublet Removals
-  * Filtering by UMI and other parameters
-* UMAP and Clustering
-* Cluster-markers enrichment analysis
-* Cell type annotation 
-* Population shift analysis
-* Integration (Harmony, CCA)
+  * QC Processing and initial filtering
+    * UMI cutoff
+    * Mitochondrial DNA cutoff
+    * Doublet Removal (scrublet)
+* Integration : harmony 
+* UMAP/Clustering/Markers
+* Cluster-markers enrichment analysis (GSEA)
+* Cell type annotation (scType, singleR)
+* Trajectory analysis
 * AUC 
 * Imputation
 
 
-<!-- ##### Further Anaysis -->
-<!-- <a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br> -->
-<!-- <a href="samplePages/" style="font-size: 16px;">Integration (preparing)</a><br> -->
-<!-- <a href="samplePages/" style="font-size: 16px;">Additional QC (preparing)</a><br> -->
-<!-- <a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br> -->
 <hr>
 
 ### [RNA-seq workflow](samplePages/RNAseq.html) 
@@ -190,6 +186,9 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 
 ### Bioinformatics Skills  
+
+<details><summary>List</summary>
+
 * Proficient in a wide array of NGS data pipelines and bioinformatics analyses including scRNA-seq, scTCR-seq, CITE-Seq, ATAC-seq, bulk RNA-seq, as well as integrative approaches with TCGA and CCLE for genomic and epigenomic studies 
 * Proficient in Linux, with programming skills in Python and R, and skilled use of bioinformatics tools including Cellranger, Salmon, and a suite of sequence alignment and analysis utilities 
 * Well-versed in peak calling, genomic visualization, and analysis using open- source platforms such as Seurat, scanpy, and the USCC Genome Browser
@@ -206,6 +205,7 @@ Guiding and mentoring interns in bioinformatics practices and project work
 * Keeping meticulous records of both raw and processed data storage
 
 <br>
+</details>
 
 <hr>
 

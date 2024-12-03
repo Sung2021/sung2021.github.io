@@ -1527,23 +1527,21 @@ Cell RNA-seq workflow</a></h3>
 <ul>
 <li>Initial Processing
 <ul>
-<li>CellRanger</li>
-<li>Doublet Removals</li>
-<li>Filtering by UMI and other parameters</li>
+<li>QC Processing and initial filtering
+<ul>
+<li>UMI cutoff</li>
+<li>Mitochondrial DNA cutoff</li>
+<li>Doublet Removal (scrublet)</li>
 </ul></li>
-<li>UMAP and Clustering</li>
-<li>Cluster-markers enrichment analysis</li>
-<li>Cell type annotation</li>
-<li>Population shift analysis</li>
-<li>Integration (Harmony, CCA)</li>
+</ul></li>
+<li>Integration : harmony</li>
+<li>UMAP/Clustering/Markers</li>
+<li>Cluster-markers enrichment analysis (GSEA)</li>
+<li>Cell type annotation (scType, singleR)</li>
+<li>Trajectory analysis</li>
 <li>AUC</li>
 <li>Imputation</li>
 </ul>
-<!-- ##### Further Anaysis -->
-<!-- <a href="samplePages/Celltype.annotation.html" style="font-size: 16px;">Cell type annotation</a><br> -->
-<!-- <a href="samplePages/" style="font-size: 16px;">Integration (preparing)</a><br> -->
-<!-- <a href="samplePages/" style="font-size: 16px;">Additional QC (preparing)</a><br> -->
-<!-- <a href="samplePages/" style="font-size: 16px;">Cell-Cell communication (preparing)</a><br> -->
 <hr>
 </div>
 <div id="rna-seq-workflow" class="section level3">
@@ -1681,6 +1679,10 @@ Fat Diet (American Journal of Physiology-Endocrionlogy and Metabolism,
 </div>
 <div id="bioinformatics-skills" class="section level3">
 <h3>Bioinformatics Skills</h3>
+<details>
+<summary>
+List
+</summary>
 <ul>
 <li>Proficient in a wide array of NGS data pipelines and bioinformatics
 analyses including scRNA-seq, scTCR-seq, CITE-Seq, ATAC-seq, bulk
@@ -1717,7 +1719,8 @@ platforms</li>
 <li>Keeping meticulous records of both raw and processed data
 storage</li>
 </ul>
-<p><br></p>
+<br>
+</details>
 <hr>
 </div>
 <div id="publications" class="section level3">
