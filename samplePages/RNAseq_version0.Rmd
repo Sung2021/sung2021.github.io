@@ -1,13 +1,13 @@
 ---
 title: "RNA-seq analysis workflow"
 subtitle: ""
-# date: "`r format(Sys.Date())`"
-output: 
-  html_document:
-    code_folding: none
-    toc: true
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: none 
+    number_sections: FALSE
     toc_depth: 6
-    toc_float: true
+    toc_float: false
 ---
 
 ```{r setup, include=FALSE}
@@ -20,11 +20,15 @@ knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
                       tidy = FALSE)
 ```
 
+
+
+
+
 <a href="https://sung2021.github.io/">Back to Main Page </a>  
 
 # Preparation  
 
-### Load packages   
+## Load packages   
 ```{r, echo=T, eval=TRUE}
 library(dplyr)
 library(ggplot2)
@@ -35,15 +39,16 @@ library(dplyr)
 ```
 
 
-## Sample data  
+# Sample data  
 
-Sample data (count matrix)
+Data import (count matrix).  
+Data import (TPM).    
 
-```{r, echo=FALSE, eval=TRUE}
-count.mtx = read.csv("../sampledata/RNAseq_sample_count.mtx.csv", row.names = 1)
-```
+<!-- # Quality control   -->
+
 
 # TPM calculation   
+
 
 **Calculate TPM sample by sample**  
 ```{r, eval=FALSE, echo=TRUE} 
@@ -56,7 +61,7 @@ for(i in 1:ncol(count_mtx)){
 ```
 
 
-# Principal component analysis {.tabset}  
+# Principal component analysis  
 
 ```{r, echo=FALSE, eval=T}
 # First, create vectors for each column
@@ -82,20 +87,6 @@ pcaData <- data.frame(PC1, PC2, group, sample, name)
 PCA_var <- c(0.82990806, 0.07676304)
 ```
 
-
-```{r, eval=FALSE}
-# PCA
-se <- SummarizedExperiment(as.matrix(count.mtx), 
-                           colData=DataFrame(sample=1:ncol(count.mtx)))
-dds <- DESeqDataSet(se, ~ 1)
-dds$sample = colnames(dds)
-vsd <- vst(dds, blind=FALSE)
-
-pcaData <- plotPCA(vsd, intgroup = "sample")
-
-```
-
-
 ```{r, fig.width=6.5, fig.height=5, eval=T}
 ggplot(pcaData, aes(x = PC1, y = PC2, fill = group)) +
   geom_point(size = 4, alpha = 0.6, shape = 21, color = "black", stroke = 0.5)  +
@@ -110,15 +101,15 @@ ggplot(pcaData, aes(x = PC1, y = PC2, fill = group)) +
 ```
 
 
-# Differentially Expressed Genes (DEG) analysis {.tabset} 
+# Differentially Expressed Genes (DEG) analysis  
 
-### DEG data   
-```{r, echo=T, eval=T}
+## DEG data   
+```{r}
 # Generate info table
 info <- data.frame(matrix(nrow = ncol(count.mtx), ncol = 2))
 colnames(info) <- c('sample', 'cond')
 info$sample <- colnames(count.mtx)
-info$cond <- c(rep("CND1",4), rep("CND2",4), rep("CTRL",3))
+info$cond <- "sample information here"
 
 # DESeq
 dds <- DESeqDataSetFromMatrix(count.mtx, info, ~ cond)
@@ -127,43 +118,22 @@ res <- results(dds)
 ```
 
 
-### Visualization of DEGs Volcanoplot    
-```{r, fig.width=6.5, fig.height=5, eval=T}
-res <- data.frame(res)
-fc=1.2
-pval=0.05
+## Visualization of DEGs Volcanoplot    
+```{r}
 res = res %>% mutate(DE=ifelse(log2FoldChange >= log2(fc) & padj < pval, 'UP',
                                ifelse(log2FoldChange <= -log2(fc) & padj < pval, 'DN','no_sig')))
 res$DE = factor(res$DE, levels = c('UP','DN','no_sig'))
 
-legend_data <- data.frame(
-  log2FoldChange = c(0, 0, 0),  
-  padj = c(0, 0, 0),           
-  DE = c("UP", "DN", "no_sig")    
-)
-
 res %>% 
-  ggplot(aes(log2FoldChange, -log10(padj))) + 
-  geom_point(size = 0.1, alpha = 0.5, color = "grey") + 
-  geom_point(data = res[res$DE == "UP", ], color = "red", size = 0.2) +
-  geom_point(data = res[res$DE == "DN", ], color = "blue", size = 0.2) +
-  geom_vline(xintercept = c(-log2(fc), log2(fc)), color = 'grey') +
-  geom_hline(yintercept = -log10(pval), color = 'grey') +
-  ##
-  geom_point(data = legend_data, 
-             aes(color = DE), 
-             size = 0) + # 
-  scale_color_manual(
-    values = c("UP" = "red", "DN" = "blue", "no_sig" = "grey"),
-    name = "Significance"
-  ) +
-  xlim(c(-10, 10)) + ylim(c(0, 75)) +
-  theme_bw() +
-  ggtitle("Resist/Naive") +
+  ggplot(aes(log2FoldChange, -log10(padj), color=DE)) + 
+  geom_point(size=1, alpha=0.5) + 
+  scale_color_manual(values = c('red','blue','grey')) +
+  theme_classic() +
+  geom_vline(xintercept = c(-log2(fc),log2(fc)), color='grey') +
+  geom_hline(yintercept = -log10(0.05),color='grey') +
   guides(colour = guide_legend(override.aes = list(size=5))) +
-  ggtitle("CND1/CTRL") +
-  ggeasy::easy_center_title() 
-
+  ggtitle("Resist/Naive") +
+  ggeasy::easy_center_title() ## to center title
 
 ```
 
@@ -314,7 +284,8 @@ Single-sample Gene Set Enrichment Analysis (ssGSEA) is an variation of the GSEA 
 
 <br>
 
-```{r, echo=FALSE, eval=TRUE}
+
+```{r, echo=TRUE, eval=TRUE}
 tpm = read.csv("../sampledata/tpm.sample_mouse.csv", row.names = 1)
 ```
 
@@ -393,6 +364,7 @@ input.data %>% pheatmap::pheatmap(color = c("grey99","salmon"),
 
 ## Pathway sample 1  
 ```{r, eval=T, echo=FALSE}
+
 tpm = read.csv("../sampledata/tpm.sample.csv", row.names = 1)
 
 # Import geneset 
@@ -412,7 +384,7 @@ colnames(pval) = rownames(test.df)
 test.df$TCSA_pval = pval[1,]
 ```
 
-```{r, eval=T, fig.width=4,fig.height=5, out.width="40%"}
+```{r, eval=T, fig.width=4,fig.height=5, out.width="60%"}
 # Plot it 
 genesetname = "WP Apoptosis"
 test.df = test.df %>% 
@@ -450,7 +422,7 @@ colnames(pval) = rownames(test.df)
 test.df$TCSA_pval = pval[1,]
 ```
 
-```{r, eval=T, fig.width=4,fig.height=5, out.width="40%"}
+```{r, eval=T, fig.width=4,fig.height=5, out.width="60%"}
 # Plot it 
 genesetname = "GPBP DNA Damage"
 test.df = test.df %>% 
@@ -468,16 +440,13 @@ input %>% pheatmap::pheatmap(cluster_rows = F, cluster_cols = F,
 
 
 
-# Multiple genes-violin plot across samples {.tabset}   
+# Multiple genes-violin plot across samples   
 
 ```{r,echo=T, eval=TRUE}
 # Import sample data 
 tpm.sample = read.csv("../sampledata/tpm.sample.csv", row.names = 1)
-cellmarker = read.csv('../info/DB/CellMarker2.0.csv')
-```
 
-## Functions
-```{r,echo=T, eval=TRUE}
+cellmarker = read.csv('../info/DB/CellMarker2.0.csv')
 celltypes = c("B cell",
               "CD8+ T cell",
               "Activated T cell",
@@ -514,16 +483,15 @@ mks.violinplot = function(cellname, tpm=tpm.sample){
     )
   return(p)
 }
+
 ```
 
 
-## Plot1
-```{r,echo=T, eval=TRUE, fig.width=8, fig.height=5}
+```{r,echo=T, eval=TRUE}
 mks.violinplot(cellname = "B cell", tpm=tpm.sample)
 ```
 
-## Plot2
-```{r,echo=T, eval=TRUE, fig.width=8, fig.height=5}
+```{r,echo=T, eval=TRUE}
 mks.violinplot(cellname = "Dendritic cell", tpm=tpm.sample)
 ```
 
@@ -535,8 +503,7 @@ mks.violinplot(cellname = "Dendritic cell", tpm=tpm.sample)
 count.mtx = read.csv("../sampledata/RNAseq_sample_count.mtx.csv", row.names = 1)
 ```
 
-## Functions
-```{r, echo=TRUE, eval=TRUE}
+```{r, echo=FALSE, eval=TRUE}
 # Function 1 
 # condition1 = CTRL 
 DEG_out = function(count.raw= count.mtx, condition1, condition2){
@@ -639,12 +606,8 @@ df %>% head() %>%
 
 DEG_volcanoplot(res = DEG1, condition1 = "CTRL", condition2= "CND1")
 
-DEG1 %>% DEG_table() %>% 
-  DT::datatable(extensions = "Buttons", 
-                width="800px",
-                options = list(dom="Bfrtip",
-                               scrollX=TRUE,
-                               buttons=c("csv","excel"), pageLength=10))
+DEG1 %>% DEG_table() %>% head() %>% 
+  DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
 ```
 
 
@@ -665,12 +628,8 @@ df %>% DT::datatable(extensions = "Responsive")
 
 DEG_volcanoplot(res = DEG2, condition1 = "CTRL", condition2= "CND2")
 
-DEG2 %>% DEG_table() %>% 
-  DT::datatable(extensions = "Buttons", 
-                width="800px",
-                options = list(dom="Bfrtip",
-                               scrollX=TRUE,
-                               buttons=c("csv","excel"), pageLength=10))
+DEG2 %>% DEG_table() %>% head() %>% 
+  DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
 ```
 
 
@@ -692,17 +651,13 @@ df %>% head() %>%
 
 DEG_volcanoplot(res = DEG3, condition1 = "CTRL", condition2= "CND2")
 
-DEG3 %>% DEG_table() %>% 
-  DT::datatable(extensions = "Buttons", 
-                width="800px",
-                options = list(dom="Bfrtip",
-                               scrollX=TRUE,
-                               buttons=c("csv","excel"), pageLength=10))
+DEG3 %>% DEG_table() %>% head() %>% 
+  DT::datatable(extensions = "Buttons", options = list(dom="Bfrtip", buttons=c("csv","excel"), pageLength=10))
 ```
 
 
 
-## Select the signicant DEGs for the next step  
+## Select the signicant DEGs  
 
 From three comparisons   
 
@@ -812,11 +767,8 @@ kmeans_heatmap = function(input.df, input.data){
 ```{r, echo=FALSE, eval=TRUE}
 kmeans_heatmap(input.df = df3, input.data = input.data)
 
-cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
-  DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
-                width = "800px",
-                options = list(scrollX=TRUE))
+cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 
@@ -825,11 +777,8 @@ cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%
 
 kmeans_heatmap(input.df = df4, input.data = input.data)
 
-cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
-  DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
-                width = "800px",
-                options = list(scrollX=TRUE))
+cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 ## K = 5 
@@ -837,11 +786,8 @@ cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%
 
 kmeans_heatmap(input.df = df5, input.data = input.data)
 
-cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
-  DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
-                width = "800px",
-                options = list(scrollX=TRUE))
+cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>% 
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 ## K = 6 
@@ -849,14 +795,13 @@ cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%
 
 kmeans_heatmap(input.df = df6, input.data = input.data)
 
-cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
-  DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
-                width = "800px",
-                options = list(scrollX=TRUE))
+cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>%  head() %>%  
+  DT::datatable(rownames = T, caption = "Clsuter information with TPM value")
 ```
 
 
+<br><br>
+More example analyses will be updated.  
 
 <br><br>
 

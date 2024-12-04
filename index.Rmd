@@ -230,6 +230,6 @@ Guiding and mentoring interns in bioinformatics practices and project work
 
 <br><br>
 
-Last update: `r format(Sys.Date())`
+<!-- Last update: `r format(Sys.Date())` -->
 
 <br><br>
