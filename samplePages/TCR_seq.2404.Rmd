@@ -1,14 +1,13 @@
 ---
 title: "scTCR-seq"
 subtitle: ""
-# date: "`r format(Sys.Date())`"
-output: 
-  html_document:
-    code_folding: none
-    theme: united
-    toc: yes
-    toc_float:
-      collapsed: false
+date: "`r format(Sys.Date())`"
+output:  
+  rmdformats::robobook: 
+    code_folding: show 
+    number_sections: FALSE
+    toc_depth: 6
+    toc_float: false
 ---
 
 ```{r setup, include=FALSE}
@@ -25,6 +24,8 @@ knitr::opts_chunk$set(echo=T, fig.align = "center",
 ```{r, echo=FALSE}
 library(dplyr)
 library(ggplot2)
+# library(DESeq2)
+# library(edgeR)
 library(reshape)
 library(dplyr)
 ```
@@ -35,10 +36,6 @@ library(dplyr)
 # Workflow 
 
 ## Preprocessing by cellranger (count, vdj, aggr)  
-
-* cellranger count
-* cellranger vdj
-* cellranger aggr
 
 ```{bash, echo=T, eval=FALSE}
 # Sample : Control
@@ -75,16 +72,12 @@ cellranger aggr --id=<Aggregation_ID> \
                 --csv=<Path_to_Aggregation_CSV>
 ```
 
-
-[Cell Ranger 5' VDJ Algorithm Overview link](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-5p-vdj-algorithm)
+[Cell Ranger 5' VDJ Algorithm Overview](https://www.10xgenomics.com/support/software/cell-ranger/latest/algorithms-overview/cr-5p-vdj-algorithm)
 
 
 <br>
 
 ## VDJ information     
-
-* Filtering 1 TRA and  1 TRB clonotype
-
 
 ```{r, eval=FALSE, echo=TRUE}
 # Import cellranger aggr output 
@@ -167,7 +160,7 @@ Suggested analyses below
 
 
 <br><br>
-<hr>
+
 
 # Sample work  
 
@@ -209,7 +202,7 @@ ggplot(data_melted, aes(x = reorder(Clonotype, -value), y = value,
 ```
 
 <br>
-<hr>
+
 
 # Clonotype Abundance in each sample {.tabset}  
 
@@ -249,18 +242,19 @@ bubble_plot = function(input.data, title="Abundant Clonotypes"){
 }
 ```
 
-## Sample A
+
+## Sample A  
 ```{r,fig.width=15, fig.height=9}
 bubble_plot(input.data = data[,c(1,2)], title = "Abundant Clonotypes in A")
 ```
 
-## Sample B
+
+## Sample B  
 ```{r,fig.width=15, fig.height=9}
 bubble_plot(input.data = data[,c(1,3)], title = "Abundant Clonotypes in B")
 ```
 
 <br><br>
-<hr>
 
 # Gene Expression Profiling across Clonotypes and Samples   
 ```{r, echo=FALSE}
