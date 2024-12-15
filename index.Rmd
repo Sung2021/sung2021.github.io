@@ -91,10 +91,10 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <a href="samplePages/ChIP_seq.html" style="font-size: 16px;">Data Processing : Applicable to ChIP-seq, ATAC-seq, Cut&Run</a><br>
 <hr>
 
-### TCR-seq workflow 
+### scTCR-seq workflow 
 
 * [preprocessing](samplePages/TCR_seq.html)
-* [scRNA-seq+scTCR-seq](https://sung2021.github.io/etc/DGKi_test_human.html)<br>
+<!-- * [scRNA-seq+scTCR-seq](https://sung2021.github.io/etc/DGKi_test_human.html)<br> -->
 <!-- * [scRepertoire (preparing: package update recently)](samplePages/DGKi_scTCRSeq_scRepertoire2.html) -->
 
 <hr>
