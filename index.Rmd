@@ -37,9 +37,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 <br><hr>
 
-### [Single Cell RNA-seq workflow](https://sung2021.github.io/works.io/samples/scRNA_index.html)
-
-<!-- (https://sung2021.github.io/samplePages/scRNAseq.html)   -->
+### [Single Cell RNA-seq workflow](https://sung2021.github.io/samplePages/scRNAseq.html)
 
 
 <br>
@@ -80,7 +78,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 <br>
 **Example**
 
-[RNA-seq Analysis using TCGA DB data](https://sung2021.github.io/works.io/samples/RNAseq/TCGA/TCGA_BRCA_RNAseq_index.html) 
+[RNA-seq Analysis using TCGA DB data](https://sung2021.github.io/samplePages/RNAseq.html) 
 
 <img src="png/TCGA_BRCA_main.png" style="width: 40%; border: 0.5px solid black;"><br>
 <br><br>
@@ -156,7 +154,7 @@ Experienced Senior Bioinformatics Scientist with a strong background in immunolo
 
 **2024**
 
-* [Conference Summary Report: 10X Genomics User Group Meeting 2024](https://sung2021.github.io/works.io/etc/Conf_10xGenomics_2024.May.html)<br>
+* [Conference Summary Report: 10X Genomics User Group Meeting 2024](https://sung2021.github.io/etc/Conf_10xGenomics_2024.May.html)<br>
 <!-- &nbsp;&nbsp;&nbsp;[Conference Note : 2024 Festival in Genomics in Boston](https://sung2021.github.io/works.io/etc/FestivalBoston24_index.html)<br> -->
 
 <br><br>
