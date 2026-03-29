@@ -1,37 +1,85 @@
-## About_Me
-I am an experienced bioinformatician with extensive research experience in immunology and oncology. Currently working at Dana Farber Cancer Institution as a senior bioinformatician, I collaborate with multiple research labs and pharmaceutical companies, primarily on various drug and antibody testing projects. Additionally, I am responsible for developing standard procedures for NGS data analysis, including scRNA-seq, TCR-seq, bulk RNA-seq, ATAC-seq, and more. I contributed lab-based NGS assay development including Drop-seq, Seq-Well, and Seq-scope.     
+# Personal Portfolio Website — index.Rmd
 
-## Expertise
-* Bioinformatics analysis and multi-omic NGS data processing including scRNA-seq,TCR-seq,CITE-Seq,ATAC-seq,Cut&Run,bulk RNA-seq,ChIP-seq
-* Integration of multi-omic data 
-* Designing of analysis and visualization 
-* R, Python
-* Markdown, Excel dashboard, powerpoint, shiny
-* Cloud computing (DNANexus)
-* HPC experience (Great Lakes, Rcapps(DFCI))
-* Immunology, Oncology, and Molecular Biology
-* Drug-testing data analysis (Oncology)
-* Efficiently managing multiple projects with tight deadlines while maintaining impeccable organization
+## Overview
 
-## Experience
-* Senior Bioinformatics scientist at Dana Farber Cancer Institution 2022-
-* Postdoctoral Fellow at Hackensack Meridian Health 
-* Postdoctoral Fellow at Cold Spring Harbor Laboratory 
-* Postdoctoral Fellow at University of Michigan
+- R Markdown (`index.Rmd`) → rendered to `index.html` via `rmarkdown::render()`
+- Theme: `flatly` (Bootstrap 4), floating TOC
+- External dependency: Font Awesome 6.5 (CDN)
+- No separate `style.css` — all CSS is inlined in `<style>` block at the top of `index.Rmd`
 
-## Publications 
-* X.Zhao, W.Hu, S.R.Park, S.Zhu, S.S.Hu, C.Zang, W.Peng, Q.Shan ,H.H. Xue. Reprogramming fate of central memory CD8+ T cells by targeting the transcriptional cofactor Tle3. (Nature Immunology, 2023) **co-first**
-* Jingyue Xi, Sung Rye Park, Jun Hee Lee and Hyun Min Kang. SiftCell: A robust framework to detect and isolate cell-containing droplets from single-cell RNA sequence reads. (Cell Systems, 2023) https://doi.org/10.1016/j.cels.2023.06.002)
-* Mohammad Heidarian, Iassac J Jensen, Shravan Kumar Kannan, Lecia L Pewe, Mariah Hassert, Sung Rye Park, Hai-Hui Xue, John Harty, Vladimir Badovinac. Sublethal whole-body irradiation induces permanent loss and dysfunction in pathogen-specific circulating memory CD8T cell populations. (PNAS, July 2023) (doi: 10.1073/pnas.2302785120.)
-* Chun-Seok Cho, Jingyue Xi, Yichen Si, Sung-Rye Park, Jer-En Hsu, Myungjin Kim, Goo Jun, Hyun-Min Kang, Jun Hee Lee. Seq-Scope: Microscopic examination of spatial transcriptome using Seq-Scope. (Cell, 2021) (https://doi.org/10.1016/j.cell.2021.05.010)
-* Sung Rye Park, Sim Namkoong, Zac Zezhi Zhang, Leon Friesen, Euisik Yoon, Chang H. Kim, Hojoong Kwak, Hyun Min Kang and Jun Hee Lee. Single cell transcriptome analysis of colon cancer cell response to 5-fluorouracil-induced DNA damage (Cell Reports, 2020) (DOI: 10.1016/j.celrep.2020.108077)
-**first**
-* Sung Rye Park, Chun-Seok Cho, Hyun Min Kang and Jun Hee Lee. Holistic Characterization of Single Hepatocyte Transcriptome Responses to High Fat Diet (American Journal of Physiology-Endocrionlogy and Metabolism, 2020) (https://doi.org/10.1152/ajpendo.00391.2020)
-**first**
+---
 
+## CSS Classes (defined in `<style>` block)
 
-## Education
-* Ph.D. Plant Biology, University of Texas at Austin 2017
-* MA. Biology Seoul National University 2010
+| Class | Usage |
+|---|---|
+| `.card-comp` | Project & Competency cards — white box with shadow |
+| `.card-comp-2` | ML card icon color (blue) |
+| `.card-comp-3` | Translational Medicine card icon color (orange) |
+| `.about-right` | About section box — white, rounded, shadow |
+| `.pub-card` | Publication card — white box with shadow |
+| `.pub-journal` | Journal name — bold, dark |
+| `.pub-year` | Year — green accent |
+| `.pub-title` | Paper title — small, grey |
+| `.pub-badge` | Author role (e.g. First author) — small italic |
 
+---
 
+## Section Structure
+
+### 1. About `{#about}`
+
+```
+<div class="about-right">
+  큰 타이틀 (font-size 1.5em)
+  서브타이틀 (italic)
+  본문 2단락
+  내부 박스 (배경 #f4f6f8): Domains + Expertise
+  버튼: CV / GitHub / LinkedIn
+</div>
+```
+
+### 2. Featured Projects `{#projects}`
+
+- Pandoc fenced div `::: {.row}` + `::: {.col-md-6}` 2열 그리드
+- 각 카드: `<div class="card-comp">` 로 감싸기
+- 내용: 제목(`###`), bullet 3~4개, 태그 (인라인 코드 `` ` ``)
+
+### 3. Selected Publications `{#publications}`
+
+- `<div class="row">` + `<div class="col-md-4">` 3열 그리드 (순수 HTML)
+- 각 카드: `<div class="pub-card">`
+- 내부 구조:
+  ```html
+  <div class="pub-journal">저널명 <span class="pub-year">연도</span></div>
+  <div class="pub-title">논문 제목</div>
+  <div class="pub-badge">기여 역할 (선택)</div>
+  ```
+
+### 4. Experience `{#experience}`
+
+- 단순 Markdown bullet list
+
+### 5. Contact `{#contact}`
+
+- 단순 Markdown bullet list (Email, GitHub, LinkedIn)
+
+---
+
+## Design Principles
+
+- **가독성 우선**: 복잡한 구조 지양, 내용이 명확하게 보이는 레이아웃
+- 그리드: Pandoc fenced div (`.row`, `.col-md-*`) 또는 Bootstrap HTML div 직접 사용
+- 박스: `.card-comp` 또는 `about-right` 클래스, 또는 인라인 `style` 속성으로 경량 박스
+- 아이콘: Font Awesome (`<i class="fa-solid fa-...">`)
+- 태그 뱃지: 인라인 코드 `` `텍스트` ``
+
+---
+
+## Files
+
+| Path | 설명 |
+|---|---|
+| `index.Rmd` | 메인 포트폴리오 소스 |
+| `index.html` | knit 결과물 (git push 대상) |
+| `info/resume/SungryePark_resume.pdf` | CV 다운로드 링크 대상 |
