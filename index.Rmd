@@ -125,9 +125,9 @@ h3 { font-size: 1.1em; }
 <span style="font-size:1.5em; font-weight:700;">COMPUTATIONAL BIOLOGIST</span>  
 *Specializing in Translational Drug Discovery*
 
-Computational Biologist with 7+ years delivering multi-omics integration and translational biomarker analyses in pharma collaborations (BMS, Takeda, Japan Tobacco)
+Computational Biologist with 7+ years of experience in multi-omics integration and translational biomarker analysis. Proven track record of pharma collaborations (BMS, Takeda, Japan Tobacco) and contributions to biological insights in oncology, immunology, and metabolic disease. Currently at Battelle, applying AI/ML to analytical pipelines and developing scalable workflows.
 
-Builds analytical frameworks that bridge biology, machine learning, and multi-omics data — designing systems-level approaches that make sense of heterogeneous biological datasets.
+Develops analytical frameworks that integrate biology, machine learning, and multi-omics data to drive systems-level insights from complex, heterogeneous datasets.
 <br><br>
 
 <div style="background:#f4f6f8; border-radius:6px; padding:12px 16px; font-size:0.88em; color:#555;">
@@ -146,8 +146,9 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 
 # Featured Projects {#projects}
 
-::: {.row}
+2024- Present
 
+::: {.row}
 ::: {.col-md-6}
 <div class="card-comp card-project" style="margin-bottom:20px;">
 ### **Novel function of Tle3: Multi-omics approach**
@@ -155,46 +156,43 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 - scRNA-seq, RNA-seq, ATAC-seq, Cut&Run (TLE3)
 - *Nature Immunology* (2024); co-first author
 <br><br>
-`Pair-wise integration` `Immunology` `T cell` `Lineage`
+`Hackensack Meridian Health` `Pair-wise integration` `Immunology` `T cell` `Lineage`
 </div>
 :::
-
 ::: {.col-md-6}
 <div class="card-comp card-project" style="margin-bottom:20px;">
 ### **STING Agonist Response: BMS Collaboration**
 - Responding cell type stratification
 - scRNA-seq + scTCR-seq
-- *Cell Reports Medicine* (2024)
+- *Cell Reports Medicine* (2025)
 <br><br>
-`Single-cell RNA-seq` `scTCR-seq` `Immunology` `Oncology` `Deconvolution`
+`Dana Farber` `Single-cell RNA-seq` `scTCR-seq` `Immunology` `Oncology` `Deconvolution`
 </div>
 :::
+:::
 
+::: {.row}
 ::: {.col-md-6}
 <div class="card-comp card-project" style="margin-bottom:20px;">
 ### **Virtual Patient Cohort Generation (MicroIRAD)**
-
 - CVAE framework learning TCGA-LUAD
 - 400+ synthetic patients
 - Patient-Model cell line pair similarity score (10,000+)
 - Preclinical go/no-go decision support
 <br><br>
-`Deep Learning` `PyTorch/Tensorflow` `CVAE` `TCGA` `LUAD` `AutoEncoder`
+`Battelle` `Deep Learning` `PyTorch/Tensorflow` `CVAE` `TCGA` `LUAD` `AutoEncoder`
 </div>
 :::
-
 ::: {.col-md-6}
 <div class="card-comp card-project" style="margin-bottom:20px;">
 ### **Cell image + RNA-seq by MOFA2**
-
 - Phenotypic profiling + Transcriptome
 - Large scale compound response study
 - End-to-end integration pipeline
 <br><br>
-`MOFA2` `Cell Painting` `Transcriptome` `Drug response` `Human lung cancer` `Multiomics`
+`Battelle` `MOFA2` `Cell Painting` `Transcriptome` `Drug response` `Human lung cancer` `Multiomics`
 </div>
 :::
-
 :::
 
 ---
@@ -273,7 +271,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="workflow-card">
 <div class="pub-journal">NK cell identification using ML</div>
 <div class="pub-title">Elastic Net for feature selection, K-means + DEG-based pattern identification (bulk RNA-seq)</div>
-<div class="pub-badge"><a href="https://sung2021.github.io/samplePages/Daiichi_bulk_RNASeq/Daiichi_2024_bulk_30342_ElasticNet_featureSelection.v2.html" target="_blank">View Example →</a></div>
+<div class="pub-badge"><a href="" target="_blank">View Example →</a></div>
 </div>
 </div>
 </div>

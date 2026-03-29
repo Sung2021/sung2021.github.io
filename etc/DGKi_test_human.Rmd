@@ -3,12 +3,14 @@ title: "Combinational test of DGKi with PD-1 blocker"
 subtitle: "scTCR-seq + scRNA-seq"
 author: "Sung Rye Park"
 date: "`r format(Sys.Date())`"
-output:  
-  rmdformats::robobook: 
-  code_folding: hide 
-  number_sections: FALSE
-  toc_depth: 6
-  toc_float: FALSE
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    code_folding: hide
+    self_contained: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,6 +22,45 @@ knitr::opts_chunk$set(echo=F, fig.align = "center",
                       prompt = FALSE,
                       tidy = FALSE)
 ```
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+h1 { font-size: 1.75em; border-bottom: 2px solid #18bc9c; padding-bottom: 6px; margin-top: 40px; }
+h2 { font-size: 1.4em; margin-top: 28px; }
+h3 { font-size: 1.1em; }
+
+body { font-size: 14.5px; color: #333; line-height: 1.7; }
+
+.back-btn {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  background: #18bc9c;
+  color: #fff !important;
+  border-radius: 5px;
+  font-size: 0.85em;
+  text-decoration: none;
+}
+.back-btn:hover { background: #15a589; }
+
+.info-box {
+  background: #f4fbf9;
+  border-left: 4px solid #18bc9c;
+  border-radius: 0 6px 6px 0;
+  padding: 12px 18px;
+  margin: 16px 0 20px;
+  font-size: 0.88em;
+  color: #444;
+}
+
+pre {
+  background: #f8f9fa;
+  border: 1px solid #e3e6ea;
+  border-radius: 5px;
+  font-size: 0.87em;
+}
+</style>
+
 
 # DGKi + Nivolumab combinational therapy   
 

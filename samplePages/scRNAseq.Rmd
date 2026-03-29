@@ -1,13 +1,15 @@
 ---
-title: "scRNA-seq analysis workflow"
-subtitle: ""
+title: "scRNA-seq Analysis Workflow"
+subtitle: "Seurat v5 · Harmony · scDblFinder · Monocle3"
 date: "`r format(Sys.Date())`"
-output:  
-  rmdformats::robobook: 
-    code_folding: none 
-    number_sections: FALSE
-    toc_depth: 6
-    toc_float: false
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    code_folding: none
+    self_contained: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,10 +22,46 @@ knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
                       tidy = FALSE)
 ```
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+<style>
+h1 { font-size: 1.75em; border-bottom: 2px solid #18bc9c; padding-bottom: 6px; margin-top: 40px; }
+h2 { font-size: 1.4em; margin-top: 28px; }
+h3 { font-size: 1.1em; }
 
+body { font-size: 14.5px; color: #333; line-height: 1.7; }
 
-<a href="https://sung2021.github.io/">Back to Main Page </a>  
+.back-btn {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  background: #18bc9c;
+  color: #fff !important;
+  border-radius: 5px;
+  font-size: 0.85em;
+  text-decoration: none;
+}
+.back-btn:hover { background: #15a589; }
+
+.info-box {
+  background: #f4fbf9;
+  border-left: 4px solid #18bc9c;
+  border-radius: 0 6px 6px 0;
+  padding: 12px 18px;
+  margin: 16px 0 20px;
+  font-size: 0.88em;
+  color: #444;
+}
+
+pre {
+  background: #f8f9fa;
+  border: 1px solid #e3e6ea;
+  border-radius: 5px;
+  font-size: 0.87em;
+}
+</style>
+
+<a href="https://sung2021.github.io/" class="back-btn"><i class="fa fa-arrow-left"></i> Back to Main Page</a>  
 
 
 # 1. Raw data processing  
@@ -194,72 +232,55 @@ obj.srt <- perform_default_analysis(obj.srt)
 
 
 
-# Integration (Seurat built-in)  
+# Integration (Seurat v5 + Harmony)  
 
-Reference URL: https://satijalab.org/seurat/articles/integration_introduction.html   
+Seurat v5 uses `IntegrateLayers()` for batch correction. Harmony is recommended for most datasets due to its speed and robustness.  
+Reference: https://satijalab.org/seurat/articles/seurat5_integration  
 <br>
-
-**Correction for Batch Effects:**    
-
-Seurat offers robust methods to align different datasets, helping to correct for batch effects that often occur due to variations in experimental conditions, sample preparation, or sequencing technologies.   
-
-**Enhanced Data Visualization:**     
-By harmonizing datasets, Seurat enables unified visualization and analysis, which facilitates the identification of trends and patterns across diverse datasets.   
 
 ```{r}
-# Define what groups to be integrated 
-groups_to_be_integrated = "Timepoint"
+library(harmony)
 
-# Split object and make them a list 
-obj.list <- SplitObject(obj.srt, split.by = groups_to_be_integrated)
+# Define batch variable
+batch_var <- "Timepoint"
 
-# Normalize and identify variable features for each dataset independently
-# selection method and number of features can be modified 
+# Step 1: Split RNA assay into layers by batch (Seurat v5)
+obj.srt[["RNA"]] <- split(obj.srt[["RNA"]], f = obj.srt@meta.data[[batch_var]])
 
-intgr.list <- lapply(X = obj.list, FUN = function(x) {
-  x <- NormalizeData(x)
-  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
-})
+# Step 2: Standard preprocessing
+obj.srt <- NormalizeData(obj.srt)
+obj.srt <- FindVariableFeatures(obj.srt)
+obj.srt <- ScaleData(obj.srt)
+obj.srt <- RunPCA(obj.srt, npcs = 30)
 
-# select features that are repeatedly variable across datasets for integration
-features <- SelectIntegrationFeatures(object.list = intgr.list)
+# Step 3: Harmony integration via IntegrateLayers
+obj.srt <- IntegrateLayers(
+  object = obj.srt,
+  method = HarmonyIntegration,
+  orig.reduction = "pca",
+  new.reduction = "harmony",
+  group.by.vars = batch_var,
+  verbose = FALSE
+)
 
-# Perform integration
-obj.anchors <- FindIntegrationAnchors(object.list = intgr.list, 
-                                      anchor.features = features)
+# Step 4: Re-join layers after integration
+obj.srt <- JoinLayers(obj.srt)
 
-# this command creates an 'integrated' data assay
-obj.intgr <- IntegrateData(anchorset = obj.anchors)
+# Step 5: Downstream analysis using harmony reduction
+obj.srt <- FindNeighbors(obj.srt, reduction = "harmony", dims = 1:30)
+obj.srt <- FindClusters(obj.srt, resolution = c(0.1, 0.2, 0.5, 0.8))
+obj.srt <- RunUMAP(obj.srt, reduction = "harmony", dims = 1:30)
 
-# Perform an integrated analysis
-
-# specify that we will perform downstream analysis on the corrected data note that the
-# original unmodified data still resides in the 'RNA' assay
-# To use integrated data, change the default assay to "integrated"
-DefaultAssay(obj.intgr) <- "integrated"
-
-# Run the standard workflow for visualization and clustering
-obj.intgr <- ScaleData(obj.intgr, verbose = FALSE)
-obj.intgr <- RunPCA(obj.intgr, npcs = 30, verbose = FALSE)
-obj.intgr <- RunUMAP(obj.intgr, reduction = "pca", dims = 1:30)
-obj.intgr <- FindNeighbors(obj.intgr, reduction = "pca", dims = 1:30)
-obj.intgr <- FindClusters(obj.intgr, resolution = c(0.1,0.2,0.5,0.8))
-
-obj.intgr %>% saveRDS("path/saved.obj.rds")
+obj.srt %>% saveRDS("path/saved.obj.rds")
 
 # Visualization
-DimPlot(obj.intgr, reduction = "umap", group.by = groups_to_be_integrated) 
+DimPlot(obj.srt, reduction = "umap", group.by = batch_var)
 ```
 
+**Other integration methods**  
 
-**Other integration methods can be considered**  
-
-Harmony  
-https://github.com/immunogenomics/harmony   
-<br>
-
-LIGER  
-https://github.com/welch-lab/liger  
+RPCA (Seurat built-in, faster than CCA): use `method = RPCAIntegration`  
+LIGER: https://github.com/welch-lab/liger  
 <br>
 
 # Cell cycle scoring 
@@ -362,7 +383,8 @@ library(GSEABase)
 
 ```{r}
 # import data from single-cell experiment
-exprMatrix <- obj.srt@assays$RNA@data
+# Seurat v5: use LayerData() instead of @assays$RNA@data
+exprMatrix <- LayerData(obj.srt, assay = "RNA", layer = "data")
 # Convert to sparse:
 exprMatrix <- as(exprMatrix, "dgCMatrix")
 ```
@@ -483,7 +505,7 @@ DEG.two_groups= function(obj.srt,cluster=0, cond1="ADU", cond2="CTL"){
                             ifelse(RNA_snn_res.0.1 == cluster & sample == cond2, 
                                    paste0(cluster,"_", cond2), "others")))
   g2=paste0(cluster,"_", cond1)
-  g1=paste0(cluster,"_", cnod2)
+  g1=paste0(cluster,"_", cond2)
   Idents(obj.srt) = 'compare'
   logfc=log2(1)
   mks =FindMarkers(obj.srt, ident.1 = g2, ident.2 = g1, 
@@ -596,6 +618,45 @@ gsea_nes_plot(gsea.res[gsea.res$p.adjust <= 0.05,], title = "Cluster3")
 id1 = "GOBP_T_CELL_ACTIVATION" # Selected pathway" 
 enrichplot::gseaplot2(gsea.res, geneSetID = id1, title = id1)
 
+```
+
+
+# Trajectory Analysis (Monocle3)  
+
+Trajectory analysis infers developmental or activation paths across cells. Monocle3 works natively with Seurat objects via `SeuratWrappers`.  
+Reference: https://cole-trapnell-lab.github.io/monocle3/  
+<br>
+
+```{r}
+library(monocle3)
+library(SeuratWrappers)
+
+# Convert Seurat object to CellDataSet
+cds <- as.cell_data_set(obj.srt)
+
+# Pre-process (skip if already done in Seurat)
+cds <- preprocess_cds(cds, num_dim = 50)
+
+# Transfer UMAP coordinates from Seurat
+reducedDim(cds, type = "UMAP") <- obj.srt@reductions$umap@cell.embeddings[, 1:2]
+cds@int_colData@listData$reducedDims$UMAP <- obj.srt@reductions$umap@cell.embeddings[, 1:2]
+
+# Cluster and learn trajectory graph
+cds <- cluster_cells(cds)
+cds <- learn_graph(cds)
+
+# Order cells along trajectory
+# Use order_cells(cds) interactively, or specify root cells:
+# cds <- order_cells(cds, root_cells = root_cell_ids)
+cds <- order_cells(cds)
+
+# Visualize pseudotime
+plot_cells(cds,
+           color_cells_by = "pseudotime",
+           label_cell_groups = FALSE,
+           label_leaves = FALSE,
+           label_branch_points = FALSE,
+           graph_label_size = 1.5)
 ```
 
 

@@ -2,17 +2,58 @@
 title: "General Workflow Overview"
 author: "Sung Rye Park"
 date: "`r format(Sys.Date())`"
-output:  
-  rmdformats::robobook: 
-    code_folding: show 
-    number_sections: F
-    toc_depth: 5
+output:
+  html_document:
+    theme: flatly
+    toc: true
     toc_float: true
+    toc_depth: 4
+    code_folding: none
+    self_contained: true
 ---
 
 ```{r setup, include=TRUE, echo=F}
 knitr::opts_chunk$set(echo=T, fig.align = "center", message=F, warning=F)
 ```
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+h1 { font-size: 1.75em; border-bottom: 2px solid #18bc9c; padding-bottom: 6px; margin-top: 40px; }
+h2 { font-size: 1.4em; margin-top: 28px; }
+h3 { font-size: 1.1em; }
+
+body { font-size: 14.5px; color: #333; line-height: 1.7; }
+
+.back-btn {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  background: #18bc9c;
+  color: #fff !important;
+  border-radius: 5px;
+  font-size: 0.85em;
+  text-decoration: none;
+}
+.back-btn:hover { background: #15a589; }
+
+.info-box {
+  background: #f4fbf9;
+  border-left: 4px solid #18bc9c;
+  border-radius: 0 6px 6px 0;
+  padding: 12px 18px;
+  margin: 16px 0 20px;
+  font-size: 0.88em;
+  color: #444;
+}
+
+pre {
+  background: #f8f9fa;
+  border: 1px solid #e3e6ea;
+  border-radius: 5px;
+  font-size: 0.87em;
+}
+</style>
+
 
 This page outlines the general workflows I utilize for the analysis of sequencing data across various platforms. I generally follow these guidelines for most of my work and incorporate additional analyses based on the specific goals and discussions related to each project.          
 

@@ -1,13 +1,15 @@
 ---
-title: "RNA-seq analysis workflow"
-subtitle: ""
-# date: "`r format(Sys.Date())`"
-output: 
+title: "Bulk RNA-seq Analysis Workflow"
+subtitle: "DESeq2 · GSEA · ssGSEA · K-means Clustering"
+date: "`r format(Sys.Date())`"
+output:
   html_document:
-    code_folding: none
+    theme: flatly
     toc: true
-    toc_depth: 6
     toc_float: true
+    toc_depth: 4
+    code_folding: none
+    self_contained: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,7 +22,46 @@ knitr::opts_chunk$set(echo=T, fig.align = "center", eval = F,
                       tidy = FALSE)
 ```
 
-<a href="https://sung2021.github.io/">Back to Main Page </a>  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+h1 { font-size: 1.75em; border-bottom: 2px solid #18bc9c; padding-bottom: 6px; margin-top: 40px; }
+h2 { font-size: 1.4em; margin-top: 28px; }
+h3 { font-size: 1.1em; }
+
+body { font-size: 14.5px; color: #333; line-height: 1.7; }
+
+.back-btn {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 6px 14px;
+  background: #18bc9c;
+  color: #fff !important;
+  border-radius: 5px;
+  font-size: 0.85em;
+  text-decoration: none;
+}
+.back-btn:hover { background: #15a589; }
+
+.info-box {
+  background: #f4fbf9;
+  border-left: 4px solid #18bc9c;
+  border-radius: 0 6px 6px 0;
+  padding: 12px 18px;
+  margin: 16px 0 20px;
+  font-size: 0.88em;
+  color: #444;
+}
+
+pre {
+  background: #f8f9fa;
+  border: 1px solid #e3e6ea;
+  border-radius: 5px;
+  font-size: 0.87em;
+}
+</style>
+
+<a href="https://sung2021.github.io/" class="back-btn"><i class="fa fa-arrow-left"></i> Back to Main Page</a>  
 
 # Preparation  
 
@@ -31,7 +72,6 @@ library(ggplot2)
 library(DESeq2)
 library(edgeR)
 library(reshape)
-library(dplyr)
 ```
 
 
@@ -260,48 +300,18 @@ gsea_nes_plot(gsea.res = gsea.res1, title = "Test2", color = "sig") # color by s
 ## Enrichment plot for the individual pathway  
 
 ```{r, eval=FALSE}
-# enrichplot::gseaplot2 function 
-perform_GSEA <- function(res, ref, pvalueCutoff = 1) {
-  ranking <- function(res) {
-    # Check the name of log2fc related 
-    if ("avg_log2FC" %in% names(res)) {
-      df <- res$avg_log2FC
-    } else if ("log2FoldChange" %in% names(res)) {
-      df <- res$log2FoldChange
-    } else {
-      stop("Neither avg_log2FC nor log2FoldChange columns found in the data frame.")
-    }
-    names(df) <- rownames(res)
-    df <- sort(df, decreasing = TRUE)
-    return(df)
-  }
-  
-  ranked.res <- ranking(res)
-  
-  x <- clusterProfiler::GSEA(geneList = ranked.res,
-                             TERM2GENE = ref,
-                             pvalueCutoff = pvalueCutoff,
-                             pAdjustMethod = "BH",
-                             verbose = TRUE,
-                             seed = TRUE)
-  return(x)
-}
-
-gsea.res = perform_GSEA(res = res, ref = hallmark, pvalueCutoff = 1)
+# Re-run perform_GSEA to get the full GSEA object (for gseaplot2)
+gsea.res.obj = perform_GSEA(res = res, ref = hallmark, pvalueCutoff = 1)
 
 # Significant pathways 
-ids = gsea.res@result %>% filter(p.adjust <= 0.05) %>% rownames()
-
+ids = gsea.res.obj@result %>% filter(p.adjust <= 0.05) %>% rownames()
 ```
 
-
 ```{r, eval=FALSE, fig.width=7, fig.height=6, out.width="60%"}
-
-enrichplot::gseaplot2(gsea.res, geneSetID = ids[1], title = ids[1])
-enrichplot::gseaplot2(gsea.res, geneSetID = ids[2], title = ids[2])
-enrichplot::gseaplot2(gsea.res, geneSetID = ids[3], title = ids[3])
-enrichplot::gseaplot2(gsea.res, geneSetID = ids[4], title = ids[4])
-
+enrichplot::gseaplot2(gsea.res.obj, geneSetID = ids[1], title = ids[1])
+enrichplot::gseaplot2(gsea.res.obj, geneSetID = ids[2], title = ids[2])
+enrichplot::gseaplot2(gsea.res.obj, geneSetID = ids[3], title = ids[3])
+enrichplot::gseaplot2(gsea.res.obj, geneSetID = ids[4], title = ids[4])
 ```
 
 
@@ -452,7 +462,7 @@ test.df$TCSA_pval = pval[1,]
 
 ```{r, eval=T, fig.width=4,fig.height=5, out.width="40%"}
 # Plot it 
-genesetname = "GPBP DNA Damage"
+genesetname = "GOBP DNA Damage"
 test.df = test.df %>% 
   mutate(significance = ifelse(TCSA_pval <= 0.05, max(test.df[,1]),0))
 input = data.frame(test.df[,c(1,3)])
@@ -814,7 +824,7 @@ kmeans_heatmap(input.df = df3, input.data = input.data)
 
 cbind(df3, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
   DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
+                caption = "Cluster information with TPM value", 
                 width = "800px",
                 options = list(scrollX=TRUE))
 ```
@@ -827,7 +837,7 @@ kmeans_heatmap(input.df = df4, input.data = input.data)
 
 cbind(df4, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
   DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
+                caption = "Cluster information with TPM value", 
                 width = "800px",
                 options = list(scrollX=TRUE))
 ```
@@ -839,7 +849,7 @@ kmeans_heatmap(input.df = df5, input.data = input.data)
 
 cbind(df5, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
   DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
+                caption = "Cluster information with TPM value", 
                 width = "800px",
                 options = list(scrollX=TRUE))
 ```
@@ -851,7 +861,7 @@ kmeans_heatmap(input.df = df6, input.data = input.data)
 
 cbind(df6, (tpm %>% filter(rownames(.) %in% rownames(df6)))) %>% 
   DT::datatable(rownames = T, 
-                caption = "Clsuter information with TPM value", 
+                caption = "Cluster information with TPM value", 
                 width = "800px",
                 options = list(scrollX=TRUE))
 ```
