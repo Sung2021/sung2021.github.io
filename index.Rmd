@@ -241,7 +241,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="pub-card">
 <div class="pub-journal">AJP-Endocrinology and Metabolism <span class="pub-year">2020</span></div>
 <div class="pub-title">Holistic Characterization of Single Hepatocyte Transcriptome Responses to High Fat Diet.</div>
-<div class="pub-badge">First author &nbsp;·&nbsp; <a href="https://doi.org/10.1152/ajpendo.00076.2020" target="_blank">View Paper →</a></div>
+<div class="pub-badge">First author &nbsp;·&nbsp; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8260362/" target="_blank">View Paper →</a></div>
 </div>
 </div>
 
