@@ -207,7 +207,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="pub-card">
 <div class="pub-journal">Nature Immunology <span class="pub-year">2024</span></div>
 <div class="pub-title">The transcriptional cofactor Tle3 reciprocally controls effector and central memory CD8+ T cell fates.</div>
-<div class="pub-badge">Co-first author</div>
+<div class="pub-badge">Co-first author &nbsp;·&nbsp; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10916363/" target="_blank">View Paper →</a></div>
 </div>
 </div>
 
@@ -215,6 +215,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="pub-card">
 <div class="pub-journal">Cell Reports Medicine <span class="pub-year">2025</span></div>
 <div class="pub-title">Immune targeting of triple-negative breast cancer through a clinically actionable STING agonist-CAR T cell platform.</div>
+<div class="pub-badge"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12281382/" target="_blank">View Paper →</a></div>
 </div>
 </div>
 
@@ -222,6 +223,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="pub-card">
 <div class="pub-journal">Cell <span class="pub-year">2021</span></div>
 <div class="pub-title">Seq-Scope: Microscopic examination of spatial transcriptome.</div>
+<div class="pub-badge"><a href="https://doi.org/10.1016/j.cell.2021.05.010" target="_blank">View Paper →</a></div>
 </div>
 </div>
 
@@ -231,7 +233,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="pub-card">
 <div class="pub-journal">Cell Reports <span class="pub-year">2021</span></div>
 <div class="pub-title">Single cell transcriptome analysis of colon cancer cell response to 5-fluorouracil-induced DNA damage.</div>
-<div class="pub-badge">First author</div>
+<div class="pub-badge">First author &nbsp;·&nbsp; <a href="https://doi.org/10.1016/j.celrep.2020.108077" target="_blank">View Paper →</a></div>
 </div>
 </div>
 
@@ -239,7 +241,7 @@ Builds analytical frameworks that bridge biology, machine learning, and multi-om
 <div class="pub-card">
 <div class="pub-journal">AJP-Endocrinology and Metabolism <span class="pub-year">2020</span></div>
 <div class="pub-title">Holistic Characterization of Single Hepatocyte Transcriptome Responses to High Fat Diet.</div>
-<div class="pub-badge">First author</div>
+<div class="pub-badge">First author &nbsp;·&nbsp; <a href="https://doi.org/10.1152/ajpendo.00076.2020" target="_blank">View Paper →</a></div>
 </div>
 </div>
 
